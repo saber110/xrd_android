@@ -5,7 +5,6 @@
 # @Desc : 程序入口
 
 from flask import Flask
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 import config
@@ -16,7 +15,6 @@ app.config[
     'SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + config.DB_USER + ':' + config.DB_PASSWORD + '@' + config.DB_HOST + ':' + config.DB_PORT + '/' + config.DB_NAME
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 import routes
 import commands

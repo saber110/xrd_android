@@ -6,7 +6,6 @@
 
 from flask import request
 from sqlalchemy.exc import DBAPIError
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
 from models import User
@@ -17,7 +16,7 @@ def register():
     """
     用户注册接口，可用于批量导入也可用于单个注册
     """
-    if request.method == "POST":
+    if request.method == 'POST':
         fail_ids = []
         data = request.get_json()
         schema = {
@@ -29,7 +28,7 @@ def register():
                                                'password': {'type': 'string', 'maxlength': 30}}}}
         }
         v = generate_validator(schema)
-        if not v.validate(data):  # 对请求数据格式进行校验
+        if not v(data):  # 对请求数据格式进行校验
             return generate_result(1, data=v.errors)
         new_users = data['newUsers']
         for index, val in enumerate(new_users):
@@ -41,3 +40,26 @@ def register():
             except DBAPIError:
                 fail_ids.append(index)
         return generate_result(0, data={'fail_ids': fail_ids})
+
+
+def login():
+    """
+    用户登录接口
+    """
+    if request.method == 'POST':
+        data = request.get_json()
+        schema = {
+            'iemi': {'type': 'string', 'maxlength': 17},
+            'password': {'type': 'string', 'maxlength': 30}
+        }
+        v = generate_validator(schema)
+        if not v(data):
+            return generate_result(1, data=v.errors)
+        user = User.query.filter_by(iemi=data['iemi']).first()
+
+        # 判断用户是否存在
+        if user is None:
+            return generate_result(2)
+        if not user.check_password(data['password']):
+            return generate_result(2)
+        return generate_result(0, data={'token': str(user.generate_auth_token(), encoding='utf-8')})

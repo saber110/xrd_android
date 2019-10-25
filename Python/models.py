@@ -4,8 +4,12 @@
 # @contact : yinaoxiong@gmail.com
 # @Desc : 定义数据库模型
 import bcrypt
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import BadTimeSignature, BadSignature
+import time
 
 from app import db
+import config
 
 
 class User(db.Model):
@@ -23,4 +27,19 @@ class User(db.Model):
         self.password = bcrypt.hashpw(bytes(password, encoding='utf-8'), bcrypt.gensalt())
 
     def check_password(self, password):
-        return bcrypt.checkpw(password, self.password)
+        return bcrypt.checkpw(bytes(password, encoding='utf-8'), bytes(self.password, encoding='utf-8'))
+
+    def generate_auth_token(self, expiration=config.EXPIRATION):
+        s = Serializer(config.SECRET_KEY, expires_in=expiration)
+        return s.dumps({'id': self.id, 'timestamp': time.time()})
+
+    @staticmethod
+    def verify_auth_token(self, token):
+        s = Serializer(config.SECRET_KEY)
+        try:
+            data = s.loads(token)
+        except BadSignature:
+            return None
+        user = User.query.get(data['id'])
+
+        return user

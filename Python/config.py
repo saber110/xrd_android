@@ -13,3 +13,8 @@ DB_PASSWORD = ''
 
 # url前缀配置
 URL_Prefix = '/api/v1'
+
+# 签署token的32位密钥
+SECRET_KEY = ''
+# token过期时间，单位秒
+EXPIRATION = 60 * 60 * 24
