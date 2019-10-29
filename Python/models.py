@@ -8,7 +8,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadTimeSignature, BadSignature
 import time
 
-from app import db
+from app import db, redis_client
 import config
 
 
@@ -34,12 +34,18 @@ class User(db.Model):
         return s.dumps({'id': self.id, 'timestamp': time.time()})
 
     @staticmethod
-    def verify_auth_token(self, token):
+    def verify_auth_token(token):
         s = Serializer(config.SECRET_KEY)
         try:
             data = s.loads(token)
+        except BadTimeSignature:
+            return None
         except BadSignature:
             return None
+        max_timestamp = redis_client.get(data['id'])
+        # 检查是否晚于token黑名单时间
+        if max_timestamp is not None:
+            if data['timestamp'] > max_timestamp:
+                return None
         user = User.query.get(data['id'])
-
         return user

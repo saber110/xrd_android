@@ -10,6 +10,7 @@ from sqlalchemy.exc import DBAPIError
 from app import db
 from models import User
 from . import generate_result, generate_validator
+from utils import token_check
 
 
 def register():
@@ -63,3 +64,11 @@ def login():
         if not user.check_password(data['password']):
             return generate_result(2)
         return generate_result(0, data={'token': str(user.generate_auth_token(), encoding='utf-8')})
+
+
+@token_check
+def refresh_token(user: User):
+    """
+    更新token接口
+    """
+    return generate_result(0, data={'token': str(user.generate_auth_token(), encoding='utf-8')})

@@ -19,3 +19,4 @@ def add_url(rule, function, methods):
 
 add_url('/user/register', user.register, methods=['POST'])
 add_url('/user/login', user.login, methods=['POST'])
+add_url('/user/refresh_token', user.refresh_token, methods=['POST'])

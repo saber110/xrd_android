@@ -11,6 +11,11 @@ DB_NAME = ''
 DB_USER = ''
 DB_PASSWORD = ''
 
+# redis 数据库配置
+
+REDIS_HOST = ''
+REDIS_POST = ''
+
 # url前缀配置
 URL_Prefix = '/api/v1'
 

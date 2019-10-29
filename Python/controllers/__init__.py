@@ -6,7 +6,7 @@
 
 import cerberus
 
-__all__ = ['user']
+__all__ = ['user', 'generate_result', 'generate_validator']
 
 
 def generate_result(code: int, message=None, data=None) -> dict:
