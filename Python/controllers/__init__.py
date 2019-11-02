@@ -6,7 +6,7 @@
 
 import cerberus
 
-__all__ = ['user']
+__all__ = ['user', 'generate_result', 'generate_validator']
 
 
 def generate_result(code: int, message=None, data=None) -> dict:
@@ -22,6 +22,8 @@ def generate_result(code: int, message=None, data=None) -> dict:
     if message is None:
         if code == 1:
             message = '请求参数有误'
+        elif code == 2:
+            message = '该用户不存在或密码错误'
         else:
             message = '请求成功'
     return {'code': code, 'message': message, 'data': data}
