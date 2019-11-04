@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from app import app
 from config import URL_Prefix
-from controllers import user, administration
+from controllers import user, administration, data
 
 
 def add_url(rule, function, methods):
@@ -14,7 +14,7 @@ def add_url(rule, function, methods):
                     is a list of methods this rule should be limited
                     to (``GET``, ``POST`` etc.).
     """
-    app.add_url_rule(URL_Prefix + rule, view_func=function, methods=methods)
+    app.add_url_rule(URL_Prefix + rule, view_func=function, methods=methods, endpoint=rule)
 
 
 add_url('/user/register', user.register, methods=['POST'])
@@ -24,6 +24,7 @@ add_url('/administration/district', administration.district, methods=['POST'])
 add_url('/administration/street', administration.street, methods=['POST'])
 add_url('/administration/community', administration.community, methods=['POST'])
 add_url('/administration/garden', administration.garden, methods=['POST'])
+add_url('/data/garden', data.garden, methods=['POST'])
 
 
 @app.route('/')
