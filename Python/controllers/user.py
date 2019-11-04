@@ -60,14 +60,14 @@ def login():
 
         # 判断用户是否存在
         if user is None:
-            return generate_result(2)
+            return generate_result(2, '该用户不存在或密码错误')
         if not user.check_password(data['password']):
-            return generate_result(2)
+            return generate_result(2, '该用户不存在或密码错误')
         return generate_result(0, data={'token': str(user.generate_auth_token(), encoding='utf-8')})
 
 
 @token_check
-def refresh_token(user: User):
+def refresh_token(user: User, *args, **kwargs):
     """
     更新token接口
     """
