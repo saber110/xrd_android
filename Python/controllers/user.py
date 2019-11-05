@@ -67,8 +67,9 @@ def login():
 
 
 @token_check
-def refresh_token(user: User, *args, **kwargs):
+def refresh_token(user_id: int, *args, **kwargs):
     """
     更新token接口
     """
+    user = User.query.get(user_id)
     return generate_result(0, data={'token': str(user.generate_auth_token(), encoding='utf-8')})

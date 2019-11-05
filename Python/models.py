@@ -23,6 +23,17 @@ def to_dict(inst, cls):
 class BaseModel(db.Model):
     __abstract__ = True
 
+    def __init__(self, *args, **kwargs):
+        """
+        删除多余的参数
+        :param args:
+        :param kwargs:
+        """
+        for k in list(kwargs.keys()):
+            if not hasattr(self, k):
+                del kwargs[k]
+        super().__init__(*args, **kwargs)
+
     @property
     def to_dict(self):
         return to_dict(self, self.__class__)
@@ -63,8 +74,7 @@ class User(BaseModel):
         if max_timestamp is not None:
             if data['timestamp'] > max_timestamp:
                 return None
-        user = User.query.get(data['id'])
-        return user
+        return data['id']
 
 
 class District(BaseModel):
@@ -102,3 +112,24 @@ class Garden(BaseModel):
     streetId = db.Column(db.Integer, db.ForeignKey('street.id'), nullable=False, comment='小区对应的街道id')
     districtId = db.Column(db.Integer, db.ForeignKey('district.id'), nullable=False, comment='小区对应的行政区id')
     name = db.Column(db.String(85), nullable=False, comment='小区名称，最长为85个字符')
+
+
+class Building(BaseModel):
+    """
+    建筑类别表
+    """
+    id = db.Column(db.Integer, primary_key=True, comment='建筑类别id')
+    kindName = db.Column(db.String(64), unique=True, comment='类别名称，最长64个字符')
+
+
+class MapData(BaseModel):
+    """
+    地图数据表
+    """
+    id = db.Column(db.Integer, primary_key=True, comment='地图数据id')
+    kindId = db.Column(db.Integer, db.ForeignKey('building.id'), nullable=False, comment='建筑类别id')
+    longitude = db.Column(db.Float(precision='10,6'), nullable=False, comment='坐标经度，统一使用GCJ-02标准存储')
+    latitude = db.Column(db.Float(precision='10,6'), nullable=False, comment="坐标维度，统一使用GCJ-02标准存储")
+    name = db.Column(db.String(64), nullable=False, comment='建筑名称，最长64个字符')
+    gardenId = db.Column(db.Integer, db.ForeignKey('garden.id'), nullable=False, comment='建筑所属的小区')
+    userId = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, comment='添加信息的用户id')
