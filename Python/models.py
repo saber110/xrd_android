@@ -12,7 +12,23 @@ from app import db, redis_client
 import config
 
 
-class User(db.Model):
+def to_dict(inst, cls):
+    d = {}
+    for c in cls.__table__.columns:
+        v = getattr(inst, c.name)
+        d[c.name] = v
+    return d
+
+
+class BaseModel(db.Model):
+    __abstract__ = True
+
+    @property
+    def to_dict(self):
+        return to_dict(self, self.__class__)
+
+
+class User(BaseModel):
     """
     用户表
     """
@@ -49,3 +65,40 @@ class User(db.Model):
                 return None
         user = User.query.get(data['id'])
         return user
+
+
+class District(BaseModel):
+    """
+    行政区表
+    """
+    id = db.Column(db.Integer, primary_key=True, comment='行政区id')
+    name = db.Column(db.String(85), nullable=False, comment='行政区名称，最长为85个字符（根据行政区命名规则长度限制制定）')
+
+
+class Street(BaseModel):
+    """
+    街道表
+    """
+    id = db.Column(db.Integer, primary_key=True, comment='街道id')
+    districtId = db.Column(db.Integer, db.ForeignKey('district.id'), nullable=False, comment='街道对应的行政区id')
+    name = db.Column(db.String(85), nullable=False, comment='街道名称，最长为85个字符')
+
+
+class Community(BaseModel):
+    """
+    社区表
+    """
+    id = db.Column(db.Integer, primary_key=True, comment='社区id')
+    streetId = db.Column(db.Integer, db.ForeignKey('street.id'), nullable=False, comment='社区对应的街道id')
+    name = db.Column(db.String(85), nullable=False, comment='社区名称，最长为85个字符')
+
+
+class Garden(BaseModel):
+    """
+    小区表
+    """
+    id = db.Column(db.Integer, primary_key=True, comment='小区id')
+    communityId = db.Column(db.Integer, db.ForeignKey('community.id'), nullable=False, comment='小区对应的社区id')
+    streetId = db.Column(db.Integer, db.ForeignKey('street.id'), nullable=False, comment='小区对应的街道id')
+    districtId = db.Column(db.Integer, db.ForeignKey('district.id'), nullable=False, comment='小区对应的行政区id')
+    name = db.Column(db.String(85), nullable=False, comment='小区名称，最长为85个字符')
