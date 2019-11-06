@@ -32,6 +32,8 @@
   <link href="../assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
   <!-- CSS Just for demo purpose, don't include it in your project -->
   <link href="../assets/demo/demo.css" rel="stylesheet" />
+  <!-- album -->
+  <link href="../assets/css/jquery.bsPhotoGallery.css" rel="stylesheet">
 </head>
 
 <body class="">
@@ -161,124 +163,86 @@
         </div>
       </nav>
       <!-- End Navbar -->
-
       <div class="content">
         <div class="container-fluid">
-          <div class="card">
-            <div class="card-header card-header-primary">
-              <h3 class="card-title">Notifications</h3>
-              <p class="card-category">Handcrafted by our friend
-                <a target="_blank" href="https://github.com/mouse0270">Robert McIntosh</a>. Please checkout the
-                <a href="http://bootstrap-notify.remabledesigns.com/" target="_blank">full documentation.</a>
-              </p>
-            </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-6">
-                  <h4 class="card-title">Notifications Style</h4>
-                  <div class="alert alert-info">
-                    <span>This is a plain notification</span>
-                  </div>
-                  <div class="alert alert-info">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <i class="material-icons">close</i>
-                    </button>
-                    <span>This is a notification with close button.</span>
-                  </div>
-                  <div class="alert alert-info alert-with-icon" data-notify="container">
-                    <i class="material-icons" data-notify="icon">add_alert</i>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <i class="material-icons">close</i>
-                    </button>
-                    <span data-notify="message">This is a notification with close button and icon.</span>
-                  </div>
-                  <div class="alert alert-info alert-with-icon" data-notify="container">
-                    <i class="material-icons" data-notify="icon">add_alert</i>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <i class="material-icons">close</i>
-                    </button>
-                    <span data-notify="message">This is a notification with close button and icon and have many lines. You can see that the icon and the close button are always vertically aligned. This is a beautiful notification. So you don't have to worry about the style.</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <h4 class="card-title">Notification states</h4>
-                  <div class="alert alert-info">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <i class="material-icons">close</i>
-                    </button>
-                    <span>
-                      <b> Info - </b> This is a regular notification made with ".alert-info"</span>
-                  </div>
-                  <div class="alert alert-success">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <i class="material-icons">close</i>
-                    </button>
-                    <span>
-                      <b> Success - </b> This is a regular notification made with ".alert-success"</span>
-                  </div>
-                  <div class="alert alert-warning">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <i class="material-icons">close</i>
-                    </button>
-                    <span>
-                      <b> Warning - </b> This is a regular notification made with ".alert-warning"</span>
-                  </div>
-                  <div class="alert alert-danger">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <i class="material-icons">close</i>
-                    </button>
-                    <span>
-                      <b> Danger - </b> This is a regular notification made with ".alert-danger"</span>
-                  </div>
-                  <div class="alert alert-primary">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <i class="material-icons">close</i>
-                    </button>
-                    <span>
-                      <b> Primary - </b> This is a regular notification made with ".alert-primary"</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-12">
-              <div class="places-buttons">
-                <div class="row">
-                  <div class="col-md-6 ml-auto mr-auto text-center">
-                    <h4 class="card-title">
-                      Notifications Places
-                      <p class="category">Click to view notifications</p>
-                    </h4>
-                  </div>
+          <div class="card card-plain">
+            <div class="col-lg-12 col-md-12">
+              <div class="card card-plain">
+                <div class="card-header card-header-tabs card-header-primary">
+                  <form class="form">
+                    <span id="city_china_val" class="bmd-form-group">
+                      <div class="input-group no-border">
+                        <select class="province other form-control" data-first-title="选择省">
+                          <option value="">请选择</option>
+                          <option value="湖南省" selected>湖南省</option>
+                        </select>
+                        <select class="city form-control" data-first-title="选择市">
+                          <option value="">请选择</option>
+                          <option value="长沙市" selected>长沙市</option>
+                        </select>
+                        <select class="area form-control" data-first-title="选择地区">
+                          <option value="">请选择</option>
+                          <option value="芙蓉区" selected>芙蓉区</option>
+                        </select>
+                        <select class="street form-control" data-first-title="选择地区">
+                          <option value="">请选择</option>
+                          <option value="文艺路街道" selected>文艺路街道</option>
+                        </select>
+                        <select class="community form-control" data-first-title="选择地区">
+                          <option value="">请选择</option>
+                          <option value="识字岭社区" selected>识字岭社区</option>
+                        </select>
+                        <button type="submit" class="btn btn-white btn-round btn-just-icon">
+                          <i class="material-icons">search</i>
+                          <div class="ripple-container"></div>
+                        </button>
+                      </div>
+                    </span>
+                  </form>
+
                 </div>
                 <div class="row">
-                  <div class="col-lg-8 col-md-10 ml-auto mr-auto">
-                    <div class="row">
-                      <div class="col-md-4">
-                        <button class="btn btn-primary btn-block" onclick="md.showNotification('top','left')">Top Left</button>
-                      </div>
-                      <div class="col-md-4">
-                        <button class="btn btn-primary btn-block" onclick="md.showNotification('top','center')">Top Center</button>
-                      </div>
-                      <div class="col-md-4">
-                        <button class="btn btn-primary btn-block" onclick="md.showNotification('top','right')">Top Right</button>
-                      </div>
-                    </div>
-                  </div>
+                  <ul class="nav">
+                    <span class="input-group ">
+                    <li class="nav-item  "><a href="#" class="nav-link">小区1</a></li>
+                    <li class="nav-item  "><a href="#" class="nav-link">小区2</a></li>
+                    <li class="nav-item  "><a href="#" class="nav-link">小区3</a></li>
+                    <li class="nav-item  "><a href="#" class="nav-link">小区4</a></li>
+                    </span>
+                  </ul>
                 </div>
-                <div class="row">
-                  <div class="col-lg-8 col-md-10 ml-auto mr-auto">
-                    <div class="row">
-                      <div class="col-md-4">
-                        <button class="btn btn-primary btn-block" onclick="md.showNotification('bottom','left')">Bottom Left</button>
-                      </div>
-                      <div class="col-md-4">
-                        <button class="btn btn-primary btn-block" onclick="md.showNotification('bottom','center')">Bottom Center</button>
-                      </div>
-                      <div class="col-md-4">
-                        <button class="btn btn-primary btn-block" onclick="md.showNotification('bottom','right')">Bottom Right</button>
-                      </div>
-                    </div>
-                  </div>
+                <div class="card-body" >
+                  <ul class="row first">
+                      <li>
+                          <img alt="Rocking the night away"  src="http://demo.michaelsoriano.com/images/photodune-174908-rocking-the-night-away-xs.jpg">
+                          <p>Consectetur adipiscing elit</p>
+                      </li>
+                      <li>
+                          <img alt="Yellow sign"  src="http://demo.michaelsoriano.com/images/photodune-287182-blah-blah-blah-yellow-road-sign-xs.jpg">
+                          <p>Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam</p>
+                      </li>
+                      <li>
+                          <img alt="Colors"  src="http://demo.michaelsoriano.com/images/photodune-460760-colors-xs.jpg">
+                           <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
+                      </li>
+                      <li>
+                          <img alt="Retro party"  src="http://demo.michaelsoriano.com/images/photodune-461673-retro-party-xs.jpg">
+                          <p>Lorem, do eiusmod tempor incid Ut enim ad minim veniam</p>
+                      </li>
+                      <li>
+                          <img alt="Technology soup"  src="http://demo.michaelsoriano.com/images/photodune-514834-touchscreen-technology-xs.jpg">
+                          <p>Do eiusmod tempor</p>
+                      </li>
+                      <li>
+                          <img alt="Legal docs"  src="http://demo.michaelsoriano.com/images/photodune-916206-legal-xs.jpg" data-bsp-large-src="http://demo.michaelsoriano.com/images/photodune-916206-legal-large.jpg">
+                          <p>Eiusmod tempor enim ad minim veniam</p>
+                      </li>
+                      <li>
+                          <img alt="Nature shot"  src="http://demo.michaelsoriano.com/images/photodune-1062948-nature-xs.jpg">
+                          <p>Adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
+                      </li>
+
+                  </ul>
                 </div>
               </div>
             </div>
@@ -433,6 +397,17 @@
   <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
   <!-- Material Dashboard DEMO methods, don't include it in your project! -->
   <script src="../assets/demo/demo.js"></script>
+  <!-- album -->
+  <script src="../assets/js/jquery.bsPhotoGallery.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('ul.first').bsPhotoGallery({
+        "classes" : "col-xl-3 col-lg-2 col-md-4 col-sm-4",
+        "hasModal" : true,
+        "shortText" : false
+      });
+    });
+  </script>
   <script>
     $(document).ready(function() {
       $().ready(function() {

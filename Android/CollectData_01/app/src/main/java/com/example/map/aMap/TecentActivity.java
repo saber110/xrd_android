@@ -252,7 +252,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
             map.put("long", latLng.longitude);
 
             // 网址请求位https ，如果不是https则会产生安全问题，需要配置文件解决
-            HttpRequest request = new HttpRequest("腾讯请求的网址（记得加上http://或者https://）","POST").form(map);
+            HttpRequest request = new HttpRequest("http://rap2api.taobao.org/app/mock/234350/data/map","POST").form(map);
 
             // 下面可以将数据进行model化，但是需要根据返回的数据来确定
             //            ResponseDao responseDao = JSONObject.parseObject(request.body(), ResponseDao.class);

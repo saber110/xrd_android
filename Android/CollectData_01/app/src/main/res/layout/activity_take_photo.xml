@@ -15,19 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ImageButton android:paddingTop="650dp"
+    <ImageButton android:paddingTop="15dp"
         android:id="@+id/takephoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:src="@mipmap/takephoto" />
 
-    <ImageButton
-        android:id="@+id/preview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:background="#000000"
-        android:src="@mipmap/yulan" />
 
 </RelativeLayout>
