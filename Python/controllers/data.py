@@ -10,7 +10,7 @@ from datetime import datetime
 
 from . import generate_result, generate_validator
 from utils import token_check
-from models import Garden, Building, MapData, GardenPictureKind, GardenPicture
+from models import Garden, Building, MapData, GardenPictureKind, GardenPicture, OtherPicture
 from app import db, image_upload
 from utils import bd09_to_gcj02
 
@@ -92,7 +92,7 @@ def garden_picture_kind(*args, **kwargs):
     :return:
     """
     garden_picture_kinds = GardenPictureKind.query.all()
-    return generate_result(0, '获取小区图片种类成功', {'gardenPictureKinds': [i.to_dict for i in garden_picture_kinds]})
+    return generate_result(0, '获取小区图片种类成功', {'gardenPictureKinds': [i.to_dict['name'] for i in garden_picture_kinds]})
 
 
 @token_check
@@ -129,3 +129,37 @@ def garden_picture(user_id: int, *args, **kwargs):
         # TODO 对图片进行删除回滚
         return generate_result(2)
     return generate_result(0, '上传小区图片成功')
+
+
+@token_check
+def other_picture(user_id: int, *args, **kwargs):
+    """
+    上传小区的其他图片
+    :param user_id: 用户id
+    :return:
+    """
+    try:
+        garden_id = request.form['gardenId']
+        collect_time = request.form['collectTime']
+        image = request.files['image']
+    except KeyError:
+        return generate_result(1)
+    collect_time = datetime.fromtimestamp(int(collect_time) / 1000.0)
+    pictures = OtherPicture.query.all()
+    try:
+        garden = Garden.query.get(garden_id)
+    except DBAPIError:
+        return generate_result(2)
+    number = f"{len(pictures) + 1:03d}"
+    file_path = f'{garden.id}/origin/4_{garden.name}_{number}.'
+    file_path = image_upload.save(image, name=file_path)
+    # TODO 压缩并保存图片
+    picture = OtherPicture(gardenId=garden_id, collectTime=collect_time,
+                           filePath=file_path, syncTime=datetime.now(), userId=user_id)
+    try:
+        db.session.add(picture)
+        db.session.commit()
+    except DBAPIError:
+        # TODO 对图片进行删除回滚
+        return generate_result(2)
+    return generate_result(0, '上传小区其他图片成功')
