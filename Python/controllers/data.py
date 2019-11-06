@@ -42,7 +42,7 @@ def garden(*args, **kwargs):
         db.session.commit()
     except DBAPIError:
         return generate_result(2, '添加小区失败')
-    return generate_result(0, '添加小区成功')
+    return generate_result(0, '添加小区成功', {'gardenId': garden.id})
 
 
 @token_check
@@ -68,12 +68,12 @@ def map_data(user_id: int, *args, **kwargs):
         "kindId": {'type': 'integer', 'min': 1},
         "name": {'type': 'string', 'maxlength': 64},
         "gardenId": {'type': 'integer', 'min': 1},
-        "mapId": {'type': 'integer', 'min': 1, 'max': 3}
+        "mapId": {'type': 'integer', 'min': 0, 'max': 2}
     }
     v = generate_validator(schema)
     if not v(data):
         return generate_result(1, data=v.errors)
-    if data['mapId'] == 2:  # 如果是百度地图则进行转换
+    if data['mapId'] == 1:  # 如果是百度地图则进行转换
         data['longitude'], data['latitude'] = bd09_to_gcj02(data['longitude'], data['latitude'])
     data['userId'] = user_id
     map_data = MapData(**data)
