@@ -43,10 +43,14 @@ def token_check(f):
     def wrapper(*args, **kwargs):
         from flask import request
         if request.method == 'POST':
-            data = request.get_json()
-            if 'token' not in data:
-                return generate_result(1, message='请求参数错误，token不存在')
-            token = data['token']
+            try:
+                data = request.get_json()
+                token = data['token']
+            except (KeyError, TypeError):
+                try:
+                    token = request.form['token']
+                except KeyError:
+                    return generate_result(1, message='请求参数错误，token不存在')
             user_id = User.verify_auth_token(token)
             if user_id is not None:
                 return f(user_id=user_id, *args, **kwargs)
