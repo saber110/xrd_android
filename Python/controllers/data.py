@@ -57,7 +57,7 @@ def building(*args, **kwargs):
 
 
 @token_check
-def map(user_id: int, *args, **kwargs):
+def map_data(user_id: int, *args, **kwargs):
     """
     添加建筑标定信息
     :return:

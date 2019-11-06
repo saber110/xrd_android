@@ -26,7 +26,7 @@ add_url('/administration/community', administration.community, methods=['POST'])
 add_url('/administration/garden', administration.garden, methods=['POST'])
 add_url('/data/garden', data.garden, methods=['POST'])
 add_url('/data/building', data.building, methods=['POST'])
-add_url('/data/map', data.map, methods=['POST'])
+add_url('/data/map', data.map_data, methods=['POST'])
 
 
 @app.route('/')
