@@ -32,6 +32,10 @@
   <link href="../assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
   <!-- CSS Just for demo purpose, don't include it in your project -->
   <link href="../assets/demo/demo.css" rel="stylesheet" />
+  <!-- excel -->
+  <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
+  <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
+
 </head>
 
 <body class="">
@@ -164,96 +168,78 @@
 
       <div class="content">
         <div class="container-fluid">
-          <div class="card">
-            <div class="card-header card-header-primary">
-              <h4 class="card-title">Material Dashboard Heading</h4>
-              <p class="card-category">Created using Roboto Font Family</p>
-            </div>
-            <div class="card-body">
-              <div id="typography">
-                <div class="card-title">
-                  <h2>Typography</h2>
+          <div class="card card card-plain">
+            <div class="col-lg-12 col-md-12">
+              <div class="card card-plain">
+                <div class="card-header card-header-tabs card-header-primary">
+                  <form class="form">
+                    <span id="city_china_val" class="bmd-form-group"><div class="input-group no-border">
+                        <select class="province other form-control" data-first-title="选择省">
+                          <option value="">请选择</option>
+                          <option value="湖南省" selected>湖南省</option>
+                        </select>
+                        <select class="city form-control" data-first-title="选择市">
+                          <option value="">请选择</option>
+                          <option value="长沙市" selected>长沙市</option>
+                        </select>
+                        <select class="area form-control" data-first-title="选择地区">
+                          <option value="">请选择</option>
+                          <option value="芙蓉区" selected>芙蓉区</option>
+                        </select>
+                        <select class="street form-control" data-first-title="选择地区">
+                          <option value="">请选择</option>
+                          <option value="文艺路街道" selected>文艺路街道</option>
+                        </select>
+                        <select class="community form-control" data-first-title="选择地区">
+                          <option value="">请选择</option>
+                          <option value="识字岭社区" selected>识字岭社区</option>
+                        </select>
+                      <button type="submit" class="btn btn-white btn-round btn-just-icon">
+                        <i class="material-icons">search</i>
+                        <div class="ripple-container"></div>
+                      </button>
+                    </div>
+                  </span>
+                  </form>
+
+                  <div class="nav-tabs-navigation">
+                    <div class="nav-tabs-wrapper">
+                      <span class="nav-tabs-title">Tasks:</span>
+                      <ul class="nav nav-tabs" data-tabs="tabs">
+                        <li class="nav-item">
+                          <a class="nav-link active" href="#profile" data-toggle="tab">
+                            <i class="material-icons">bug_report</i> 表一
+                            <div class="ripple-container"></div>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#messages" data-toggle="tab">
+                            <i class="material-icons">code</i> 表二
+                            <div class="ripple-container"></div>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#settings" data-toggle="tab">
+                            <i class="material-icons">cloud</i> 表三
+                            <div class="ripple-container"></div>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-                <div class="row">
-                  <div class="tim-typo">
-                    <h1>
-                      <span class="tim-note">Header 1</span>The Life of Material Dashboard </h1>
-                  </div>
-                  <div class="tim-typo">
-                    <h2>
-                      <span class="tim-note">Header 2</span>The Life of Material Dashboard</h2>
-                  </div>
-                  <div class="tim-typo">
-                    <h3>
-                      <span class="tim-note">Header 3</span>The Life of Material Dashboard</h3>
-                  </div>
-                  <div class="tim-typo">
-                    <h4>
-                      <span class="tim-note">Header 4</span>The Life of Material Dashboard</h4>
-                  </div>
-                  <div class="tim-typo">
-                    <h5>
-                      <span class="tim-note">Header 5</span>The Life of Material Dashboard</h5>
-                  </div>
-                  <div class="tim-typo">
-                    <h6>
-                      <span class="tim-note">Header 6</span>The Life of Material Dashboard</h6>
-                  </div>
-                  <div class="tim-typo">
-                    <p>
-                      <span class="tim-note">Paragraph</span>
-                      I will be the leader of a company that ends up being worth billions of dollars, because I got the answers. I understand culture. I am the nucleus. I think that’s a responsibility that I have, to push possibilities, to show people, this is the level that things could be at.</p>
-                  </div>
-                  <div class="tim-typo">
-                    <span class="tim-note">Quote</span>
-                    <blockquote class="blockquote">
-                      <p>
-                        I will be the leader of a company that ends up being worth billions of dollars, because I got the answers. I understand culture. I am the nucleus. I think that’s a responsibility that I have, to push possibilities, to show people, this is the level that things could be at.
-                      </p>
-                      <small>
-                        Kanye West, Musician
-                      </small>
-                    </blockquote>
-                  </div>
-                  <div class="tim-typo">
-                    <span class="tim-note">Muted Text</span>
-                    <p class="text-muted">
-                      I will be the leader of a company that ends up being worth billions of dollars, because I got the answers...
-                    </p>
-                  </div>
-                  <div class="tim-typo">
-                    <span class="tim-note">Primary Text</span>
-                    <p class="text-primary">
-                      I will be the leader of a company that ends up being worth billions of dollars, because I got the answers... </p>
-                  </div>
-                  <div class="tim-typo">
-                    <span class="tim-note">Info Text</span>
-                    <p class="text-info">
-                      I will be the leader of a company that ends up being worth billions of dollars, because I got the answers... </p>
-                  </div>
-                  <div class="tim-typo">
-                    <span class="tim-note">Success Text</span>
-                    <p class="text-success">
-                      I will be the leader of a company that ends up being worth billions of dollars, because I got the answers... </p>
-                  </div>
-                  <div class="tim-typo">
-                    <span class="tim-note">Warning Text</span>
-                    <p class="text-warning">
-                      I will be the leader of a company that ends up being worth billions of dollars, because I got the answers...
-                    </p>
-                  </div>
-                  <div class="tim-typo">
-                    <span class="tim-note">Danger Text</span>
-                    <p class="text-danger">
-                      I will be the leader of a company that ends up being worth billions of dollars, because I got the answers... </p>
-                  </div>
-                  <div class="tim-typo">
-                    <h2>
-                      <span class="tim-note">Small Tag</span>
-                      Header with small subtitle
-                      <br>
-                      <small>Use "small" tag for the headers</small>
-                    </h2>
+                <div class="card-body" style="overflow-x:auto">
+                  <div class="tab-content">
+                    <div class="tab-pane active" id="profile" >
+                      <div id="spreadsheet" style="padding-right:10px"></div>
+                    </div>
+                    <div class="tab-pane" id="messages">
+                      <div id="spreadsheet" style="padding-right:10px"></div>
+
+                    </div>
+                    <div class="tab-pane" id="settings">
+                      <div id="spreadsheet" style="padding-right:10px"></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -298,74 +284,7 @@
       </footer>
     </div>
   </div>
-  <div class="fixed-plugin">
-    <div class="dropdown show-dropdown">
-      <a href="#" data-toggle="dropdown">
-        <i class="fa fa-cog fa-2x"> </i>
-      </a>
-      <ul class="dropdown-menu">
-        <li class="header-title"> Sidebar Filters</li>
-        <li class="adjustments-line">
-          <a href="javascript:void(0)" class="switch-trigger active-color">
-            <div class="badge-colors ml-auto mr-auto">
-              <span class="badge filter badge-purple" data-color="purple"></span>
-              <span class="badge filter badge-azure" data-color="azure"></span>
-              <span class="badge filter badge-green" data-color="green"></span>
-              <span class="badge filter badge-warning" data-color="orange"></span>
-              <span class="badge filter badge-danger" data-color="danger"></span>
-              <span class="badge filter badge-rose active" data-color="rose"></span>
-            </div>
-            <div class="clearfix"></div>
-          </a>
-        </li>
-        <li class="header-title">Images</li>
-        <li class="active">
-          <a class="img-holder switch-trigger" href="javascript:void(0)">
-            <img src="../assets/img/sidebar-1.jpg" alt="">
-          </a>
-        </li>
-        <li>
-          <a class="img-holder switch-trigger" href="javascript:void(0)">
-            <img src="../assets/img/sidebar-2.jpg" alt="">
-          </a>
-        </li>
-        <li>
-          <a class="img-holder switch-trigger" href="javascript:void(0)">
-            <img src="../assets/img/sidebar-3.jpg" alt="">
-          </a>
-        </li>
-        <li>
-          <a class="img-holder switch-trigger" href="javascript:void(0)">
-            <img src="../assets/img/sidebar-4.jpg" alt="">
-          </a>
-        </li>
-        <li class="button-container">
-          <a href="https://www.creative-tim.com/product/material-dashboard" target="_blank" class="btn btn-primary btn-block">Free Download</a>
-        </li>
-        <!-- <li class="header-title">Want more components?</li>
-            <li class="button-container">
-                <a href="https://www.creative-tim.com/product/material-dashboard-pro" target="_blank" class="btn btn-warning btn-block">
-                  Get the pro version
-                </a>
-            </li> -->
-        <li class="button-container">
-          <a href="https://demos.creative-tim.com/material-dashboard/docs/2.1/getting-started/introduction.html" target="_blank" class="btn btn-default btn-block">
-            View Documentation
-          </a>
-        </li>
-        <li class="button-container github-star">
-          <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
-        </li>
-        <li class="header-title">Thank you for 95 shares!</li>
-        <li class="button-container text-center">
-          <button id="twitter" class="btn btn-round btn-twitter"><i class="fa fa-twitter"></i> &middot; 45</button>
-          <button id="facebook" class="btn btn-round btn-facebook"><i class="fa fa-facebook-f"></i> &middot; 50</button>
-          <br>
-          <br>
-        </li>
-      </ul>
-    </div>
-  </div>
+
   <!--   Core JS Files   -->
   <script src="../assets/js/core/jquery.min.js"></script>
   <script src="../assets/js/core/popper.min.js"></script>
@@ -409,6 +328,186 @@
   <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
   <!-- Material Dashboard DEMO methods, don't include it in your project! -->
   <script src="../assets/demo/demo.js"></script>
+  <!-- excel -->
+  <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
+  <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var data = [
+          ['BR', 'Cheese', 1],
+          ['CA', 'Apples', 0],
+          ['US', 'Carrots', 1],
+          ['GB', 'Oranges', 0],
+      ];
+
+      table = jexcel(document.getElementById('spreadsheet'), {
+          data:data,
+          columns: [
+              {
+                  title: '采集人员',
+                  width: '100'
+              },
+              {
+                  title: '采集日期',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: '市',
+                  title: '状态',
+                  width:'100'
+              },
+              {
+                  title: '区县',
+                  width: '100'
+              },
+              {
+                  title: '街道',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: '社区名称',
+                  title: '状态',
+                  width:'100'
+              },
+              {
+                  title: '社区别名',
+                  width: '100'
+              },
+              {
+                  title: '小区名称',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: '小区别名',
+                  title: '状态',
+                  width:'100'
+              },
+              {
+                  title: '小区别名2',
+                  width: '100'
+              },
+              {
+                  title: '小区座落',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: '小区东至',
+                  title: '状态',
+                  width:'100'
+              },
+              {
+                  title: '小区南至',
+                  width: '100'
+              },
+              {
+                  title: '小区西至',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: '小区北至',
+                  title: '状态',
+                  width:'100'
+              },
+              {
+                  title: '区域位置',
+                  width: '100',
+                  source: ['城区中心','城东区域','城南区域','城西区域','城北区域','近郊组团及乡镇','远郊组团及乡镇']
+              },
+              {
+                  title: '楼盘状态',
+                  width: '150',
+                  source: ['存量','在建','在售','灭失']
+              },
+              {
+                  title: '小区类型',
+                  width:'100',
+                  source: ['普通商品房','老式住宅区','经济适用房','中档商品房','高档商品房','自建房','零星住宅区','农村拆迁房','城市拆迁房','人才专项房']
+              },
+              {
+                  title: '建筑类型',
+                  width: '100',
+                  source:['住宅(电梯房)','住宅(楼梯房)','住宅(洋房)','单身公寓(住宅)','单身公寓(非住宅)','办公写字楼','别墅(独栋)','别墅(联排)','别墅(双拼)','叠墅','自建民房','其它类型']
+              },
+              {
+                  title: '房屋性质',
+                  width: '150',
+                  source: ['商品房','房改房','经济适用房','集资房','私房','非商品房','公租房','安置房']
+              },
+              {
+                  title: '建筑结构',
+                  width:'100',
+                  source: ['钢混结构','混合结构','钢及钢混结构','砖混结构','砖木结构','钢结构','木结构','简易结构']
+              },
+              {
+                  title: '住宅幢数',
+                  width: '100'
+              },
+              {
+                  title: '非住宅幢数',
+                  width: '150',
+              },
+              {
+                  title: '幢数描述',
+                  width:'100'
+              },
+              {
+                  title: '建成年份',
+                  width: '100'
+              },
+              {
+                  title: '设定年份',
+                  width: '150',
+              },
+              {
+                  title: '土地性质',
+                  width:'100',
+                  source: ['国有土地','集体土地']
+
+              },
+              {
+                  title: '使_用_权',
+                  width: '100',
+                  source: ['出让','划拨','集体']
+
+              },
+              {
+                  title: '土地等级',
+                  width: '150',
+                  source: ['一级','二级','三级','四级','五级','六级','七级','八级','九级','十级','十一级']
+              },
+              {
+                  title: '询价记录',
+                  width:'100'
+              },
+          ],
+          // nestedHeaders:[
+          //     [
+          //         {
+          //             title: '表一',
+          //             colspan: '3',
+          //         },
+          //     ],
+          //     [
+          //         {
+          //             title: '特征码',
+          //             colspan: '1',
+          //         },
+          //         {
+          //             title: ' 数据',
+          //             colspan: '2'
+          //         }
+          //     ],
+          // ],
+          columnDrag:true,
+      });
+    });
+  </script>
   <script>
     $(document).ready(function() {
       $().ready(function() {
@@ -579,6 +678,126 @@
         });
       });
     });
+  </script>
+  <script src="../assets/js/jquery.cxselect.js"></script>
+  <script>
+  (function() {
+    var urlChina = '../assets/js/data.min.js';
+    var urlGlobal = 'js/globalData.min.json';
+
+
+    $.cxSelect.defaults.url = urlChina;
+
+    // 默认
+    $('#city_china').cxSelect({
+      selects: ['province', 'city', 'area', 'street', 'community']
+    });
+
+    // 设置默认值及选项标题
+    $('#city_china_val').cxSelect({
+      selects: ['province', 'city', 'area', 'street', 'community'],
+      emptyStyle: 'none'
+    });
+
+    // 全球主要国家城市联动
+    $('#global_location').cxSelect({
+      url: urlGlobal,
+      selects: ['country', 'state', 'city', 'region'],
+      emptyStyle: 'none'
+    });
+
+    // API 接口
+    var apiBox = $('#api_data');
+    var cxSelectApi;
+
+    apiBox.cxSelect({
+      selects: ['province', 'city', 'area']
+    }, function(api) {
+      cxSelectApi = api;
+    });
+
+    // cxSelectApi = $.cxSelect(apiBox, {
+    //   selects: ['province', 'city', 'area']
+    // });
+
+    $('body').on('click', 'button', function() {
+      var _name = this.name;
+      var _value = this.value;
+
+      switch (_name) {
+        case 'attach':
+          cxSelectApi.attach();
+          break;
+
+        case 'detach':
+          cxSelectApi.detach();
+          break;
+
+        case 'clear':
+          cxSelectApi.clear();
+          break;
+
+        case 'required':
+          cxSelectApi.setOptions({
+            required: _value == 1 ? false : true
+          });
+          this.value = _value == 1 ? 0 : 1;
+          break;
+
+        case 'emptyStyle':
+          if (_value === 'none') {
+            _value = 'hidden';
+          } else if (_value === 'hidden') {
+            _value = '';
+          } else {
+            _value = 'none';
+          };
+          cxSelectApi.setOptions({
+            emptyStyle: _value
+          });
+          this.value = _value;
+          break;
+
+        case 'firstTitle':
+          _value = _value === '请选择' ? '选择吧' : '请选择';
+          cxSelectApi.setOptions({
+            firstTitle: _value
+          });
+          this.value = _value;
+          break;
+
+        case 'setSelect':
+          cxSelectApi.setOptions({
+            selects: _value === 'a' ? ['province', 'city', 'area', 'street', 'community'] : ['first', 'second', 'third', 'fourth', 'fifth']
+          });
+          this.value = _value === 'a' ? 'b' : 'a';
+          break;
+
+        case 'setData':
+          if (_value === 'china' || _value === 'global') {
+            // $.ajax({
+            //   url: this.value === 'china' ? urlChina : urlGlobal,
+            //   type: 'GET',
+            //   dataType: 'json'
+            // }).done(function(data, textStatus, jqXHR) {
+              cxSelectApi.setOptions({
+                url: this.value === 'china' ? urlChina : urlGlobal,
+                // data: data
+              });
+            // }).fail(function(jqXHR, textStatus, errorThrown) {
+            // });
+
+          } else if (this.value === 'custom') {
+            cxSelectApi.setOptions({
+              data: dataCustom
+            });
+          };
+          break;
+
+        // not default
+      };
+    });
+  })();
   </script>
 </body>
 

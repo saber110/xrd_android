@@ -40,7 +40,7 @@
 
 </head>
 
-<body class="" onload="load()">
+<body class="">
   <div class="wrapper ">
     <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
       <!--
@@ -171,13 +171,12 @@
       <div class="content">
         <div class="container-fluid">
           <div class="row">
-
             <div class="col-md-6">
               <div class="card">
                 <div class="card-header card-header-primary">
                   <h4 class="card-title">用户管理</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="overflow-x:auto">
                   <form>
                     <div class="row">
                       <div class="col-md-12">
@@ -313,11 +312,51 @@
   <script>
 
     document.addEventListener('DOMContentLoaded', function() {
-        var options = {
-            minDimensions:[5,5],
-        }
+      var data = [
+          ['BR', 'Cheese', 1],
+          ['CA', 'Apples', 0],
+          ['US', 'Carrots', 1],
+          ['GB', 'Oranges', 0],
+      ];
 
-        $('#spreadsheet').jexcel(options);
+      table = jexcel(document.getElementById('spreadsheet'), {
+          data:data,
+          columns: [
+              {
+                  title: 'IEMI',
+                  width: '100'
+              },
+              {
+                  title: '姓名',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: 'checkbox',
+                  title: '状态',
+                  width:'100'
+              },
+          ],
+          // nestedHeaders:[
+          //     [
+          //         {
+          //             title: 'Supermarket information',
+          //             colspan: '3',
+          //         },
+          //     ],
+          //     [
+          //         {
+          //             title: 'Location',
+          //             colspan: '1',
+          //         },
+          //         {
+          //             title: ' Other Information',
+          //             colspan: '2'
+          //         }
+          //     ],
+          // ],
+          columnDrag:true,
+      });
     });
   </script>
   <script>
