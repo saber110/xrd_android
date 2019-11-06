@@ -23,3 +23,8 @@ URL_Prefix = '/api/v1'
 SECRET_KEY = ''
 # token过期时间，单位秒
 EXPIRATION = 60 * 60 * 24
+
+# 图片储存路径
+IMAGE_PATH = ''
+# 文件上传大小限制 单位MB
+FILE_SIZE = 16
