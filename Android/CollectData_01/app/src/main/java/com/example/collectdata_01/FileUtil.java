@@ -34,11 +34,31 @@ public class FileUtil {
      */
     //用获取到的位置信息保存图片
     String locationString;
+    String jpegName;
     public void saveBitmap(Bitmap b){
 
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
         long dataTake = System.currentTimeMillis();
-        String jpegName = path + "/" + locationString + dataTake +".jpg";
+
+        if(locationString.equals("平面")){
+            jpegName = path + "/" + "2_平面图_001"  +".jpg";
+        }
+        if(locationString.equals("入口")){
+            jpegName = path + "/" + "2_小区入口_001"  +".jpg";
+        }
+        if(locationString.equals("外")){
+            jpegName = path + "/" + "2_外景图_001"  +".jpg";
+        }
+        if(locationString.equals("内")){
+            jpegName = path + "/" + "2_内景图_001"  +".jpg";
+        }
+        if(locationString.equals("楼号")){
+            jpegName = path + "/" + "3_楼牌号_001"  +".jpg";
+        }
+        else{
+            jpegName = path + "/" + "3_建筑立面_001"  +".jpg";
+        }
+
         Log.i(TAG, "saveBitmap:jpegName = " + jpegName);
         try {
             FileOutputStream fout = new FileOutputStream(jpegName);

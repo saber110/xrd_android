@@ -1,9 +1,7 @@
 package com.example.map.aMap;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -19,16 +17,9 @@ import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.example.collectdata_01.R;
-import com.example.net.AsyncRequest;
-import com.example.net.ProcessInterface;
-import com.github.kevinsawicki.http.HttpRequest;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import com.example.map.tecent_map.TecentActivity;
 
 public class AmapActivity extends AppCompatActivity implements AMapLocationListener, LocationSource, AMap.OnMapLongClickListener {
 
@@ -53,7 +44,7 @@ public class AmapActivity extends AppCompatActivity implements AMapLocationListe
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AmapActivity.this,TecentActivity.class);
+                Intent intent = new Intent(AmapActivity.this, TecentActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -168,39 +159,17 @@ public class AmapActivity extends AppCompatActivity implements AMapLocationListe
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        aMap.addMarker(new MarkerOptions().position(latLng).title("标记地点"));
-        AsyncTask asyncTask = new AsyncRequest().execute(new SendMsgToNet(latLng));
-        try {
-            String result = (String) asyncTask.get();
-            if (result != null){
-                Log.d("高德地图上传数据", "onMapLongClick: 数据发送成功");
-            }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+//        aMap.addMarker(new MarkerOptions().position(latLng).title("标记地点"));
+//        SendMsg sendMsg = new SendMsg(latLng.latitude, latLng.longitude);
+//
+//        AsyncTask asyncTask = new AsyncRequest().execute(sendMsg);
+//        try {
+//            if (asyncTask.get() == null) {
+//                Toast.makeText(this, "发送数据失败", Toast.LENGTH_SHORT);
+//            }
+//        } catch (Exception e) {
+//            Toast.makeText(this, "发送数据失败", Toast.LENGTH_SHORT);
+//        }
 
-    private class SendMsgToNet implements ProcessInterface {
-        private LatLng latLng;
-        public SendMsgToNet(LatLng latLng) {
-            this.latLng = latLng;
-        }
-
-        @Override
-        public Object call() {
-            Map map = new HashMap(2);
-            map.put("lat", latLng.latitude);
-            map.put("long", latLng.longitude);
-            // 网址请求位https ，如果不是https则会产生安全问题，需要配置文件解决
-            HttpRequest request = new HttpRequest("请求的网址","POST").form(map);
-
-            // 下面可以将数据进行model化，但是需要根据返回的数据来确定
-            //            ResponseDao responseDao = JSONObject.parseObject(request.body(), ResponseDao.class);
-            //            return responseDao.getSuccess();
-
-            return request.body();
-        }
     }
 }
