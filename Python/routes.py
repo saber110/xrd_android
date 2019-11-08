@@ -30,6 +30,7 @@ add_url('/data/map', data.map_data, methods=['POST'])
 add_url('/data/garden_picture_kind', data.garden_picture_kind, methods=['POST'])
 add_url('/data/garden_picture', data.garden_picture, methods=['POST'])
 add_url('/data/other_picture', data.other_picture, methods=['POST'])
+add_url('/data/garden_base_info', data.garden_base_info, methods=['POST'])
 
 
 @app.route('/')

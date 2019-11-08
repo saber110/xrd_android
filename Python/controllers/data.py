@@ -10,7 +10,7 @@ from datetime import datetime
 
 from . import generate_result, generate_validator
 from utils import token_check
-from models import Garden, Building, MapData, GardenPictureKind, GardenPicture, OtherPicture
+from models import *
 from app import db, image_upload
 from utils import bd09_to_gcj02
 
@@ -163,3 +163,52 @@ def other_picture(user_id: int, *args, **kwargs):
         # TODO 对图片进行删除回滚
         return generate_result(2)
     return generate_result(0, '上传小区其他图片成功')
+
+
+@token_check
+def garden_base_info(user_id: int, *args, **kwargs):
+    """
+    提交小区概况表
+    :param user_id: 用户id
+    :return:
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer'},
+        'collectTime': {'type': 'integer'},
+        'gardenLocation': {'type': 'string'},
+        'gardenEastTo': {'type': 'string'},
+        'gardenWestTo': {'type': 'string'},
+        'gardenNorthTo': {'type': 'string'},
+        'gardenSouthTo': {'type': 'string'},
+        'regionalLocation': {'type': 'string'},
+        'houseStatus': {'type': 'string'},
+        'gardenKind': {'type': 'string'},
+        'roomType': {'type': 'string'},
+        'buildingStructure': {'type': 'string'},
+        'houseNumber': {'type': 'integer'},
+        'description': {'type': 'string'},
+        'buildYear': {'type': 'integer'},
+        'setYear': {'type': 'integer'},
+        'landStatus': {'type': 'string'},
+        'right': {'type': 'string'},
+        'landGrade': {'type': 'string'},
+        'askRecode': {'type': 'string'},
+        'closed': {'type': 'string'},
+        'managementKind': {'type': 'string'},
+        'roadGrade': {'type': 'string'},
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    data['userId'] = user_id
+    data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
+
+    try:
+        base_info = GardenBaseInfo(**data)
+        db.session.add(base_info)
+        db.session.commit()
+    except DBAPIError as e:
+        print(str(e))
+        return generate_result(2)
+    return generate_result(0, '上传小区基本数据成功')
