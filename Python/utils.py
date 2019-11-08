@@ -8,10 +8,13 @@ import click
 from functools import wraps
 from flask import abort
 import math
+from PIL import Image
+import os
 
 from app import app, db
 from models import User
 from controllers import generate_result
+import config
 
 
 @app.cli.command()
@@ -53,7 +56,7 @@ def token_check(f):
                     return generate_result(1, message='请求参数错误，token不存在')
             user_id = User.verify_auth_token(token)
             if user_id is not None:
-                return f(user_id=user_id, *args, **kwargs)
+                return f(user_id=int(user_id), *args, **kwargs)
             else:
                 abort(401)
 
@@ -92,3 +95,27 @@ def bd09_to_gcj02(bd_lon, bd_lat):
     gg_lng = z * math.cos(theta)
     gg_lat = z * math.sin(theta)
     return gg_lng, gg_lat
+
+
+def compress_image(origin_path: str, compressed_path: str, size: int):
+    """
+    将图片压缩至指定大小内到指定路径
+    :param origin_path: 原始图片位置
+    :param compressed_path: 压缩图片位置
+    :param size: 图片大小
+    :return:
+    """
+    origin_image = Image.open(origin_path)
+    dir_name = os.path.dirname(compressed_path)
+    os.makedirs(dir_name, exist_ok=True)
+    origin_image.save(compressed_path)
+    while True:
+        file_size = os.path.getsize(compressed_path) / float(1024)
+        if file_size < config.COMPRESSED_SIZE:
+            break
+        rate = config.COMPRESSED_SIZE / file_size
+        rate = math.sqrt(rate)
+        image = Image.open(compressed_path)
+        width, high = image.size
+        image = image.resize((int(rate * width), int(rate * high)), Image.ANTIALIAS)
+        image.save(compressed_path)

@@ -28,3 +28,5 @@ EXPIRATION = 60 * 60 * 24
 IMAGE_PATH = ''
 # 文件上传大小限制 单位MB
 FILE_SIZE = 16
+# 压缩图片的最大大小，单位kb
+COMPRESSED_SIZE = 500
