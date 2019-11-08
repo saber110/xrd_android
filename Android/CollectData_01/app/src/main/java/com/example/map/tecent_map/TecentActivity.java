@@ -1,20 +1,21 @@
-package com.example.map.aMap;
+package com.example.map.tecent_map;
 
+import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.collectdata_01.R;
+import com.example.dialog.ChooseMapDialog;
+import com.example.map.net.SendMapMsg;
 import com.example.net.AsyncRequest;
-import com.example.net.ProcessInterface;
-import com.github.kevinsawicki.http.HttpRequest;
 import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
@@ -28,8 +29,6 @@ import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
 import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.maps.model.MyLocationStyle;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
@@ -40,23 +39,18 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     private String TAG = "腾讯地图";
     private UiSettings uiSettings;
     private LocationListener listener;
+    private Dialog dialog;
+    private View view;
+    private int gradenId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tecent);
         mapview = findViewById(R.id.tecent_mapview);
-        Button button =findViewById(R.id.choose_amap);
-        button.setText("跳转到高德地图");
-        button.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(TecentActivity.this,AmapActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+        view = getLayoutInflater().inflate(R.layout.send_map_data, null);
+        dialog = ChooseMapDialog.createDialog(this, view);
+        gradenId = getIntent().getIntExtra("gardenId", 1);
         init();
         initLoc();
 
@@ -132,26 +126,44 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
     /**
      * 长按监听器
+     *
      * @param latLng
      */
     @Override
-    public void onMapLongClick(LatLng latLng) {
-        tencentMap.addMarker(new MarkerOptions().
-                position(latLng).
-                title("标记地点"));
+    public void onMapLongClick(final LatLng latLng) {
 
-        AsyncTask asyncTask = new AsyncRequest().execute(new TecentActivity.SendMsgToNet(latLng));
-        try {
-            String result = (String) asyncTask.get();
-            if (result != null){
-                Log.d("腾讯地图上传数据", "onMapLongClick: 数据发送成功");
+        dialog.show();
+        view.findViewById(R.id.send_map_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText name = view.findViewById(R.id.map_name);
+                EditText category = view.findViewById(R.id.map_category);
+                if (name.getText().toString() == null && name.getText().toString().length() == 0 && category.getText().toString() == null && category.getText().toString().length() == 0) {
+                    Toast.makeText(TecentActivity.this, "请输入数据", Toast.LENGTH_SHORT).show();
+                } else {
+                    SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gradenId, 1);
+                    AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
+                    try {
+                        String result = (String) asyncTask.get();
+                        Log.d(">>>>", "onClick: "+result);
+                        if (result != null) {
+                            Toast.makeText(TecentActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
+                            tencentMap.addMarker(new MarkerOptions().
+                                    position(latLng).
+                                    title("标记地点"));
+                        }
+                    } catch (ExecutionException e) {
+                        Toast.makeText(TecentActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        Toast.makeText(TecentActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }finally {
+                        dialog.cancel();
+                    }
+                }
             }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        });
     }
 
 
@@ -175,6 +187,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
         /**
          * 如果位置发生改变
+         *
          * @param arg0
          * @param arg1
          * @param arg2
@@ -190,9 +203,9 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
                 // 定位 sdk 只有 gps 返回的值才有可能获取到偏向角
                 location.setBearing(arg0.getBearing());
-                if (flag){
+                if (flag) {
                     tencentMap.animateCamera(CameraUpdateFactory.zoomTo(17));
-                    tencentMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(arg0.getLatitude(),arg0.getLongitude())));
+                    tencentMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(arg0.getLatitude(), arg0.getLongitude())));
                     flag = false;
                 }
                 mChangedListener.onLocationChanged(location);
@@ -236,28 +249,5 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
             mChangedListener = null;
         }
 
-    }
-
-    private class SendMsgToNet implements ProcessInterface {
-
-        private LatLng latLng;
-        public SendMsgToNet(LatLng latLng) {
-            this.latLng = latLng;
-        }
-
-        @Override
-        public Object call() {
-            Map map = new HashMap(2);
-            map.put("lat", latLng.latitude);
-            map.put("long", latLng.longitude);
-
-            // 网址请求位https ，如果不是https则会产生安全问题，需要配置文件解决
-            HttpRequest request = new HttpRequest("http://rap2api.taobao.org/app/mock/234350/data/map","POST").form(map);
-
-            // 下面可以将数据进行model化，但是需要根据返回的数据来确定
-            //            ResponseDao responseDao = JSONObject.parseObject(request.body(), ResponseDao.class);
-            //            return responseDao.getSuccess();
-            return request.body();
-        }
     }
 }

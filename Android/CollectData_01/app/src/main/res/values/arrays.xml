@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="map_list">
+        <item>百度地图</item>
+        <item>腾讯地图</item>
+    </string-array>
+</resources>
