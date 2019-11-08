@@ -7,12 +7,13 @@
 from flask import request
 from sqlalchemy.exc import DBAPIError
 from datetime import datetime
+import os
 
 from . import generate_result, generate_validator
-from utils import token_check
 from models import *
 from app import db, image_upload
-from utils import bd09_to_gcj02
+from utils import bd09_to_gcj02, compress_image, token_check
+import config
 
 
 @token_check
@@ -118,7 +119,10 @@ def garden_picture(user_id: int, *args, **kwargs):
     number = f"{len(pictures) + 1:03d}"
     file_path = f'origin/{garden.id}/2_{garden.name}_{picture_kind}_{number}.'
     file_path = image_upload.save(image, name=file_path)
-    # TODO 压缩并保存图片
+    origin_path = os.path.join(config.IMAGE_PATH, file_path)
+    compressed_path = os.path.join(config.IMAGE_PATH,
+                                   f'compressed/{garden.id}/2_{garden.name}_{picture_kind}_{number}.jpg')
+    compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = GardenPicture(gardenId=garden_id, pictureKind=picture_kind, collectTime=collect_time,
                             filePath=file_path,
                             syncTime=datetime.now(), userId=user_id)
@@ -126,7 +130,9 @@ def garden_picture(user_id: int, *args, **kwargs):
         db.session.add(picture)
         db.session.commit()
     except DBAPIError:
-        # TODO 对图片进行删除回滚
+        os.remove(origin_path)
+        os.remove(compressed_path)
+        # 对图片进行删除回滚
         return generate_result(2)
     return generate_result(0, '上传小区图片成功')
 
@@ -166,7 +172,10 @@ def building_picture(user_id: int, *args, **kwargs):
     number = f"{len(pictures) + 1:03d}"
     file_path = f'origin/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
     file_path = image_upload.save(image, name=file_path)
-    # TODO 压缩并保存图片
+    origin_path = os.path.join(config.IMAGE_PATH, file_path)
+    compressed_path = os.path.join(config.IMAGE_PATH,
+                                   f'compressed/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.jpg')
+    compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = BuildingPicture(buildingId=building_id, pictureKind=picture_kind, collectTime=collect_time,
                               filePath=file_path,
                               syncTime=datetime.now(), userId=user_id)
@@ -174,7 +183,9 @@ def building_picture(user_id: int, *args, **kwargs):
         db.session.add(picture)
         db.session.commit()
     except DBAPIError:
-        # TODO 对图片进行删除回滚
+        os.remove(origin_path)
+        os.remove(compressed_path)
+        # 对图片进行删除回滚
         return generate_result(2)
     return generate_result(0, '上传小区图片成功')
 
@@ -201,14 +212,19 @@ def other_picture(user_id: int, *args, **kwargs):
     number = f"{len(pictures) + 1:03d}"
     file_path = f'origin/{garden.id}/4_{garden.name}_{number}.'
     file_path = image_upload.save(image, name=file_path)
-    # TODO 压缩并保存图片
+    origin_path = os.path.join(config.IMAGE_PATH, file_path)
+    compressed_path = os.path.join(config.IMAGE_PATH,
+                                   f'compressed/{garden.id}/4_{garden.name}_{number}.jpg')
+    compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = OtherPicture(gardenId=garden_id, collectTime=collect_time,
                            filePath=file_path, syncTime=datetime.now(), userId=user_id)
     try:
         db.session.add(picture)
         db.session.commit()
     except DBAPIError:
-        # TODO 对图片进行删除回滚
+        os.remove(origin_path)
+        os.remove(compressed_path)
+        # 对图片进行删除回滚
         return generate_result(2)
     return generate_result(0, '上传小区其他图片成功')
 

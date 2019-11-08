@@ -6,3 +6,4 @@ cerberus
 bcrypt
 itsdangerous
 flask_uploads
+pillow
