@@ -114,8 +114,6 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             //监听时间，页面跳转
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, TakePhoto.class));
-                dialog.show();
-
             }
         });
 
@@ -185,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.CAMERA,
     };
 
 
