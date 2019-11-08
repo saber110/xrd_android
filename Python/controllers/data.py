@@ -212,3 +212,40 @@ def garden_base_info(user_id: int, *args, **kwargs):
         print(str(e))
         return generate_result(2)
     return generate_result(0, '上传小区基本数据成功')
+
+
+@token_check
+def first_floor_kind(*args, **kwargs):
+    """
+    返回楼栋一楼可能存在的情况
+    """
+    return generate_result(0, '查询楼栋一楼情况成功', {'firstFloorKind': [i.to_dict['kind'] for i in FirstFloorKind.query.all()]})
+
+
+@token_check
+def building_info(user_id: int, *args, **kwargs):
+    """
+    楼栋调查表
+    :param user_id: 用户id
+    :return:
+    """
+    data = request.get_json()
+    schema = {
+        "gardenId": {'type': 'integer', 'min': 1},
+        "collectTime": {'type': 'integer', 'min': 1},
+        "buildingName": {'type': 'string'}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    data['userId'] = user_id
+    data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
+
+    try:
+        info = BuildingInfo(**data)
+        db.session.add(info)
+        db.session.commit()
+    except DBAPIError as e:
+        print(str(e))
+        return generate_result(2)
+    return generate_result(0, '提交楼栋信息成功')
