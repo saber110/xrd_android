@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             @Override
             //监听时间，页面跳转
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, TakePhoto.class));
+                startActivity(new Intent(MainActivity.this, takePhoto01.class));
             }
         });
 
