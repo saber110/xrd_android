@@ -30,6 +30,8 @@
         <activity android:name="com.example.map.tecent_map.TecentActivity" />
         <activity android:name="com.example.map.aMap.AmapActivity" />
         <activity android:name=".TakePhoto" />
+        <activity android:name=".takePhoto01" />
+        <activity android:name=".ResultActivity" />
 
         <activity android:name=".MainActivity">
 <!--        <activity android:name="com.example.map.baidu_map.BaiduMapActivity">-->

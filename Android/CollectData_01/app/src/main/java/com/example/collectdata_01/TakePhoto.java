@@ -72,11 +72,6 @@ public class TakePhoto extends AppCompatActivity
     }
 
 
-
-
-
-
-
     int yourChoice;
     String item;
     private void showSingleChoiceDialog(){

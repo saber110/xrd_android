@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -40,4 +41,5 @@ dependencies {
     //    添加高德地图的
     implementation files('libs/AMap3DMap_7.0.0_AMapNavi_7.0.0_AMapSearch_6.9.2_AMapTrack_1.1.0_AMapLocation_4.7.2_20191008.jar')
     implementation files('libs/BaiduLBS_Android.jar')
+    implementation 'org.devio.takephoto:takephoto_library:4.1.0'
 }
