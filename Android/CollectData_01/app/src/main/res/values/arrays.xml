@@ -4,4 +4,31 @@
         <item>百度地图</item>
         <item>腾讯地图</item>
     </string-array>
+    <string-array name="LocationArray">
+        <item>城区中心</item>
+        <item>城东区域</item>
+        <item>城南区域</item>
+        <item>城西区域</item>
+        <item>城北区域</item>
+        <item>近郊组团及乡镇</item>
+        <item>远郊组团及乡镇</item>
+    </string-array>
+    <string-array name="BuildStateArray">
+        <item>存量</item>
+        <item>在建</item>
+        <item>城南区域</item>
+        <item>城西区域</item>
+    </string-array>
+    <string-array name="BuildType">
+        <item>普通商品房</item>
+        <item>老式住宅区</item>
+        <item>经济适用房</item>
+        <item>中档商品房</item>
+        <item>高档商品房</item>
+        <item>自建房</item>
+        <item>零星住宅区</item>
+        <item>农村拆迁房</item>
+        <item>城市拆迁房</item>
+        <item>人才专项房</item>
+    </string-array>
 </resources>
