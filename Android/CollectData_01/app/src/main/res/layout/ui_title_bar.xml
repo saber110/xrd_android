@@ -11,7 +11,7 @@
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:gravity="center"
-        android:text="CollectData_01"
+        android:text="数据采集"
         />
     <RelativeLayout
         android:id="@+id/title_left_btn"

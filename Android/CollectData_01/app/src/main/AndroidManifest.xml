@@ -32,14 +32,24 @@
         <activity android:name=".TakePhoto" />
         <activity android:name=".takePhoto01" />
         <activity android:name=".ResultActivity" />
+        <activity android:name=".CollectActivity" />
+        <activity android:name=".MainActivity"/>
+        <activity android:name="com.example.login.register"/>
 
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.login.login">
 <!--        <activity android:name="com.example.map.baidu_map.BaiduMapActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<!--        <activity android:name="MainActivity">-->
+<!--            &lt;!&ndash;        <activity android:name="com.example.map.baidu_map.BaiduMapActivity">&ndash;&gt;-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
