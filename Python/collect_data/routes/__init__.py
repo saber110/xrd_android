@@ -1,12 +1,25 @@
 # -*- coding: utf-8 -*-
-# @Time : 2019/10/23 17:53
+# @Time : 2019/11/11 20:07
 # @Author : 尹傲雄
 # @contact : yinaoxiong@gmail.com
-# @Desc : controller中公用的函数
+# @Desc : 路由和控制器部分的内容
 
 import cerberus
+from flask import Flask
+from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 
-__all__ = ['user', 'administration', 'generate_result', 'generate_validator']
+image_upload: UploadSet = UploadSet('images', IMAGES)
+
+
+def init_app(app: Flask):
+    from .administration import administration_bp
+    from .user import user_bp
+    from .data import data_bp
+    app.register_blueprint(administration_bp)
+    app.register_blueprint(user_bp)
+    app.register_blueprint(data_bp)
+    configure_uploads(app, image_upload)
+    patch_request_class(app)
 
 
 def generate_result(code: int, message=None, data=None) -> dict:

@@ -2,36 +2,18 @@
 # @Time : 2019/10/23 17:53
 # @Author : 尹傲雄
 # @contact : yinaoxiong@gmail.com
-# @Desc : 自定义 flask 命令
+# @Desc : 辅助函数
 
-import click
-from functools import wraps
-from flask import abort
 import math
+import os
+from functools import wraps
 
-from app import app, db
-from models import User
-from controllers import generate_result
+from PIL import Image
+from flask import abort
 
-
-@app.cli.command()
-@click.option('--drop', is_flag=True, help='Create after drop.')
-def init_db(drop):
-    """
-    根据定义model初始数据库
-    """
-    if drop:
-        db.drop_all()
-    db.create_all()
-    click.echo('Initialized database')
-
-
-@app.cli.command()
-def drop_db():
-    """
-    删除所有表
-    """
-    db.drop_all()
+from . import config
+from .models.user import User
+from .routes import generate_result
 
 
 def token_check(f):
@@ -53,7 +35,7 @@ def token_check(f):
                     return generate_result(1, message='请求参数错误，token不存在')
             user_id = User.verify_auth_token(token)
             if user_id is not None:
-                return f(user_id=user_id, *args, **kwargs)
+                return f(user_id=int(user_id), *args, **kwargs)
             else:
                 abort(401)
 
@@ -92,3 +74,27 @@ def bd09_to_gcj02(bd_lon, bd_lat):
     gg_lng = z * math.cos(theta)
     gg_lat = z * math.sin(theta)
     return gg_lng, gg_lat
+
+
+def compress_image(origin_path: str, compressed_path: str, size: int):
+    """
+    将图片压缩至指定大小内到指定路径
+    :param origin_path: 原始图片位置
+    :param compressed_path: 压缩图片位置
+    :param size: 图片大小
+    :return:
+    """
+    origin_image = Image.open(origin_path)
+    dir_name = os.path.dirname(compressed_path)
+    os.makedirs(dir_name, exist_ok=True)
+    origin_image.save(compressed_path)
+    while True:
+        file_size = os.path.getsize(compressed_path) / float(1024)
+        if file_size < config.COMPRESSED_SIZE:
+            break
+        rate = config.COMPRESSED_SIZE / file_size
+        rate = math.sqrt(rate)
+        image = Image.open(compressed_path)
+        width, high = image.size
+        image = image.resize((int(rate * width), int(rate * high)), Image.ANTIALIAS)
+        image.save(compressed_path)
