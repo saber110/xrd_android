@@ -15,9 +15,11 @@ def init_app(app: Flask):
     from .administration import administration_bp
     from .user import user_bp
     from .data import data_bp
+    from .get_data import get_data_bp
     app.register_blueprint(administration_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(data_bp)
+    app.register_blueprint(get_data_bp)
     configure_uploads(app, image_upload)
     patch_request_class(app)
 

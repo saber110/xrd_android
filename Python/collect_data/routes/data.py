@@ -336,3 +336,4 @@ def building_info(user_id: int, *args, **kwargs):
         print(str(e))
         return generate_result(2)
     return generate_result(0, '提交楼栋信息成功')
+
