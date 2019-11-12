@@ -39,7 +39,7 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements AMapLocationListener {
     private TextView textView;
-    private RelativeLayout mapLayout, relativeLayout;
+    private RelativeLayout mapLayout, relativeLayout, dataCollectLayout;
     private Dialog dialog;
     private int selectMap = 0;
     private View view;
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         textView = findViewById(R.id.position);
         relativeLayout = (RelativeLayout) findViewById(R.id.zhaopian);
         mapLayout = (RelativeLayout)findViewById(R.id.ditu);
+        dataCollectLayout = (RelativeLayout) findViewById(R.id.shuju);
         view = getLayoutInflater().inflate(R.layout.map_enter_dialog_layout, null);
         dialog = ChooseMapDialog.createDialog(MainActivity.this, view);
         mapLayout.setOnClickListener(new View.OnClickListener() {
@@ -111,9 +112,14 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
         relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            //监听时间，页面跳转
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, TakePhoto.class));
+                startActivity(new Intent(MainActivity.this, takePhoto01.class));
+            }
+        });
+        dataCollectLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, CollectActivity.class));
             }
         });
 
