@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         relativeLayout = (RelativeLayout) findViewById(R.id.zhaopian);
         mapLayout = (RelativeLayout)findViewById(R.id.ditu);
         dataCollectLayout = (RelativeLayout) findViewById(R.id.shuju);
-
         view = getLayoutInflater().inflate(R.layout.map_enter_dialog_layout, null);
         dialog = ChooseMapDialog.createDialog(MainActivity.this, view);
         mapLayout.setOnClickListener(new View.OnClickListener() {

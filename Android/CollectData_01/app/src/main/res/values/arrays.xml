@@ -4,6 +4,7 @@
         <item>百度地图</item>
         <item>腾讯地图</item>
     </string-array>
+
     <string-array name="LocationArray">
         <item>城区中心</item>
         <item>城东区域</item>
@@ -31,4 +32,5 @@
         <item>城市拆迁房</item>
         <item>人才专项房</item>
     </string-array>
+
 </resources>

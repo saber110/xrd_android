@@ -71,7 +71,6 @@ public class TakePhoto extends AppCompatActivity
         initSurfaceView(videoview);
     }
 
-
     int yourChoice;
     String item;
     private void showSingleChoiceDialog(){

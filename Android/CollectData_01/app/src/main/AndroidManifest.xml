@@ -37,12 +37,14 @@
         <activity android:name="com.example.login.register"/>
 
         <activity android:name="com.example.login.login">
+
 <!--        <activity android:name="com.example.map.baidu_map.BaiduMapActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
 <!--        <activity android:name="MainActivity">-->
 <!--            &lt;!&ndash;        <activity android:name="com.example.map.baidu_map.BaiduMapActivity">&ndash;&gt;-->
 <!--            <intent-filter>-->
