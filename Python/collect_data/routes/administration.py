@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
-# @Time : 2019/11/4 12:43
+# @Time : 2019/11/11 20:09
 # @Author : 尹傲雄
 # @contact : yinaoxiong@gmail.com
-# @Desc : 获取行政区信息
+# @Desc : 行政区数据获取
 
-from flask import request
+from flask import request, Blueprint
 
-from models import District, Street, Community, Garden
-from utils import token_check
 from . import generate_result
+from .. import config
+from ..models.community import Community
+from ..models.district import District
+from ..models.garden import Garden
+from ..models.street import Street
+from ..wraps import token_check
+
+administration_bp = Blueprint('administration', __name__, url_prefix=config.URL_Prefix + '/administration')
 
 
+@administration_bp.route('/district', methods=['POST'])
 @token_check
 def district(*args, **kwargs):
     districts = District.query.all()
@@ -18,6 +25,7 @@ def district(*args, **kwargs):
     return generate_result(0, '获取行政区数据成功', data)
 
 
+@administration_bp.route('/street', methods=['POST'])
 @token_check
 def street(*args, **kwargs):
     data = request.get_json()
@@ -32,6 +40,7 @@ def street(*args, **kwargs):
         return generate_result(0, '获取街道数据成功', {'streets': result_list})
 
 
+@administration_bp.route('/community', methods=['POST'])
 @token_check
 def community(*args, **kwargs):
     data = request.get_json()
@@ -46,12 +55,13 @@ def community(*args, **kwargs):
         return generate_result(0, '获取社区数据成功', {'communities': result_list})
 
 
+@administration_bp.route('/garden', methods=['POST'])
 @token_check
 def garden(*args, **kwargs):
     data = request.get_json()
     if 'communityId' in data:
-        communityId = data['communityId']
-        gardens = Garden.query.filter_by(communityId=communityId).all()
+        community_id = data['communityId']
+        gardens = Garden.query.filter_by(communityId=community_id).all()
         result_list = []
         for i in gardens:
             the_dict = i.to_dict

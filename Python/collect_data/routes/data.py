@@ -1,21 +1,36 @@
 # -*- coding: utf-8 -*-
-# @Time : 2019/11/4 21:41
+# @Time : 2019/11/11 20:40
 # @Author : 尹傲雄
 # @contact : yinaoxiong@gmail.com
-# @Desc : 收集小区数据功能实现
+# @Desc : 收集数据相关
 
-from flask import request
-from sqlalchemy.exc import DBAPIError
-from datetime import datetime
 import os
+from datetime import datetime
 
-from . import generate_result, generate_validator
-from models import *
-from app import db, image_upload
-from utils import bd09_to_gcj02, compress_image, token_check
-import config
+from flask import request, Blueprint
+from sqlalchemy.exc import DBAPIError
+
+from . import generate_result, generate_validator, image_upload
+from .. import config
+from ..models.base_model import db
+from ..models.building import Building
+from ..models.building_info import BuildingInfo
+from ..models.building_picture import BuildingPicture
+from ..models.building_picture_kind import BuildingPictureKind
+from ..models.first_floor_kind import FirstFloorKind
+from ..models.garden import Garden
+from ..models.garden_base_info import GardenBaseInfo
+from ..models.garden_picture import GardenPicture
+from ..models.garden_picture_kind import GardenPictureKind
+from ..models.map_data import MapData
+from ..models.other_picture import OtherPicture
+from ..utils import bd09_to_gcj02, compress_image
+from ..wraps import token_check
+
+data_bp = Blueprint('data', __name__, url_prefix=config.URL_Prefix + '/data')
 
 
+@data_bp.route('/garden', methods=['POST'])
 @token_check
 def garden(*args, **kwargs):
     """
@@ -46,6 +61,7 @@ def garden(*args, **kwargs):
     return generate_result(0, '添加小区成功', {'gardenId': garden.id})
 
 
+@data_bp.route('/building', methods=['POST'])
 @token_check
 def building(*args, **kwargs):
     """
@@ -56,6 +72,7 @@ def building(*args, **kwargs):
     return generate_result(0, '获取建筑种类数据成功', {'buildingKinds': [i.to_dict for i in buildings]})
 
 
+@data_bp.route('/map', methods=['POST'])
 @token_check
 def map_data(user_id: int, *args, **kwargs):
     """
@@ -86,6 +103,7 @@ def map_data(user_id: int, *args, **kwargs):
     return generate_result(0, '添加建筑成功')
 
 
+@data_bp.route('/garden_picture_kind', methods=['POST'])
 @token_check
 def garden_picture_kind(*args, **kwargs):
     """
@@ -96,7 +114,7 @@ def garden_picture_kind(*args, **kwargs):
     return generate_result(0, '获取小区图片种类成功', {'gardenPictureKinds': [i.to_dict['name'] for i in garden_picture_kinds]})
 
 
-@token_check
+@data_bp.route('/garden_picture', methods=['POST'])
 def garden_picture(user_id: int, *args, **kwargs):
     """
     上传小区图片
@@ -119,8 +137,8 @@ def garden_picture(user_id: int, *args, **kwargs):
     number = f"{len(pictures) + 1:03d}"
     file_path = f'origin/{garden.id}/2_{garden.name}_{picture_kind}_{number}.'
     file_path = image_upload.save(image, name=file_path)
-    origin_path = os.path.join(config.IMAGE_PATH, file_path)
-    compressed_path = os.path.join(config.IMAGE_PATH,
+    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, file_path)
+    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST,
                                    f'compressed/{garden.id}/2_{garden.name}_{picture_kind}_{number}.jpg')
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = GardenPicture(gardenId=garden_id, pictureKind=picture_kind, collectTime=collect_time,
@@ -137,6 +155,7 @@ def garden_picture(user_id: int, *args, **kwargs):
     return generate_result(0, '上传小区图片成功')
 
 
+@data_bp.route('/building_picture_kind', methods=['POST'])
 @token_check
 def building_picture_kind(*args, **kwargs):
     """
@@ -147,6 +166,7 @@ def building_picture_kind(*args, **kwargs):
                            {'buildingPictureKinds': [i.to_dict['name'] for i in BuildingPictureKind.query.all()]})
 
 
+@data_bp.route('/building_picture', methods=['POST'])
 @token_check
 def building_picture(user_id: int, *args, **kwargs):
     """
@@ -172,8 +192,8 @@ def building_picture(user_id: int, *args, **kwargs):
     number = f"{len(pictures) + 1:03d}"
     file_path = f'origin/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
     file_path = image_upload.save(image, name=file_path)
-    origin_path = os.path.join(config.IMAGE_PATH, file_path)
-    compressed_path = os.path.join(config.IMAGE_PATH,
+    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, file_path)
+    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST,
                                    f'compressed/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.jpg')
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = BuildingPicture(buildingId=building_id, pictureKind=picture_kind, collectTime=collect_time,
@@ -190,6 +210,7 @@ def building_picture(user_id: int, *args, **kwargs):
     return generate_result(0, '上传小区图片成功')
 
 
+@data_bp.route('/other_picture', methods=['POST'])
 @token_check
 def other_picture(user_id: int, *args, **kwargs):
     """
@@ -212,8 +233,8 @@ def other_picture(user_id: int, *args, **kwargs):
     number = f"{len(pictures) + 1:03d}"
     file_path = f'origin/{garden.id}/4_{garden.name}_{number}.'
     file_path = image_upload.save(image, name=file_path)
-    origin_path = os.path.join(config.IMAGE_PATH, file_path)
-    compressed_path = os.path.join(config.IMAGE_PATH,
+    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, file_path)
+    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST,
                                    f'compressed/{garden.id}/4_{garden.name}_{number}.jpg')
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = OtherPicture(gardenId=garden_id, collectTime=collect_time,
@@ -229,6 +250,7 @@ def other_picture(user_id: int, *args, **kwargs):
     return generate_result(0, '上传小区其他图片成功')
 
 
+@data_bp.route('/garden_base_info', methods=['POST'])
 @token_check
 def garden_base_info(user_id: int, *args, **kwargs):
     """
@@ -278,6 +300,7 @@ def garden_base_info(user_id: int, *args, **kwargs):
     return generate_result(0, '上传小区基本数据成功')
 
 
+@data_bp.route('/first_floor_kind', methods=['POST'])
 @token_check
 def first_floor_kind(*args, **kwargs):
     """
@@ -286,6 +309,7 @@ def first_floor_kind(*args, **kwargs):
     return generate_result(0, '查询楼栋一楼情况成功', {'firstFloorKind': [i.to_dict['kind'] for i in FirstFloorKind.query.all()]})
 
 
+@data_bp.route('/building_info', methods=['POST'])
 @token_check
 def building_info(user_id: int, *args, **kwargs):
     """
@@ -313,3 +337,4 @@ def building_info(user_id: int, *args, **kwargs):
         print(str(e))
         return generate_result(2)
     return generate_result(0, '提交楼栋信息成功')
+

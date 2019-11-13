@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
-# @Time : 2019/10/23 17:53
+# @Time : 2019/11/11 20:28
 # @Author : 尹傲雄
 # @contact : yinaoxiong@gmail.com
-# @Desc : user相关处理函数
+# @Desc : 用户数据相关处理
 
-from flask import request
+from flask import request, Blueprint
 from sqlalchemy.exc import DBAPIError
 
-from app import db
-from models import User
 from . import generate_result, generate_validator
-from utils import token_check
+from .. import config
+from ..models.base_model import db
+from ..models.user import User
+from ..wraps import token_check
+
+user_bp = Blueprint('user', __name__, url_prefix=config.URL_Prefix + '/user')
 
 
+@user_bp.route('/register', methods=["POST"])
 def register():
     """
     用户注册接口，可用于批量导入也可用于单个注册
@@ -43,6 +47,7 @@ def register():
         return generate_result(0, data={'fail_ids': fail_ids})
 
 
+@user_bp.route('/login', methods=["POST"])
 def login():
     """
     用户登录接口
@@ -66,6 +71,7 @@ def login():
         return generate_result(0, data={'token': str(user.generate_auth_token(), encoding='utf-8')})
 
 
+@user_bp.route('/refresh_token', methods=["POST"])
 @token_check
 def refresh_token(user_id: int, *args, **kwargs):
     """

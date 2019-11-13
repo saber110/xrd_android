@@ -2,65 +2,14 @@
 # @Time : 2019/10/23 17:53
 # @Author : 尹傲雄
 # @contact : yinaoxiong@gmail.com
-# @Desc : 自定义 flask 命令
+# @Desc : 辅助函数
 
-import click
-from functools import wraps
-from flask import abort
 import math
-from PIL import Image
 import os
 
-from app import app, db
-from models import User
-from controllers import generate_result
-import config
+from PIL import Image
 
-
-@app.cli.command()
-@click.option('--drop', is_flag=True, help='Create after drop.')
-def init_db(drop):
-    """
-    根据定义model初始数据库
-    """
-    if drop:
-        db.drop_all()
-    db.create_all()
-    click.echo('Initialized database')
-
-
-@app.cli.command()
-def drop_db():
-    """
-    删除所有表
-    """
-    db.drop_all()
-
-
-def token_check(f):
-    """
-    token 检查函数
-    """
-
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        from flask import request
-        if request.method == 'POST':
-            try:
-                data = request.get_json()
-                token = data['token']
-            except (KeyError, TypeError):
-                try:
-                    token = request.form['token']
-                except KeyError:
-                    return generate_result(1, message='请求参数错误，token不存在')
-            user_id = User.verify_auth_token(token)
-            if user_id is not None:
-                return f(user_id=int(user_id), *args, **kwargs)
-            else:
-                abort(401)
-
-    return wrapper
+from . import config
 
 
 def gcj02_to_bd09(lng, lat):
@@ -111,7 +60,7 @@ def compress_image(origin_path: str, compressed_path: str, size: int):
     origin_image.save(compressed_path)
     while True:
         file_size = os.path.getsize(compressed_path) / float(1024)
-        if file_size < config.COMPRESSED_SIZE:
+        if file_size < size:
             break
         rate = config.COMPRESSED_SIZE / file_size
         rate = math.sqrt(rate)
