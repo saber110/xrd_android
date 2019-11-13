@@ -1,5 +1,5 @@
 
-
+const split = '|';
 // const preFix = "http://rap2api.taobao.org/app/mock/234350/api/v1/";
 const preFix = "http://139.199.8.103:8888/api/v1/"
 
@@ -8,6 +8,7 @@ const register = user + "register";
 const login = user + "login";
 const updateToken = user + "refresh_token";
 const userList = user + "lists";
+const updateUser = user + "update";
 
 
 const admin = preFix + "administration/";
@@ -39,39 +40,102 @@ const garden_base_info = data + "garden_base_info";
 const building_base_info = data + "building_base_info";
 
 var token;
+var userLists;
 
-function loginFun(username, password) {
-	$.ajax({
-		url: login,
+function conSplit() {
+	return arguments[0] + split + arguments[1];
+}
+
+function conJson() {
+	// var datas = [];
+	var data = {};
+	for (var i = arguments.length - 1; i >= 0; i--) {
+		strs = arguments[i].split(split);
+		data[strs[0]] = strs[1];
+	}
+	// datas.push(data);
+	return JSON.stringify(data);
+}
+
+function xhrPost(url, data) {
+	console.log(data);
+	return $.ajax({
+		url: url,
 		method: "POST",
-		data:{
-			"iemi": username,
-			"password": password
-		}
-	}).done(function (data) {
-		updateTokenFun();
-		console.log(data);
+		dataType: "json",
+		contentType:'application/json',
+		data: data
 	});
 }
 
+function loginFun(username, password) {
+	xhrPost(login , conJson(conSplit("iemi", username), conSplit("password", password)))
+		.done(function (data) {
+			if(data.code == 0){
+				md.showNotification("bottom","right","登录成功");
+				this.token = data.data.token;
+			}
+			else{
+				md.showNotification("bottom","right","登录失败，请重试",danger);
+			}
+		});
+}
+
+// TODO: add hidden input of token in footer
 function updateTokenFun(token = '') {
-	$.ajax({
-		url: updateTocken,
-		method: "POST",
-		data:{
-			"token": token
-		}
-	}).done(function (data) {
-		this.token = token;
-	})
+
+	xhrPost(updateToken, conJson(conSplit("token", token)))
+		.done(function (data) {
+			this.token = data.data.token;
+		});
 }
 
 function getUserLists(token = '') {
-	$.ajax({
-		url: userList,
-		method: "POST",
-		data:{
-			"token": token
-		}
-	})
+
+	xhrPost(userList,conJson(conSplit("token", token)))
+		.done(function (data) {
+			// TODO: 更新列表
+			this.userLists = data;
+		});
+}
+
+function updateUser(data) {
+	for(let index in data){
+		console.log(data[index]);
+		var json ={
+			"newUsers" : [
+				data[index]
+				]
+		};
+		xhrPost(register, JSON.stringify(json))
+			.done(function (data) {
+				if (data.code == 0) {
+				  	md.showNotification("bottom",'right','更新成功');
+				}
+				else{
+					md.showNotification("bottom",'right','更新失败，请联系管理员','danger');
+				}
+			}).fail(function (code) {
+				md.showNotification("bottom",'right','更新失败，请联系管理员','danger');
+			});
+	};
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function debugOutput(argument) {
+	console.log(argument);
 }
