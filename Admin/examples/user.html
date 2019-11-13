@@ -1,4 +1,4 @@
-<!--
+  <!--
 =========================================================
  Material Dashboard - v2.1.1
 =========================================================
@@ -171,54 +171,71 @@
       <div class="content">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title">用户管理</h4>
-                </div>
-                <div class="card-body" style="overflow-x:auto">
-                  <form>
+                <form>
+                  <div class="card-header card-header-primary">
                     <div class="row">
                       <div class="col-md-12">
-                        <div id="spreadsheet" class="jexcel_container"></div>
+                        <span>
+                          <h4 class="card-title">用户管理
+                            <button type="submit" class="btn btn-primary pull-right">保存修改</button>                         
+                          </h4>
+                          <a onclick="testGetJson()"> test </a>
+                        </span>
                       </div>
                     </div>
-
-                  </form>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title">用户添加</h4>
-                  <p class="card-category">密码自动生成</p>
-                </div>
-                <div class="card-body">
-                  <form>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="fileinput fileinput-new input-group" data-provides="fileinput">
-                          <div class="form-control" data-trigger="fileinput">
-                            <span class="fileinput-filename">选择文件</span>
-                          </div>
-                          <span class="input-group-append">
-                            <span class="input-group-text fileinput-exists" data-dismiss="fileinput">
-                              删除
-                            </span>
-
-                            <span class="input-group-text btn-file">
-                              <span class="fileinput-exists">更改文件</span>
-                              <input type="file" name="..." multiple>
-                            </span>
-                            <button type="submit" class="btn btn-primary pull-right">上传文件</button>
-                          </span>
+                  </div>
+                  <div class="card-body" style="overflow-x:auto">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div id="spreadsheet" class="jexcel_container"></div>
                         </div>
                       </div>
-                    </div>
 
-                  </form>
-                </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card">
+                <form>
+                  <div class="card-header card-header-primary">
+                    <div class="row">
+                        <div class="col-md-12">
+                          <span>
+                            <h4 class="card-title">用户添加
+                              <button type="submit" class="btn btn-primary pull-right">上传文件</button>                         
+                            </h4>
+                            <p class="card-category">密码自动生成</p>
+                          </span>
+                        </div>
+                      </div>                  
+                  </div>
+                  <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                            <div class="form-control" data-trigger="fileinput">
+                              <span class="fileinput-filename">选择文件</span>
+                            </div>
+                            <span class="input-group-append">
+                              <span class="input-group-text fileinput-exists" data-dismiss="fileinput">
+                                删除
+                              </span>
+
+                              <span class="input-group-text btn-file">
+                                <span class="fileinput-exists">更改文件</span>
+                                <input type="file" name="..." multiple>
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -227,6 +244,14 @@
     </div>
   </div>
   <!--   Core JS Files   -->
+  <script type="text/javascript" src="../assets/js/interface.js"></script>
+    <script type="text/javascript">
+    function testGetJson() {
+      // console.log(table.getJson());
+      loginFun(1,1);
+      // updateUser(table.getJson());
+    }
+  </script>
   <script src="../assets/js/core/jquery.min.js"></script>
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap-material-design.min.js"></script>
@@ -260,7 +285,7 @@
   <!-- Library for adding dinamically elements -->
   <script src="../assets/js/plugins/arrive.min.js"></script>
   <!--  Google Maps Plugin    -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+  <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script> -->
   <!-- Chartist JS -->
   <script src="../assets/js/plugins/chartist.min.js"></script>
   <!--  Notifications Plugin    -->
@@ -274,14 +299,32 @@
   <!-- excel -->
   <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
   <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+
   <script>
 
     document.addEventListener('DOMContentLoaded', function() {
       var data = [
-          ['BR', 'Cheese', 1],
-          ['CA', 'Apples', 0],
-          ['US', 'Carrots', 1],
-          ['GB', 'Oranges', 0],
+          {
+            iemi: "11111111111",
+            name:'Paul Hodel',
+            phoneNum:'3',
+            privilidge: 1,
+            valid: 1
+          },
+          {
+            iemi: "11111111111",
+            name:'Paul Hodel',
+            phoneNum:'3',
+            privilidge: 1,
+            valid:1
+          },
+          {
+            iemi: "11111111111",
+            name:'Paul Hodel',
+            phoneNum:'3',
+            privilidge: 1,
+            valid:1
+          }
       ];
 
       table = jexcel(document.getElementById('spreadsheet'), {
@@ -297,10 +340,20 @@
                   source: ['Apples','Bananas','Carrots','Oranges','Cheese']
               },
               {
+                  title: '电话号码',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  title: '权限等级',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
                   type: 'checkbox',
                   title: '状态',
                   width:'100'
-              },
+              }
           ],
           // nestedHeaders:[
           //     [

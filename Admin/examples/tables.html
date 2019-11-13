@@ -34,6 +34,7 @@
   <link href="../assets/demo/demo.css" rel="stylesheet" />
   <!-- file upload -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/css/jasny-bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../assets/css/nestable.css" />
 </head>
 
 <body class="">
@@ -169,6 +170,60 @@
             <div class="col-md-6">
               <div class="card">
                 <div class="card-header card-header-primary">
+                  <h4 class="card-title">数据查看及修改</h4>
+                </div>
+                <div class="card-body">
+                  <form>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="cf nestable-lists">
+                          <div class="dd" id="nestable">
+                              <ol class="dd-list">
+                                  <li class="dd-item" data-id="1">
+                                      <div class="dd-handle">Item 1</div>
+                                  </li>
+                                  <li class="dd-item" data-id="2">
+                                      <div class="dd-handle">Item 2</div>
+                                      <ol class="dd-list">
+                                          <li class="dd-item" data-id="3"><div class="dd-handle">Item 3</div></li>
+                                          <li class="dd-item" data-id="4"><div class="dd-handle">Item 4</div></li>
+                                          <li class="dd-item" data-id="5">
+                                              <div class="dd-handle">Item 5</div>
+                                              <ol class="dd-list">
+                                                  <li class="dd-item" data-id="6"><div class="dd-handle">Item 6</div></li>
+                                                  <li class="dd-item" data-id="7"><div class="dd-handle">Item 7</div></li>
+                                                  <li class="dd-item" data-id="8"><div class="dd-handle">Item 8</div></li>
+                                              </ol>
+                                          </li>
+                                          <li class="dd-item" data-id="9"><div class="dd-handle">Item 9</div></li>
+                                          <li class="dd-item" data-id="10"><div class="dd-handle">Item 10</div></li>
+                                      </ol>
+                                  </li>
+                                  <li class="dd-item" data-id="11">
+                                      <div class="dd-handle">Item 11</div>
+                                  </li>
+                                  <li class="dd-item" data-id="12">
+                                      <div class="dd-handle">Item 12</div>
+                                  </li>
+                              </ol>
+                          </div>
+
+                      </div>
+
+                      <p><strong>Serialised Output (per list)</strong></p>
+
+                      <textarea id="nestable-output"></textarea>
+
+                      </div>
+                    </div>
+
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header card-header-primary">
                   <h4 class="card-title">上传数据</h4>
                 </div>
                 <div class="card-body">
@@ -238,7 +293,7 @@
   <!-- Library for adding dinamically elements -->
   <script src="../assets/js/plugins/arrive.min.js"></script>
   <!--  Google Maps Plugin    -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+  <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script> -->
   <!-- Chartist JS -->
   <script src="../assets/js/plugins/chartist.min.js"></script>
   <!--  Notifications Plugin    -->
@@ -247,6 +302,9 @@
   <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
   <!-- Material Dashboard DEMO methods, don't include it in your project! -->
   <script src="../assets/demo/demo.js"></script>
+  
+  <script src="../assets/js/jquery.nestable.js"></script>
+
   <script>
     $(document).ready(function() {
       $().ready(function() {
@@ -416,6 +474,28 @@
 
         });
       });
+      
+      // for nestable list
+      var updateOutput = function(e)
+      {
+          var list   = e.length ? e : $(e.target),
+              output = list.data('output');
+          if (window.JSON) {
+              output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
+          } else {
+              output.val('JSON browser support required for this feature.');
+          }
+      };
+
+      // activate Nestable for list 1
+      $('#nestable').nestable({
+          group: 1
+      })
+      .on('change', updateOutput);
+
+      // output initial serialised data
+      updateOutput($('#nestable').data('output', $('#nestable-output')));
+      $('.dd').nestable('collapseAll');
     });
   </script>
 </body>
