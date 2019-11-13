@@ -9,7 +9,8 @@ from flask import request, Blueprint
 from . import generate_validator, generate_result
 from .. import config
 from ..models.map_data import MapData
-from ..utils import token_check, gcj02_to_bd09
+from ..utils import gcj02_to_bd09
+from ..wraps import token_check
 
 get_data_bp = Blueprint('get_data', __name__, url_prefix=config.URL_Prefix + '/get_data')
 

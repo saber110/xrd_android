@@ -11,7 +11,7 @@ from . import generate_result, generate_validator
 from .. import config
 from ..models.base_model import db
 from ..models.user import User
-from ..utils import token_check
+from ..wraps import token_check
 
 user_bp = Blueprint('user', __name__, url_prefix=config.URL_Prefix + '/user')
 

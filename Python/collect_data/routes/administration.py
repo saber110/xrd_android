@@ -12,7 +12,7 @@ from ..models.community import Community
 from ..models.district import District
 from ..models.garden import Garden
 from ..models.street import Street
-from ..utils import token_check
+from ..wraps import token_check
 
 administration_bp = Blueprint('administration', __name__, url_prefix=config.URL_Prefix + '/administration')
 

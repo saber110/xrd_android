@@ -36,7 +36,7 @@ class User(BaseModel):
 
     def generate_auth_token(self, expiration=config.EXPIRATION):
         s = Serializer(config.SECRET_KEY, expires_in=expiration)
-        return s.dumps({'id': self.id, 'timestamp': time.time()})
+        return s.dumps({'id': self.id, 'timestamp': time.time(), 'permission': self.permission})
 
     @staticmethod
     def verify_auth_token(token):

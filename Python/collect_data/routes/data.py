@@ -24,7 +24,8 @@ from ..models.garden_picture import GardenPicture
 from ..models.garden_picture_kind import GardenPictureKind
 from ..models.map_data import MapData
 from ..models.other_picture import OtherPicture
-from ..utils import bd09_to_gcj02, compress_image, token_check
+from ..utils import bd09_to_gcj02, compress_image
+from ..wraps import token_check
 
 data_bp = Blueprint('data', __name__, url_prefix=config.URL_Prefix + '/data')
 
