@@ -44,3 +44,37 @@ def token_check(f):
                 abort(401)
 
     return wrapper
+
+
+def admin_required(f):
+    """
+    管理员权限检查装饰器
+    :param f:
+    """
+
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if request.method == 'POST':
+            token = get_token()
+            if User.verify_permission(token, 1):
+                return f(*args, **kwargs)
+            abort(401)
+
+    return wrapper
+
+
+def super_admin_required(f):
+    """
+    超级管理员权限检查装饰器
+    :param f:
+    """
+
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if request.method == 'POST':
+            token = get_token()
+            if User.verify_permission(token, 2):
+                return f(*args, **kwargs)
+            abort(401)
+
+    return wrapper

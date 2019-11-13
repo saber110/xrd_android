@@ -53,3 +53,20 @@ class User(BaseModel):
             if data['timestamp'] > max_timestamp:
                 return None
         return data['id']
+
+    @staticmethod
+    def verify_permission(token: str, permission: int):
+        """
+        校验用户权限
+        :param token:
+        :param permission: 待验证权限
+        :return: 是否拥有该权限
+        """
+        s = Serializer(config.SECRET_KEY)
+        try:
+            data = s.loads(token)
+        except BadSignature:
+            return False
+        if permission != data['permission']:
+            return False
+        return True
