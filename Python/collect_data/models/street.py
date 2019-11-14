@@ -14,3 +14,6 @@ class Street(BaseModel):
     id = db.Column(db.Integer, primary_key=True, comment='街道id')
     districtId = db.Column(db.Integer, db.ForeignKey('district.id'), nullable=False, comment='街道对应的行政区id')
     name = db.Column(db.String(85), nullable=False, comment='街道名称，最长为85个字符')
+    __table_args__ = (
+        db.UniqueConstraint('districtId', 'name', name='districtId_name'),
+    )

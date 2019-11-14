@@ -8,3 +8,5 @@ itsdangerous
 flask_uploads
 pillow
 flask_cors
+openpyxl
+defusedxml

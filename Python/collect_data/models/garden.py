@@ -16,3 +16,7 @@ class Garden(BaseModel):
     streetId = db.Column(db.Integer, db.ForeignKey('street.id'), nullable=False, comment='小区对应的街道id')
     districtId = db.Column(db.Integer, db.ForeignKey('district.id'), nullable=False, comment='小区对应的行政区id')
     name = db.Column(db.String(85), nullable=False, comment='小区名称，最长为85个字符')
+
+    __table_args__ = (
+        db.UniqueConstraint('communityId', 'streetId', 'districtId', 'name', name='garden_index'),
+    )

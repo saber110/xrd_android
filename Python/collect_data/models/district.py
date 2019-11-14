@@ -11,4 +11,4 @@ class District(BaseModel):
     行政区表
     """
     id = db.Column(db.Integer, primary_key=True, comment='行政区id')
-    name = db.Column(db.String(85), nullable=False, comment='行政区名称，最长为85个字符（根据行政区命名规则长度限制制定）')
+    name = db.Column(db.String(85), unique=True, nullable=False, comment='行政区名称，最长为85个字符（根据行政区命名规则长度限制制定）')

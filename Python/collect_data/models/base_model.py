@@ -31,6 +31,11 @@ class BaseModel(db.Model):
                 del kwargs[k]
         super().__init__(*args, **kwargs)
 
+    def update(self, **kwargs):
+        for k in list(kwargs.keys()):
+            if hasattr(self, k):
+                self.__setattr__(k, kwargs[k])
+
     @property
     def to_dict(self):
         return to_dict(self, self.__class__)
