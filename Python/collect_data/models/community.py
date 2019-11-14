@@ -14,3 +14,7 @@ class Community(BaseModel):
     id = db.Column(db.Integer, primary_key=True, comment='社区id')
     streetId = db.Column(db.Integer, db.ForeignKey('street.id'), nullable=False, comment='社区对应的街道id')
     name = db.Column(db.String(85), nullable=False, comment='社区名称，最长为85个字符')
+
+    __table_args__ = (
+        db.UniqueConstraint('name', 'streetId', name='streetId_name'),
+    )
