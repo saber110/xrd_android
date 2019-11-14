@@ -94,3 +94,29 @@ def all_info(*args, **kwargs):
     for user_info in user_info_list:
         del user_info['password']
     return generate_result(0, '获取用户列表成功', {'all_info': user_info_list})
+
+
+@user_bp.route('/update', methods=['POST'])
+@token_check
+def update(user_id: int, *args, **kwargs):
+    """
+    用户更新个人信息
+    :param user_id: 用户id
+    """
+    data = request.get_json()
+    schema = {
+        "realName": {'type': 'string', 'maxlength': 32},
+        "phoneNumber": {'type': 'string'}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    user = User.query.get(user_id)
+    user.realName = data['realName']
+    user.phoneNumber = data['phoneNumber']
+    try:
+        db.session.add(user)
+        db.session.commit()
+    except DBAPIError:
+        return generate_result(2, '更新信息失败')
+    return generate_result(0, '更新用户信息成功')
