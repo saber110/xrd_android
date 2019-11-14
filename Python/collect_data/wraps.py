@@ -48,7 +48,7 @@ def token_check(f):
 
 def admin_required(f):
     """
-    管理员权限检查装饰器
+    管理员权限检查装饰器，必须在token_check后调用
     :param f:
     """
 
@@ -65,7 +65,7 @@ def admin_required(f):
 
 def super_admin_required(f):
     """
-    超级管理员权限检查装饰器
+    超级管理员权限检查装饰器，必须在token_check后调用
     :param f:
     """
 

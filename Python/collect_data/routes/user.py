@@ -110,7 +110,7 @@ def update(user_id: int, *args, **kwargs):
     }
     v = generate_validator(schema)
     if not v(data):
-        return generate_result(1)
+        return generate_result(1, data=v.errors)
     user = User.query.get(user_id)
     user.realName = data['realName']
     user.phoneNumber = data['phoneNumber']
@@ -120,3 +120,39 @@ def update(user_id: int, *args, **kwargs):
     except DBAPIError:
         return generate_result(2, '更新信息失败')
     return generate_result(0, '更新用户信息成功')
+
+
+@user_bp.route('/super_update', methods=['POST'])
+@token_check
+@super_admin_required
+def super_update(*args, **kwargs):
+    """
+    超级管理员批量更新用户信息
+    """
+    data = request.get_json()
+    schema = {
+        'userInfo': {'type': 'list',
+                     'schema': {'type': 'dict',
+                                'schema': {'id': {'type': 'integer', 'min': 1},
+                                           'realName': {'type': 'string', 'maxlength': 32},
+                                           'phoneNumber': {'type': 'string', 'maxlength': 11},
+                                           'password': {'type': 'string', 'maxlength': 30},
+                                           'permission': {'type': 'integer', 'min': 0}}}}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    user_info = data['userInfo']
+    fail_ids = []
+
+    for index, val in enumerate(user_info):
+        try:
+            user = User.query.get(val['id'])
+            user.update(**val)
+            user.set_password(user.password)
+            db.session.add(user)
+            db.session.commit()
+        except DBAPIError as e:
+            print(str(e))
+            fail_ids.append(index)
+    return generate_result(0, data={'fail_ids': fail_ids})
