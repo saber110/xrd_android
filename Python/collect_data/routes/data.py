@@ -8,7 +8,7 @@ import os
 from datetime import datetime
 
 from flask import request, Blueprint
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import SQLAlchemyError
 
 from . import generate_result, generate_validator, image_upload
 from .. import config
@@ -56,7 +56,8 @@ def garden(*args, **kwargs):
     try:
         db.session.add(garden)
         db.session.commit()
-    except DBAPIError:
+    except SQLAlchemyError:
+        db.session.rollback()
         return generate_result(2, '添加小区失败')
     return generate_result(0, '添加小区成功', {'gardenId': garden.id})
 
@@ -98,7 +99,8 @@ def map_data(user_id: int, *args, **kwargs):
     try:
         db.session.add(map_data)
         db.session.commit()
-    except DBAPIError:
+    except SQLAlchemyError:
+        db.session.rollback()
         return generate_result(2, '添加建筑失败')
     return generate_result(0, '添加建筑成功')
 
@@ -132,7 +134,8 @@ def garden_picture(user_id: int, *args, **kwargs):
     pictures = GardenPicture.query.filter_by(gardenId=garden_id, pictureKind=picture_kind).all()
     try:
         garden = Garden.query.get(garden_id)
-    except DBAPIError:
+    except SQLAlchemyError:
+        db.session.rollback()
         return generate_result(2)
     number = f"{len(pictures) + 1:03d}"
     file_path = f'origin/{garden.id}/2_{garden.name}_{picture_kind}_{number}.'
@@ -147,7 +150,8 @@ def garden_picture(user_id: int, *args, **kwargs):
     try:
         db.session.add(picture)
         db.session.commit()
-    except DBAPIError:
+    except SQLAlchemyError:
+        db.session.rollback()
         os.remove(origin_path)
         os.remove(compressed_path)
         # 对图片进行删除回滚
@@ -187,7 +191,8 @@ def building_picture(user_id: int, *args, **kwargs):
     try:
         garden = Garden.query.get(garden_id)
         building = BuildingInfo.query.get(building_id)
-    except DBAPIError:
+    except SQLAlchemyError:
+        db.session.rollback()
         return generate_result(2)
     number = f"{len(pictures) + 1:03d}"
     file_path = f'origin/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
@@ -202,7 +207,8 @@ def building_picture(user_id: int, *args, **kwargs):
     try:
         db.session.add(picture)
         db.session.commit()
-    except DBAPIError:
+    except SQLAlchemyError:
+        db.session.rollback()
         os.remove(origin_path)
         os.remove(compressed_path)
         # 对图片进行删除回滚
@@ -228,7 +234,7 @@ def other_picture(user_id: int, *args, **kwargs):
     pictures = OtherPicture.query.all()
     try:
         garden = Garden.query.get(garden_id)
-    except DBAPIError:
+    except SQLAlchemyError:
         return generate_result(2)
     number = f"{len(pictures) + 1:03d}"
     file_path = f'origin/{garden.id}/4_{garden.name}_{number}.'
@@ -242,7 +248,8 @@ def other_picture(user_id: int, *args, **kwargs):
     try:
         db.session.add(picture)
         db.session.commit()
-    except DBAPIError:
+    except SQLAlchemyError:
+        db.session.rollback()
         os.remove(origin_path)
         os.remove(compressed_path)
         # 对图片进行删除回滚
@@ -294,8 +301,8 @@ def garden_base_info(user_id: int, *args, **kwargs):
         base_info = GardenBaseInfo(**data)
         db.session.add(base_info)
         db.session.commit()
-    except DBAPIError as e:
-        print(str(e))
+    except SQLAlchemyError:
+        db.session.rollback()
         return generate_result(2)
     return generate_result(0, '上传小区基本数据成功')
 
@@ -333,8 +340,8 @@ def building_info(user_id: int, *args, **kwargs):
         info = BuildingInfo(**data)
         db.session.add(info)
         db.session.commit()
-    except DBAPIError as e:
-        print(str(e))
+    except SQLAlchemyError:
+        db.session.rollback()
         return generate_result(2)
     return generate_result(0, '提交楼栋信息成功')
 

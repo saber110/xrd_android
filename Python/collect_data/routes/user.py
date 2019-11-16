@@ -5,7 +5,7 @@
 # @Desc : 用户数据相关处理
 
 from flask import request, Blueprint
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import SQLAlchemyError
 
 from . import generate_result, generate_validator
 from .. import config
@@ -44,7 +44,8 @@ def register():
                 user.set_password(user.password)
                 db.session.add(user)
                 db.session.commit()
-            except DBAPIError:
+            except SQLAlchemyError:
+                db.session.rollback()
                 fail_ids.append(index)
         return generate_result(0, data={'fail_ids': fail_ids})
 
@@ -117,7 +118,8 @@ def update(user_id: int, *args, **kwargs):
     try:
         db.session.add(user)
         db.session.commit()
-    except DBAPIError:
+    except SQLAlchemyError:
+        db.session.rollback()
         return generate_result(2, '更新信息失败')
     return generate_result(0, '更新用户信息成功')
 
@@ -152,7 +154,8 @@ def super_update(*args, **kwargs):
             user.reset_password(user.password)
             db.session.add(user)
             db.session.commit()
-        except DBAPIError:
+        except SQLAlchemyError:
+            db.session.rollback()
             # 回退redis
             User.redis_del(val['id'])
             fail_ids.append(index)
@@ -181,7 +184,8 @@ def reset_password(user_id: int, *args, **kwargs):
         user.reset_password(data['newPassword'])
         db.session.add(user)
         db.session.commit()
-    except DBAPIError:
+    except SQLAlchemyError:
+        db.session.rollback()
         # 回退redis
         User.redis_del(user_id)
         return generate_result(2, '数据更新失败')
