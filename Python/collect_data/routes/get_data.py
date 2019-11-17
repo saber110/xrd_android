@@ -43,6 +43,54 @@ def map_data(*args, **kwargs):
     return generate_result(0, '获取地图数据成功', {'map_data': [i.to_dict for i in all_map_data]})
 
 
+@get_data_bp.route('/garden_base_info', methods=['POST'])
+@token_check
+def garden_base_info(*args, **kwargs):
+    """
+    获取小区基本信息
+    """
+    data = request.get_json()
+    schema = {
+        'gardenId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        garden_info = GardenBaseInfo.query.get(data['gardenId'])
+    except SQLAlchemyError:
+        return generate_result(2, '获取数据失败')
+    result = garden_info.to_dict
+    for key in result.keys():
+        if result[key] is None:
+            result[key] = ''
+    return generate_result(0, '获取数据成功', {'gardenInfo': result})
+
+
+@get_data_bp.route('/building_base_info', methods=['POST'])
+@token_check
+def building_base_info(*args, **kwargs):
+    """
+    获取楼栋基本信息
+    """
+    data = request.get_json()
+    schema = {
+        'buildingId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        building_info = BuildingInfo.query.get(data['buildingId'])
+    except SQLAlchemyError:
+        return generate_result(2, '获取数据失败')
+    result = building_info.to_dict
+    for key in result.keys():
+        if result[key] is None:
+            result[key] = ''
+    return generate_result(0, '获取数据成功', {'buildingInfo': result})
+
+
 @get_data_bp.route('/garden_table', methods=['POST'])
 @token_check
 @admin_required
