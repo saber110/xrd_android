@@ -5,7 +5,7 @@
 # @Desc : 用户数据相关处理
 
 from flask import request, Blueprint
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import SQLAlchemyError
 
 from . import generate_result, generate_validator
 from .. import config
@@ -44,7 +44,8 @@ def register():
                 user.set_password(user.password)
                 db.session.add(user)
                 db.session.commit()
-            except DBAPIError:
+            except SQLAlchemyError:
+                db.session.rollback()
                 fail_ids.append(index)
         return generate_result(0, data={'fail_ids': fail_ids})
 
@@ -117,7 +118,8 @@ def update(user_id: int, *args, **kwargs):
     try:
         db.session.add(user)
         db.session.commit()
-    except DBAPIError:
+    except SQLAlchemyError:
+        db.session.rollback()
         return generate_result(2, '更新信息失败')
     return generate_result(0, '更新用户信息成功')
 
@@ -149,10 +151,42 @@ def super_update(*args, **kwargs):
         try:
             user = User.query.get(val['id'])
             user.update(**val)
-            user.set_password(user.password)
+            user.reset_password(user.password)
             db.session.add(user)
             db.session.commit()
-        except DBAPIError as e:
-            print(str(e))
+        except SQLAlchemyError:
+            db.session.rollback()
+            # 回退redis
+            User.redis_del(val['id'])
             fail_ids.append(index)
     return generate_result(0, data={'fail_ids': fail_ids})
+
+
+@user_bp.route('/reset_password', methods=['POST'])
+@token_check
+def reset_password(user_id: int, *args, **kwargs):
+    """
+    用户更新密码接口
+    :return:
+    """
+    data = request.get_json()
+    schema = {
+        'oldPassword': {'type': 'string', 'maxlength': 64},
+        'newPassword': {'type': 'string', 'maxlength': 64}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        user = User.query.get(user_id)
+        if not user.check_password(data['oldPassword']):
+            return generate_result(2, '密码错误')
+        user.reset_password(data['newPassword'])
+        db.session.add(user)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        # 回退redis
+        User.redis_del(user_id)
+        return generate_result(2, '数据更新失败')
+    return generate_result(0, '更新密码成功')

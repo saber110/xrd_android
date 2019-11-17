@@ -31,12 +31,21 @@ class User(BaseModel):
     def set_password(self, password):
         self.password = bcrypt.hashpw(bytes(password, encoding='utf-8'), bcrypt.gensalt())
 
+    def reset_password(self, password):
+        self.password = bcrypt.hashpw(bytes(password, encoding='utf-8'), bcrypt.gensalt())
+        # 将重设密码之前的token失效
+        redis_client.set(name=self.id, value=time.time(), ex=config.EXPIRATION)
+
     def check_password(self, password):
         return bcrypt.checkpw(bytes(password, encoding='utf-8'), bytes(self.password, encoding='utf-8'))
 
     def generate_auth_token(self, expiration=config.EXPIRATION):
         s = Serializer(config.SECRET_KEY, expires_in=expiration)
         return s.dumps({'id': self.id, 'timestamp': time.time(), 'permission': self.permission})
+
+    @staticmethod
+    def redis_del(*name):
+        redis_client.delete(*name)
 
     @staticmethod
     def verify_auth_token(token):
@@ -50,7 +59,7 @@ class User(BaseModel):
         max_timestamp = redis_client.get(data['id'])
         # 检查是否晚于token黑名单时间
         if max_timestamp is not None:
-            if data['timestamp'] > max_timestamp:
+            if data['timestamp'] < float(max_timestamp):
                 return None
         return data['id']
 

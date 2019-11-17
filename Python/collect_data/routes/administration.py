@@ -7,7 +7,7 @@
 import openpyxl as excel
 from flask import request, Blueprint
 from openpyxl.utils.exceptions import InvalidFileException
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import SQLAlchemyError
 
 from . import generate_result
 from .. import config
@@ -51,6 +51,7 @@ def street(*args, **kwargs):
             the_dict.pop('districtId')
             result_list.append(the_dict)
         return generate_result(0, '获取街道数据成功', {'streets': result_list})
+    return generate_result(1)
 
 
 @administration_bp.route('/community', methods=['POST'])
@@ -66,6 +67,7 @@ def community(*args, **kwargs):
             the_dict.pop('streetId')
             result_list.append(the_dict)
         return generate_result(0, '获取社区数据成功', {'communities': result_list})
+    return generate_result(1)
 
 
 @administration_bp.route('/garden', methods=['POST'])
@@ -81,6 +83,7 @@ def garden(*args, **kwargs):
             the_dict.pop('communityId')
             result_list.append(the_dict)
         return generate_result(0, '获取小区数据成功', {'gardens': result_list})
+    return generate_result(1)
 
 
 @administration_bp.route('/import_data', methods=['POST'])
@@ -101,8 +104,8 @@ def import_data(*args, **kwargs):
         return generate_result(2, '仅支持.xlsx格式的文件')
     sheet_name_list = table.sheetnames
     fail_dict = {}
-    if 'district' in sheet_name_list:
-        sheet = table['district']
+    if '行政区' in sheet_name_list:
+        sheet = table['行政区']
         district_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=1, values_only=True)):
             if have_empty_str(row):
@@ -111,11 +114,12 @@ def import_data(*args, **kwargs):
             try:
                 db.session.add(the_district)
                 db.session.commit()
-            except DBAPIError:
+            except SQLAlchemyError:
+                db.session.rollback()
                 district_fail_row.append(index + 1)
-        fail_dict['district'] = district_fail_row
-    if 'district_street' in sheet_name_list:
-        sheet = table['district_street']
+        fail_dict['行政区'] = district_fail_row
+    if '行政区_街道' in sheet_name_list:
+        sheet = table['行政区_街道']
         street_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=2, values_only=True)):
             if have_empty_str(row):
@@ -127,12 +131,14 @@ def import_data(*args, **kwargs):
                     db.session.add(the_street)
                     db.session.commit()
                     continue
-                except DBAPIError:
+                except SQLAlchemyError:
+                    db.session.rollback()
                     street_fail_row.append(index + 1)
+                    continue
             street_fail_row.append(index + 1)
-        fail_dict['district_street'] = street_fail_row
-    if 'district_street_community' in sheet_name_list:
-        sheet = table['district_street_community']
+        fail_dict['行政区_街道'] = street_fail_row
+    if '行政区_街道_社区' in sheet_name_list:
+        sheet = table['行政区_街道_社区']
         community_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=3, values_only=True)):
             if have_empty_str(row):
@@ -146,12 +152,14 @@ def import_data(*args, **kwargs):
                         db.session.add(the_community)
                         db.session.commit()
                         continue
-                    except DBAPIError:
+                    except SQLAlchemyError:
+                        db.session.rollback()
                         community_fail_row.append(index + 1)
+                        continue
             community_fail_row.append(index + 1)
-        fail_dict['district_street_community'] = community_fail_row
-    if 'district_street_community_garden' in sheet_name_list:
-        sheet = table['district_street_community_garden']
+        fail_dict['行政区_街道_社区'] = community_fail_row
+    if '行政区_街道_社区_小区' in sheet_name_list:
+        sheet = table['行政区_街道_社区_小区']
         garden_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=4, values_only=True)):
             if have_empty_str(row):
@@ -168,8 +176,11 @@ def import_data(*args, **kwargs):
                             db.session.add(the_garden)
                             db.session.commit()
                             continue
-                        except DBAPIError:
+                        except SQLAlchemyError:
+                            db.session.rollback()
                             garden_fail_row.append(index + 1)
+                            continue
             garden_fail_row.append(index + 1)
+        fail_dict['行政区_街道_社区_小区'] = garden_fail_row
 
     return generate_result(0, '导入数据成功', {'fail_rows': fail_dict})
