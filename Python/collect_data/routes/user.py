@@ -19,7 +19,7 @@ user_bp = Blueprint('user', __name__, url_prefix=config.URL_Prefix + '/user')
 @user_bp.route('/register', methods=['POST'])
 @token_check
 @super_admin_required
-def register():
+def register(*args, **kwargs):
     """
     用户注册接口，可用于批量导入也可用于单个注册
     """
