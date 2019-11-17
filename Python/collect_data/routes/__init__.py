@@ -4,8 +4,10 @@
 # @contact : yinaoxiong@gmail.com
 # @Desc : 路由和控制器部分的内容
 
+from urllib.parse import quote
+
 import cerberus
-from flask import Flask
+from flask import Flask, send_file
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 
 image_upload: UploadSet = UploadSet('images', IMAGES)
@@ -52,3 +54,11 @@ def generate_validator(schema: dict) -> cerberus.Validator:
     """
     v = cerberus.Validator(schema, allow_unknown=True, require_all=True)
     return v
+
+
+def my_send_file(filename_or_fp, mimetype=None, attachment_filename=None):
+    rv = send_file(filename_or_fp, mimetype)
+    if attachment_filename is not None:
+        attachment_filename = quote(attachment_filename)
+        rv.headers['Content-Disposition'] = f"attachment;filename*=utf-8''{attachment_filename}"
+    return rv

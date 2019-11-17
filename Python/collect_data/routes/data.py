@@ -316,7 +316,7 @@ def first_floor_kind(*args, **kwargs):
     return generate_result(0, '查询楼栋一楼情况成功', {'firstFloorKind': [i.to_dict['kind'] for i in FirstFloorKind.query.all()]})
 
 
-@data_bp.route('/building_info', methods=['POST'])
+@data_bp.route('/building_base_info', methods=['POST'])
 @token_check
 def building_info(user_id: int, *args, **kwargs):
     """

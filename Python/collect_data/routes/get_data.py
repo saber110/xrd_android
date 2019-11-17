@@ -5,14 +5,14 @@
 # @Desc : 数据获取模块
 
 from io import BytesIO
-from urllib.parse import quote
 
-from flask import request, Blueprint, send_file
+from flask import request, Blueprint
 from openpyxl import Workbook
 from sqlalchemy.exc import SQLAlchemyError
 
-from . import generate_validator, generate_result
+from . import generate_validator, generate_result, my_send_file
 from .. import config
+from ..models.building_info import BuildingInfo
 from ..models.garden import Garden
 from ..models.garden_base_info import GardenBaseInfo
 from ..models.map_data import MapData
@@ -116,8 +116,71 @@ def garden_table(*args, **kwargs):
     stream = BytesIO()
     wb.save(stream)
     stream.seek(0)
-    filename = quote('小区信息_数据导入表.xlsx')
-    rv = send_file(stream,
-                   mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    rv.headers['Content-Disposition'] = f"attachment;filename*=utf-8''{filename}"
-    return rv
+    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '小区信息_数据导入表.xlsx')
+
+
+@get_data_bp.route('/building_table', methods=['POST'])
+@token_check
+@admin_required
+def building_table(*args, **kwargs):
+    """
+    导出楼幢信息_数据导入表
+    """
+    data = request.get_json()
+    schema = {
+        'buildingId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        building_info = BuildingInfo.query.get(data['buildingId'])
+    except SQLAlchemyError:
+        return generate_result(2, '导出数据失败')
+    wb = Workbook()
+    ws = wb.active
+    ws.title = '表4 《楼幢信息_数据导入表》'
+    table_head = ['楼幢名称', '楼幢别名', '楼幢东至', '楼幢西至', '楼幢南至', '楼幢北至', '物业分类', '单元名称', '室号名称', '单_元_数', '单_元_号', '楼_层_号',
+                  '楼层差异', '住宅起始', '总_套_数', '主_朝_向', '部位说明', '建筑结构', '建成年份', '地上总层', '地下总层', '住房层高', '装修标准', '装修描述',
+                  '装修时间', '户型分类', '房产性质', '图_丘_号', '辅房用途', '架_空_层', '地上车库', '地下车库', '建筑面积', '是否别墅', '一梯几户', '得_房_率',
+                  '楼幢状态', '建筑风格', '设备设施', '外墙饰面', '消防设施', '电梯设施', '空调设施', '有无热水', '大堂入口', '顶楼情况', '顶楼露台', '顶楼阁楼',
+                  '顶楼跃层', '屋面情况', '电梯大堂', '公共部位', '平面布局', '通风采光', '营_业_房', '使用状况', '幢外景观', '中心花园', '不利设施', '噪声污染',
+                  '楼幢间距', '三临情况', '其他不利', '其他有利', '楼幢评价', '价格初判', '地图来源', '定位坐标']
+    table_map = {'楼幢名称': 'buildingName', '楼幢别名': 'buildingAlias', '楼幢东至': '', '楼幢西至': '', '楼幢南至': '', '楼幢北至': '',
+                 '物业分类': 'propertyKind', '单元名称': 'unitName', '室号名称': 'roomName', '单_元_数': 'numberOfUnit',
+                 '单_元_号': 'unitNumber', '楼_层_号': 'floorNumber', '楼层差异': 'floorDifferent', '住宅起始': 'beginFloor',
+                 '总_套_数': '', '主_朝_向': 'mainTowards', '部位说明': 'locationDescription', '建筑结构': 'buildingStructure',
+                 '建成年份': 'completedYear', '地上总层': 'floorOverGround', '地下总层': 'floorUnderGround', '住房层高': '',
+                 '装修标准': 'decorationStandard', '装修描述': '', '装修时间': 'decorationYear', '户型分类': '',
+                 '房产性质': 'buildingProperty', '图_丘_号': '', '辅房用途': '', '架_空_层': '架_空_层', '地上车库': '地上车库', '地下车库': '',
+                 '建筑面积': '',
+                 '是否别墅': 'isVilla', '一梯几户': 'oneLiftNumber', '得_房_率': '', '楼幢状态': 'buildingStatus', '建筑风格': '',
+                 '设备设施': '', '外墙饰面': '', '消防设施': '', '电梯设施': '', '空调设施': '', '有无热水': '', '大堂入口': '',
+                 '顶楼情况': 'roofTopInfo', '顶楼露台': 'roofTopTerrace', '顶楼阁楼': 'roofTopAttic', '顶楼跃层': 'roofTopLayer',
+                 '屋面情况': 'roofInfo', '电梯大堂': '', '公共部位': '', '平面布局': '', '通风采光': '', '营_业_房': '', '使用状况': '',
+                 '幢外景观': '', '中心花园': '', '不利设施': '', '噪声污染': '', '楼幢间距': '', '三临情况': '', '其他不利': '', '其他有利': '',
+                 '楼幢评价': '', '价格初判': '', '地图来源': '', '定位坐标': ''}
+    ws.append(table_head)
+    building_info = building_info.to_dict
+    building_info['架_空_层'] = '_'
+    building_info['地上车库'] = '_'
+    #   添加1F情况说明key
+    if building_info['firstFloorDescription'] == '架_空_层':
+        building_info['架_空_层'] = '√'
+    elif building_info['firstFloorDescription'] == '地上车库':
+        building_info['地上车库'] = '√'
+    for key in building_info.keys():
+        if building_info[key] is None:
+            building_info[key] = ''
+    table_data = []
+    for key in table_head:
+        data_base_key = table_map[key]
+        if data_base_key == '':
+            table_data.append('')
+        else:
+            table_data.append(building_info[data_base_key])
+    ws.append(table_data)
+    stream = BytesIO()
+    wb.save(stream)
+    stream.seek(0)
+    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '楼幢信息_数据导入表.xlsx')
