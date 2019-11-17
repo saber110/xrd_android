@@ -11,10 +11,10 @@ public class SendMapMsg implements ProcessInterface {
 
     private MapData mapData = new MapData();
 
-    public SendMapMsg(double lat, double lg, String name, int gardenId, int mapId) {
+    public SendMapMsg(double lat, double lg, String name, int gardenId, int mapId,int kindId) {
         mapData.setLatitude(lat);
         mapData.setLongitude(lg);
-        mapData.setKindId(1);
+        mapData.setKindId(kindId);
         mapData.setName(name);
         mapData.setGardenId(gardenId);
         mapData.setToken("12345678");

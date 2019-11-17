@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -20,15 +21,13 @@ import java.util.ArrayList;
 
 public class takePhoto01 extends TakePhotoActivity {
 
-    FileUtil fu = new FileUtil();
     int yourChoice;
     String item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        showSingleChoiceDialog();
+            super.onCreate(savedInstanceState);
+            showSingleChoiceDialog();
 
     }
 
@@ -49,8 +48,32 @@ public class takePhoto01 extends TakePhotoActivity {
         showImg(result.getImages());
     }
 
+
+    public String locationString;
+    public String jpegName;
+
     private void picture(){
-        File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + System.currentTimeMillis() + ".jpg");
+
+        if(locationString.equals("平面")){
+            jpegName = "2_平面图_001"  +".jpg";
+        }
+        if(locationString.equals("入口")){
+            jpegName = "2_小区入口_001"  +".jpg";
+        }
+        if(locationString.equals("外")){
+            jpegName = "2_外景图_001"  +".jpg";
+        }
+        if(locationString.equals("内")){
+            jpegName = "2_内景图_001"  +".jpg";
+        }
+        if(locationString.equals("楼号")){
+            jpegName = "3_楼牌号_001"  +".jpg";
+        }
+        else{
+            jpegName = "3_建筑立面_001" + locationString +".jpg";
+        }
+
+        File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + jpegName);
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
@@ -71,7 +94,7 @@ public class takePhoto01 extends TakePhotoActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         yourChoice = which;
                         item = items[yourChoice];
-                        fu.locationString = item;
+                        locationString = item;
                     }
                 });
         singleChoiceDialog.setPositiveButton("确定",
@@ -92,7 +115,7 @@ public class takePhoto01 extends TakePhotoActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 Toast.makeText(context, "你确立的地点是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
                                 //把输入的地点赋给 fu.locationString
-                                fu.locationString = edit.getText().toString();
+                                locationString = edit.getText().toString();
                                 picture();
                             }
                         });
@@ -127,7 +150,7 @@ public class takePhoto01 extends TakePhotoActivity {
                             Toast.makeText(takePhoto01.this,
                                     "你选择了平面",
                                     Toast.LENGTH_SHORT).show();
-                            fu.locationString = "平面";
+                            locationString = "平面";
                             picture();
                         }
                     }
@@ -135,11 +158,57 @@ public class takePhoto01 extends TakePhotoActivity {
         singleChoiceDialog.show();
     }
 
+    /**
+     * 单选对话框
+     */
+    private void singleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(takePhoto01.this);
+        builder.setTitle("是否对您当前的图片进行操作");
+        final String[] items = { "是", "否" };// 创建一个存放选项的数组
+        final boolean[] checkedItems = { true, false };// 存放选中状态，true为选中
+        // ，false为未选中，和setSingleChoiceItems中第二个参数对应
+        // 为对话框添加单选列表项
+        // 第一个参数存放选项的数组，第二个参数存放默认被选中的项，第三个参数点击事件
+        builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                // TODO Auto-generated method stub
+                for (int i = 0; i < checkedItems.length; i++) {
+                    checkedItems[i] = false;
+                }
+                checkedItems[arg1] = true;
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                // TODO Auto-generated method stub
+                arg0.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                // TODO Auto-generated method stub
+//                String str = "";
+//                for (int i = 0; i < checkedItems.length; i++) {
+//                    if (checkedItems[i]) {
+//                        str = items[i];
+//                    }
+//                }
+//                myToast("您选择了" + str);
+                startActivity(new Intent(takePhoto01.this, DrawActivity.class));
+            }
+        });
+        builder.create().show();
+    }
+
 
     private void showImg(ArrayList<TImage> images) {
-        Intent intent = new Intent(takePhoto01.this, MainActivity.class);
-//        intent.putExtra("images", images);
-        startActivity(intent);
+        singleDialog();
+//        Intent intent = new Intent(takePhoto01.this, MainActivity.class);
+////        intent.putExtra("images", images);
+//        startActivity(intent);
         Toast.makeText(takePhoto01.this, "已存储", Toast.LENGTH_SHORT).show();
 
     }

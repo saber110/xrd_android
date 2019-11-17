@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#f6f6f6"
     android:orientation="vertical">
-    <include layout="@layout/ui_title_bar"/>
+
+    <include layout="@layout/ui_title_bar" />
 
     <LinearLayout
         android:id="@+id/mainview"
@@ -253,10 +254,9 @@
         android:text="地址" />
 
     <com.ashokvarma.bottomnavigation.BottomNavigationBar
-        android:layout_gravity="bottom"
         android:id="@+id/bottom_navigation_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
 
 </LinearLayout>

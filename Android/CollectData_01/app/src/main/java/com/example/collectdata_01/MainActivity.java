@@ -9,90 +9,111 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.alibaba.fastjson.JSONObject;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+import com.example.collectdata_01.adapter.GardenListAdapter;
+import com.example.collectdata_01.util.BottomUtil;
 import com.example.dialog.ChooseMapDialog;
 import com.example.map.baidu_map.BaiduMapActivity;
 import com.example.map.dao.AddGradenResult;
+import com.example.map.dao.SearchGardenResultDao;
 import com.example.map.net.AddGarden;
-import com.example.map.tecent_map.TecentActivity;
+import com.example.map.net.SearchGarden;
 import com.example.net.AsyncRequest;
 
 import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity implements AMapLocationListener {
+    RelativeLayout relativeLayout;
     private TextView textView;
-    private RelativeLayout mapLayout, relativeLayout, dataCollectLayout;
+    private RelativeLayout mapLayout;
     private Dialog dialog;
-    private int selectMap = 0;
     private View view;
+    private RecyclerView recyclerView;
+    private EditText searchKey;
+    private TextView addGardenBtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.position);
         relativeLayout = (RelativeLayout) findViewById(R.id.zhaopian);
-        mapLayout = (RelativeLayout)findViewById(R.id.ditu);
-        dataCollectLayout = (RelativeLayout) findViewById(R.id.shuju);
+        mapLayout = (RelativeLayout) findViewById(R.id.ditu);
         view = getLayoutInflater().inflate(R.layout.map_enter_dialog_layout, null);
+
+        recyclerView =  view.findViewById(R.id.garden_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false));
+        /**
+         * 获得弹出来的框框
+         */
         dialog = ChooseMapDialog.createDialog(MainActivity.this, view);
+        searchKey = view.findViewById(R.id.search_garden_key);
+        addGardenBtn = view.findViewById(R.id.add_garden);
+
         mapLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 dialog.show();
-                final Spinner spinner = view.findViewById(R.id.choose_map_list);
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                /**
+                 * 当用户点击了搜索
+                 */
+                view.findViewById(R.id.search_garden_button).setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onItemSelected(AdapterView<?> parent, View view,
-                                               int pos, long id) {
-                        String[] languages = getResources().getStringArray(R.array.map_list);
-                        selectMap = pos;
-                        Toast.makeText(MainActivity.this, "你点击的是:"+languages[pos], Toast.LENGTH_SHORT).show();
-                    }
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        // Another interface callback
+                    public void onClick(View v) {
+                        SearchGarden searchGarden = new SearchGarden("token");
+                        AsyncTask asyncTask = new AsyncRequest().execute(searchGarden);
+                        try {
+                            SearchGardenResultDao gardenResultDao = (SearchGardenResultDao) asyncTask.get();
+                            if (gardenResultDao == null || gardenResultDao.getData() == null
+                                    || gardenResultDao.getData().getBuildingKinds().size() == 0
+                            ) {
+                                Toast.makeText(MainActivity.this, "无查询结果", Toast.LENGTH_SHORT).show();
+                            } else {
+                                GardenListAdapter gardenListAdapter = new GardenListAdapter(MainActivity.this, gardenResultDao.getData());
+                                recyclerView.setAdapter(gardenListAdapter);
+                            }
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
 
-                view.findViewById(R.id.choose_map_button).setOnClickListener(new View.OnClickListener() {
+                addGardenBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EditText editText = view.findViewById(R.id.choose_garden_name);
-                        if (editText.getText().toString() == null && editText.getText().toString().length() == 0) {
-                            Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT);
+                        String key = searchKey.getText().toString();
+                        if (key.trim().length() == 0) {
+                            Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT).show();
                         } else {
-                            AddGarden addGarden = new AddGarden(editText.getText().toString());
+                            AddGarden addGarden = new AddGarden(key);
                             AsyncTask asyncTask = new AsyncRequest().execute(addGarden);
                             try {
-                                String result = (String) asyncTask.get();
-                                AddGradenResult addGradenResult = JSONObject.parseObject(result, AddGradenResult.class);
+                                AddGradenResult addGradenResult  = (AddGradenResult) asyncTask.get();
                                 if (addGradenResult.getCode() == 0) {
-                                    Intent intent;
-                                    if (spinner.getSelectedItemPosition() == 0){
-                                         intent = new Intent(MainActivity.this, BaiduMapActivity.class);
-                                    }else {
-                                         intent = new Intent(MainActivity.this, TecentActivity.class);
-                                    }
+                                    Toast.makeText(MainActivity.this,addGradenResult.getMessage(),Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(MainActivity.this, BaiduMapActivity.class);
                                     intent.putExtra("gardenId",addGradenResult.getData().getGardenId());
-                                    intent.putExtra("selectMapId",spinner.getSelectedItemPosition());
                                     startActivity(intent);
                                 }
                             } catch (ExecutionException e) {
@@ -100,51 +121,32 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }finally {
-                                dialog.cancel();
                             }
                         }
+
                     }
                 });
-//                startActivity(new Intent(MainActivity.this, AmapActivity.class));
             }
         });
 
 
         relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
+            //监听时间，页面跳转
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, takePhoto01.class));
             }
         });
-        dataCollectLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, CollectActivity.class));
-            }
-        });
 
         BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
+        // 第一个参数是导航，第二个参数是this，第三个参数代表这个是哪一个activity的位置，这个与之前的对应
+        BottomUtil bottomUtil = new BottomUtil(bottomNavigationBar,this,1000);
+        /**
+         * 设置样式添加监听
+         */
+        bottomUtil.setBottomBarStytle();
 
-        bottomNavigationBar
-                .addItem(new BottomNavigationItem(R.drawable.ic_home_white_24dp, "Home"))
-                .addItem(new BottomNavigationItem(R.drawable.ic_book_white_24dp, "Books"))
-                .addItem(new BottomNavigationItem(R.drawable.ic_music_note_white_24dp, "Music"))
-                .addItem(new BottomNavigationItem(R.drawable.ic_tv_white_24dp, "Movies & TV"))
-                .addItem(new BottomNavigationItem(R.drawable.ic_videogame_asset_white_24dp, "Games"))
-                .initialise();
-        bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(int position) {
-            }
 
-            @Override
-            public void onTabUnselected(int position) {
-            }
-
-            @Override
-            public void onTabReselected(int position) {
-            }
-        });
         checkPermissions(needPermissions);
         getLocPosition();
 

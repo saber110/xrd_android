@@ -26,8 +26,8 @@ public class ChooseMapDialog {
                 .create();
 
         Window win = dialog.getWindow();
-        win.setGravity(Gravity.CENTER);
-        win.getDecorView().setPadding(0, 0, 0, 0);
+        win.setGravity(Gravity.BOTTOM);
+        win.getDecorView().setPadding(10, 0, 10, 10);
         WindowManager.LayoutParams lp = win.getAttributes();
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;

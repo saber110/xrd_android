@@ -2,21 +2,22 @@ package com.example.map.baidu_map;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -28,8 +29,10 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.example.collectdata_01.R;
+import com.example.collectdata_01.util.BottomUtil;
 import com.example.dialog.ChooseMapDialog;
 import com.example.map.net.SendMapMsg;
+import com.example.map.tecent_map.TecentActivity;
 import com.example.net.AsyncRequest;
 
 import java.util.concurrent.ExecutionException;
@@ -41,26 +44,121 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     private LocationClient mLocationClient;
     private Button locButton;
     private Intent intent;
-    private int gradenId;
+    private int gardenId;
     private View view;
     private Dialog dialog;
+    private TextView huayuan;
+    private TextView louceng;
+    private TextView lu;
+    private TextView qita;
+    private TextView lat;
+    private TextView lng;
+    private int choose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //在使用SDK各组件之前初始化context信息，传入ApplicationContext
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_baidu_map);
-        //自4.3.0起，百度地图SDK所有接口均支持百度坐标和国测局坐标，用此方法设置您使用的坐标类型.
-        //包括BD09LL和GCJ02两种坐标，默认是BD09LL坐标。
-        SDKInitializer.setCoordType(CoordType.BD09LL);
         mMapView = findViewById(R.id.bmapView);
+        /**
+         * dialog 的view
+         */
         view = getLayoutInflater().inflate(R.layout.send_map_data, null);
         dialog = ChooseMapDialog.createDialog(this, view);
         intent = getIntent();
-        gradenId = intent.getIntExtra("gardenId", 1);
+        gardenId = intent.getIntExtra("gardenId", 1);
+        BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
+        BottomUtil bottomUtil = new BottomUtil(bottomNavigationBar,this,1);
+        /**
+         * 设置样式添加监听
+         */
+        bottomUtil.setBottomBarStytle();
+        initChooseMap();
+        initChoose();
         initMap();
         beginLoc();
+    }
+    /**
+     * 设置百度地图腾讯地图和goolemap的颜色
+     */
+    private void initChooseMap() {
+
+        TextView baiduText = findViewById(R.id.baidu_map);
+        TextView tecentText = findViewById(R.id.tecent_map);
+        TextView googleText = findViewById(R.id.google_map);
+        baiduText.setBackgroundColor(Color.RED);
+        tecentText.setBackgroundColor(0x99EEE6E6);
+        googleText.setBackgroundColor(0x99EEE6E6);
+
+        /**
+         * 点击百度地图进行跳转
+         */
+        tecentText.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              Intent intent = new Intent(BaiduMapActivity.this,TecentActivity.class);
+                                              intent.putExtra("gardenId",gardenId);
+                                              startActivity(intent);
+                                              finish();
+                                          }
+                                      }
+        );
+
+    }
+
+
+    private void initChoose() {
+
+        huayuan = view.findViewById(R.id.huayuan);
+        louceng = view.findViewById(R.id.louceng);
+        lu = view.findViewById(R.id.lu);
+        qita = view.findViewById(R.id.qita);
+
+        lat = view.findViewById(R.id.lat);
+        lng = view.findViewById(R.id.lng);
+
+        huayuan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                huayuan.setBackgroundColor(Color.RED);
+                louceng.setBackgroundColor(0x99EEE6E6);
+                lu.setBackgroundColor(0x99EEE6E6);
+                qita.setBackgroundColor(0x99EEE6E6);
+                choose = 0;
+            }
+        });
+
+        louceng.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                louceng.setBackgroundColor(Color.RED);
+                huayuan.setBackgroundColor(0x99EEE6E6);
+                lu.setBackgroundColor(0x99EEE6E6);
+                qita.setBackgroundColor(0x99EEE6E6);
+                choose = 1;
+            }
+        });
+        lu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                lu.setBackgroundColor(Color.RED);
+                louceng.setBackgroundColor(0x99EEE6E6);
+                huayuan.setBackgroundColor(0x99EEE6E6);
+                qita.setBackgroundColor(0x99EEE6E6);
+                choose = 2;
+            }
+        });
+        qita.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                qita.setBackgroundColor(Color.RED);
+                louceng.setBackgroundColor(0x99EEE6E6);
+                lu.setBackgroundColor(0x99EEE6E6);
+                huayuan.setBackgroundColor(0x99EEE6E6);
+                choose = 3;
+            }
+        });
     }
 
     private void beginLoc() {
@@ -71,12 +169,9 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         LocationClientOption option = new LocationClientOption();
         // 打开gps
         option.setOpenGps(true);
-        option.setScanSpan(1000);
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
-        option.setCoorType("bd09lll");
-        option.setIsNeedAddress(true);
-        option.setOpenAutoNotifyMode(3000, 1, LocationClientOption.LOC_SENSITIVITY_HIGHT);
-
+        option.setOpenAutoNotifyMode(1000, 0, LocationClientOption.LOC_SENSITIVITY_HIGHT);
+        option.setCoorType("bd09ll");
         //设置locationClientOption
         mLocationClient.setLocOption(option);
         //注册LocationListener监听器
@@ -87,10 +182,11 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
 
     private void initMap() {
         locButton = findViewById(R.id.dw_bt);
-
         locButton.setOnClickListener(this);
-
         baiduMap = mMapView.getMap();
+        /**
+         * 设置为卫星地图
+         */
         baiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
         baiduMap.setMyLocationEnabled(true);
 
@@ -127,21 +223,19 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     @Override
     public void onMapLongClick(final LatLng latLng) {
         dialog.show();
+        lat.setText((latLng.latitude+"").substring(0,7));
+        lng.setText((latLng.longitude+"").substring(0,7));
         view.findViewById(R.id.send_map_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("发送数据据", "onClick: ");
-                Log.d("发送数据", "onClick: ");
-                EditText name = view.findViewById(R.id.map_name);
-                EditText category = view.findViewById(R.id.map_category);
-                if (name.getText().toString() == null && name.getText().toString().length() == 0 && category.getText().toString() == null && category.getText().toString().length() == 0) {
+                EditText name = view.findViewById(R.id.input_msg);
+                if (name.getText().toString() == null && name.getText().toString().length() == 0) {
                     Toast.makeText(BaiduMapActivity.this, "请输入数据", Toast.LENGTH_SHORT).show();
                 } else {
-                    SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gradenId, 1);
+                    SendMapMsg sendMapMsg =  new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1,choose);
                     AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
                     try {
                         String result = (String) asyncTask.get();
-                        Log.d(">>>>", "onClick: "+result);
                         if (result != null) {
                             Toast.makeText(BaiduMapActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
                             //构造MarkerOptions对象
@@ -170,8 +264,10 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     public void onClick(View view) {
         MyLocationData locationData = baiduMap.getLocationData();
         LatLng ll = new LatLng(locationData.latitude, locationData.longitude);
-        MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(ll);
-        baiduMap.animateMapStatus(msu);
+        MapStatus.Builder builder = new MapStatus.Builder();
+        builder.target(ll).zoom(18.0f);
+        baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+
     }
 
 
@@ -187,7 +283,6 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
             }
             MyLocationData locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
-                    // 此处设置开发者获取到的方向信息，顺时针0-360
                     .direction(location.getDirection()).latitude(location.getLatitude())
                     .longitude(location.getLongitude()).build();
             baiduMap.setMyLocationData(locData);

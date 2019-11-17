@@ -2,18 +2,24 @@ package com.example.map.tecent_map;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.example.collectdata_01.R;
+import com.example.collectdata_01.util.BottomUtil;
 import com.example.dialog.ChooseMapDialog;
+import com.example.map.baidu_map.BaiduMapActivity;
 import com.example.map.net.SendMapMsg;
 import com.example.net.AsyncRequest;
 import com.tencent.map.geolocation.TencentLocation;
@@ -41,18 +47,62 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     private LocationListener listener;
     private Dialog dialog;
     private View view;
-    private int gradenId;
+    private int gardenId;
+    private TextView huayuan;
+    private TextView louceng;
+    private TextView lu;
+    private TextView qita;
+    private TextView lat;
+    private TextView lng;
+    private int choose;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tecent);
+        initChooseMap();
         mapview = findViewById(R.id.tecent_mapview);
         view = getLayoutInflater().inflate(R.layout.send_map_data, null);
         dialog = ChooseMapDialog.createDialog(this, view);
-        gradenId = getIntent().getIntExtra("gardenId", 1);
+        gardenId = getIntent().getIntExtra("gardenId", 1);
+
+        BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
+        BottomUtil bottomUtil = new BottomUtil(bottomNavigationBar,this,1);
+        /**
+         * 设置样式添加监听
+         */
+        bottomUtil.setBottomBarStytle();
+
         init();
         initLoc();
+    }
+
+    /**
+     * 设置百度地图腾讯地图和goolemap的颜色
+     */
+    private void initChooseMap() {
+
+        TextView baiduText = findViewById(R.id.baidu_map);
+        TextView tecentText = findViewById(R.id.tecent_map);
+        TextView googleText = findViewById(R.id.google_map);
+        baiduText.setBackgroundColor(0x99EEE6E6);
+        tecentText.setBackgroundColor(Color.RED);
+        googleText.setBackgroundColor(0x99EEE6E6);
+
+        /**
+         * 点击百度地图进行跳转
+         */
+        baiduText.setOnClickListener(new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View v) {
+                                             Intent intent = new Intent(TecentActivity.this, BaiduMapActivity.class);
+                                             intent.putExtra("gardenId",gardenId);
+                                             startActivity(intent);
+                                             finish();
+                                         }
+                                     }
+        );
 
     }
 
@@ -69,16 +119,70 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
      * 初始化腾讯地图配置
      */
     private void init() {
-
+        initChoose();
         listener = new LocationListener(this);
         tencentMap = mapview.getMap();
         uiSettings = tencentMap.getUiSettings();
         uiSettings.setMyLocationButtonEnabled(true);
+        // 设置卫星地图
+        tencentMap.setSatelliteEnabled(true);
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
         myLocationStyle.strokeColor(android.R.color.transparent);
         myLocationStyle.fillColor(android.R.color.transparent);
         tencentMap.setMyLocationStyle(myLocationStyle);
+    }
+
+    private void initChoose() {
+        huayuan = view.findViewById(R.id.huayuan);
+        louceng = view.findViewById(R.id.louceng);
+        lu = view.findViewById(R.id.lu);
+        qita = view.findViewById(R.id.qita);
+
+        lat = view.findViewById(R.id.lat);
+        lng = view.findViewById(R.id.lng);
+
+        huayuan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                huayuan.setBackgroundColor(Color.RED);
+                louceng.setBackgroundColor(0x99EEE6E6);
+                lu.setBackgroundColor(0x99EEE6E6);
+                qita.setBackgroundColor(0x99EEE6E6);
+                choose = 0;
+            }
+        });
+
+        louceng.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                louceng.setBackgroundColor(Color.RED);
+                huayuan.setBackgroundColor(0x99EEE6E6);
+                lu.setBackgroundColor(0x99EEE6E6);
+                qita.setBackgroundColor(0x99EEE6E6);
+                choose = 1;
+            }
+        });
+        lu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                lu.setBackgroundColor(Color.RED);
+                louceng.setBackgroundColor(0x99EEE6E6);
+                huayuan.setBackgroundColor(0x99EEE6E6);
+                qita.setBackgroundColor(0x99EEE6E6);
+                choose = 2;
+            }
+        });
+        qita.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                qita.setBackgroundColor(Color.RED);
+                louceng.setBackgroundColor(0x99EEE6E6);
+                lu.setBackgroundColor(0x99EEE6E6);
+                huayuan.setBackgroundColor(0x99EEE6E6);
+                choose = 3;
+            }
+        });
     }
 
 
@@ -133,24 +237,25 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     public void onMapLongClick(final LatLng latLng) {
 
         dialog.show();
+        lat.setText(latLng.latitude + "");
+        lng.setText(latLng.longitude + "");
         view.findViewById(R.id.send_map_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText name = view.findViewById(R.id.map_name);
-                EditText category = view.findViewById(R.id.map_category);
-                if (name.getText().toString() == null && name.getText().toString().length() == 0 && category.getText().toString() == null && category.getText().toString().length() == 0) {
-                    Toast.makeText(TecentActivity.this, "请输入数据", Toast.LENGTH_SHORT).show();
+                EditText name = view.findViewById(R.id.input_msg);
+                if (name.getText().toString() == null && name.getText().toString().length() == 0) {
+
                 } else {
-                    SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gradenId, 1);
+                    SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1, choose);
                     AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
                     try {
                         String result = (String) asyncTask.get();
-                        Log.d(">>>>", "onClick: "+result);
+                        Log.d(">>>>", "onClick: " + result);
                         if (result != null) {
                             Toast.makeText(TecentActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
                             tencentMap.addMarker(new MarkerOptions().
                                     position(latLng).
-                                    title("标记地点"));
+                                    title(name.getText().toString()));
                         }
                     } catch (ExecutionException e) {
                         Toast.makeText(TecentActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
@@ -158,7 +263,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                     } catch (InterruptedException e) {
                         Toast.makeText(TecentActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
-                    }finally {
+                    } finally {
                         dialog.cancel();
                     }
                 }
