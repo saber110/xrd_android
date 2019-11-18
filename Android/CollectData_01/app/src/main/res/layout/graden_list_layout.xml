@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#000000"
-        android:textSize="24dp"
+        android:textSize="@dimen/main_text_size"
         android:text="查询结果" />
 
 </LinearLayout>
