@@ -1,4 +1,4 @@
-package com.example.map.dao;
+package com.example.dao;
 
 public class MapData {
 

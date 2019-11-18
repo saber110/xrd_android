@@ -69,7 +69,6 @@
             android:layout_marginLeft="12dp"
             android:layout_marginTop="9dp"
             android:layout_marginRight="12dp"
-            android:layout_marginBottom="12dp"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -97,7 +96,7 @@
                         android:shadowRadius="1"
                         android:text="地图标定"
                         android:textColor="#FFFFFF"
-                        android:textSize="21sp"
+                        android:textSize="@dimen/main_text_size"
                         android:textStyle="bold" />
 
                     <ImageView
@@ -141,7 +140,7 @@
                         android:shadowRadius="1"
                         android:text="上传照片"
                         android:textColor="#FFFFFF"
-                        android:textSize="21sp"
+                        android:textSize="@dimen/main_text_size"
                         android:textStyle="bold" />
 
                     <ImageView
@@ -184,7 +183,7 @@
                         android:shadowRadius="1"
                         android:text="照片采集"
                         android:textColor="#FFFFFF"
-                        android:textSize="21sp"
+                        android:textSize="@dimen/main_text_size"
                         android:textStyle="bold" />
 
                     <ImageView
@@ -227,7 +226,7 @@
                         android:shadowRadius="1"
                         android:text="数据采集"
                         android:textColor="#FFFFFF"
-                        android:textSize="21sp"
+                        android:textSize="@dimen/main_text_size"
                         android:textStyle="bold" />
 
                     <ImageView
@@ -246,17 +245,37 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/position"
-        android:layout_width="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="地址" />
+        android:id="@+id/id_neighbour_chose"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/mtrl_card_spacing"
+        android:layout_marginTop="@dimen/mtrl_card_spacing"
+        android:layout_marginRight="@dimen/mtrl_card_spacing"
+        android:minHeight="35dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/main_text_size"
+            android:layout_marginLeft="@dimen/mtrl_card_spacing"
+            android:layout_gravity="center_vertical"
+            android:text="@string/label_neighbour"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_neighbour_working"
+            android:textSize="@dimen/main_text_size"
+            android:layout_marginRight="@dimen/mtrl_card_spacing"
+            android:layout_gravity="right|center_vertical"
+            android:text="@string/label_neighbour_working"/>
+    </com.google.android.material.card.MaterialCardView>
 
     <com.ashokvarma.bottomnavigation.BottomNavigationBar
         android:id="@+id/bottom_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mtrl_card_spacing"
         android:layout_gravity="bottom" />
 
 </LinearLayout>

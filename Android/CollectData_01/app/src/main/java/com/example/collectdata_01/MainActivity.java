@@ -1,11 +1,8 @@
 package com.example.collectdata_01;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,8 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +20,6 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
-import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.example.collectdata_01.adapter.GardenListAdapter;
 import com.example.collectdata_01.util.BottomUtil;
 import com.example.dialog.ChooseMapDialog;
@@ -35,32 +29,34 @@ import com.example.map.dao.SearchGardenResultDao;
 import com.example.map.net.AddGarden;
 import com.example.map.net.SearchGarden;
 import com.example.net.AsyncRequest;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity implements AMapLocationListener {
     RelativeLayout relativeLayout;
-    private TextView textView;
+    private MaterialCardView neighbourChose;
     private RelativeLayout mapLayout;
     private Dialog dialog;
     private View view;
     private RecyclerView recyclerView;
     private EditText searchKey;
+    private TextView neighbourWorking;
     private TextView addGardenBtn;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = findViewById(R.id.position);
+        neighbourChose = findViewById(R.id.id_neighbour_chose);
+        neighbourWorking = findViewById(R.id.id_neighbour_working);
         relativeLayout = (RelativeLayout) findViewById(R.id.zhaopian);
         mapLayout = (RelativeLayout) findViewById(R.id.ditu);
         view = getLayoutInflater().inflate(R.layout.map_enter_dialog_layout, null);
 
-        recyclerView =  view.findViewById(R.id.garden_list);
+        recyclerView = view.findViewById(R.id.garden_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false));
         /**
          * 获得弹出来的框框
@@ -72,60 +68,68 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         mapLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.show();
-                /**
-                 * 当用户点击了搜索
-                 */
-                view.findViewById(R.id.search_garden_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        SearchGarden searchGarden = new SearchGarden("token");
-                        AsyncTask asyncTask = new AsyncRequest().execute(searchGarden);
-                        try {
-                            SearchGardenResultDao gardenResultDao = (SearchGardenResultDao) asyncTask.get();
-                            if (gardenResultDao == null || gardenResultDao.getData() == null
-                                    || gardenResultDao.getData().getBuildingKinds().size() == 0
-                            ) {
-                                Toast.makeText(MainActivity.this, "无查询结果", Toast.LENGTH_SHORT).show();
-                            } else {
-                                GardenListAdapter gardenListAdapter = new GardenListAdapter(MainActivity.this, gardenResultDao.getData());
-                                recyclerView.setAdapter(gardenListAdapter);
-                            }
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
 
-                addGardenBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String key = searchKey.getText().toString();
-                        if (key.trim().length() == 0) {
-                            Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT).show();
-                        } else {
-                            AddGarden addGarden = new AddGarden(key);
-                            AsyncTask asyncTask = new AsyncRequest().execute(addGarden);
-                            try {
-                                AddGradenResult addGradenResult  = (AddGradenResult) asyncTask.get();
-                                if (addGradenResult.getCode() == 0) {
-                                    Toast.makeText(MainActivity.this,addGradenResult.getMessage(),Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(MainActivity.this, BaiduMapActivity.class);
-                                    intent.putExtra("gardenId",addGradenResult.getData().getGardenId());
-                                    startActivity(intent);
-                                }
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }finally {
-                            }
-                        }
-
+                Intent intent = new Intent(MainActivity.this, BaiduMapActivity.class);
+                startActivity(intent);
+            }
+        });
+        neighbourChose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            dialog.show();
+            /**
+             * 当用户点击了搜索
+             */
+            view.findViewById(R.id.search_garden_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                SearchGarden searchGarden = new SearchGarden("token");
+                AsyncTask asyncTask = new AsyncRequest().execute(searchGarden);
+                try {
+                    SearchGardenResultDao gardenResultDao = (SearchGardenResultDao) asyncTask.get();
+                    if (gardenResultDao == null || gardenResultDao.getData() == null
+                            || gardenResultDao.getData().getBuildingKinds().size() == 0
+                    ) {
+                        Toast.makeText(MainActivity.this, "无查询结果", Toast.LENGTH_SHORT).show();
+                    } else {
+                        GardenListAdapter gardenListAdapter = new GardenListAdapter(MainActivity.this, gardenResultDao.getData(), neighbourWorking);
+                        recyclerView.setAdapter(gardenListAdapter);
                     }
-                });
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                }
+            });
+
+            addGardenBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                String key = searchKey.getText().toString();
+                if (key.trim().length() == 0) {
+                    Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT).show();
+                } else {
+                    AddGarden addGarden = new AddGarden(key);
+                    AsyncTask asyncTask = new AsyncRequest().execute(addGarden);
+                    try {
+                        AddGradenResult addGradenResult  = (AddGradenResult) asyncTask.get();
+                        if (addGradenResult.getCode() == 0) {
+                            Toast.makeText(MainActivity.this,addGradenResult.getMessage(),Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(MainActivity.this, BaiduMapActivity.class);
+                            intent.putExtra("gardenId",addGradenResult.getData().getGardenId());
+                            startActivity(intent);
+                        }
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }finally {
+                    }
+                }
+
+                }
+            });
             }
         });
 
@@ -145,9 +149,6 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
          * 设置样式添加监听
          */
         bottomUtil.setBottomBarStytle();
-
-
-        checkPermissions(needPermissions);
         getLocPosition();
 
     }
@@ -182,50 +183,13 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         mapLocationClient.startLocation();
     }
 
-    /**
-     * 需要进行检测的权限数组
-     */
-    protected String[] needPermissions = {
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.CAMERA,
-    };
-
-
-    /**
-     * 检测权限
-     * 地图sdk所必需的权限
-     *
-     * @param needPermissions
-     */
-    private void checkPermissions(String[] needPermissions) {
-        // 假如手机的版本大于23 ， 则申请权限
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            for (String permission : needPermissions) {
-                // 假如已经授权
-                if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                    continue;
-                } else {
-                    ActivityCompat.requestPermissions(this, needPermissions, 1);
-                }
-            }
-        }
-        // 假如手机版本低于23
-        else {
-            Log.d("授权tag", "checkPermissions: 手机版本低于23");
-        }
-    }
-
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         Log.d("地址", "onLocationChanged: " + aMapLocation);
-        if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
-            textView.setText(aMapLocation.getAddress());
-        }
     }
 
+    public void dialogCancel(){
+        dialog.cancel();
+    }
 }
