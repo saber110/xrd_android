@@ -12,9 +12,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from . import generate_result
 from .. import config
 from ..models.base_model import db
+from ..models.city import City
 from ..models.community import Community
 from ..models.district import District
 from ..models.garden import Garden
+from ..models.province import Province
 from ..models.street import Street
 from ..wraps import token_check, super_admin_required
 
@@ -30,12 +32,44 @@ def have_empty_str(the_list_like) -> bool:
     return False
 
 
+@administration_bp.route('/province', methods=['POST'])
+@token_check
+def province(*args, **kwargs):
+    provinces = Province.query.all()
+    data = {'provinces': [i.to_dict for i in provinces]}
+    return generate_result(0, '获取省份数据成功', data)
+
+
+@administration_bp.route('/city', methods=['POST'])
+@token_check
+def city(*args, **kwargs):
+    data = request.get_json()
+    if 'provinceId' in data:
+        provinceId = data['provinceId']
+        cities = City.query.filter_by(provinceId=provinceId).all()
+        result_list = []
+        for i in cities:
+            the_dict = i.to_dict
+            the_dict.pop('provinceId')
+            result_list.append(the_dict)
+        return generate_result(0, '获取城市数据成功', {'cities': result_list})
+    return generate_result(1)
+
+
 @administration_bp.route('/district', methods=['POST'])
 @token_check
 def district(*args, **kwargs):
-    districts = District.query.all()
-    data = {'districts': [i.to_dict for i in districts]}
-    return generate_result(0, '获取行政区数据成功', data)
+    data = request.get_json()
+    if 'cityId' in data:
+        cityId = data['cityId']
+        districts = District.query.filter_by(cityId=cityId).all()
+        result_list = []
+        for i in districts:
+            the_dict = i.to_dict
+            the_dict.pop('cityId')
+            result_list.append(the_dict)
+        return generate_result(0, '获取行政区数据成功', {'districts': result_list})
+    return generate_result(1)
 
 
 @administration_bp.route('/street', methods=['POST'])
