@@ -336,7 +336,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'neighborGarden',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -344,7 +345,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'mainRoad',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -361,7 +363,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'busStation',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -377,7 +380,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'baseBus',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -385,7 +389,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'quickBus',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -401,7 +406,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'subwayStation',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -425,7 +431,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'farmerMarket',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -433,7 +440,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'market',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -441,7 +449,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'hospital',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -449,7 +458,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'bank',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -457,7 +467,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'gym',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -465,7 +476,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'organization',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -473,7 +485,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'kindergarten',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -481,7 +494,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'primary',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -489,7 +503,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'middle',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -497,7 +512,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'college',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -505,7 +521,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'attractions',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
@@ -513,7 +530,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'park',
             'required': False,
             'changed': True,
-            'type': 'text',
+            'type': 'map',
+            'radius': 100,
             'value': ''
         },
         {
