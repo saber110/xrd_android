@@ -4,10 +4,12 @@
 # @contact : yinaoxiong@gmail.com
 # @Desc : 用户数据相关处理
 
+import openpyxl as excel
 from flask import request, Blueprint
+from openpyxl.utils.exceptions import InvalidFileException
 from sqlalchemy.exc import SQLAlchemyError
 
-from . import generate_result, generate_validator
+from . import generate_result, generate_validator, is_excel_end
 from .. import config
 from ..models.base_model import db
 from ..models.user import User
@@ -48,6 +50,39 @@ def register(*args, **kwargs):
                 db.session.rollback()
                 fail_ids.append(index)
         return generate_result(0, data={'fail_ids': fail_ids})
+
+
+@user_bp.route('/import_user', methods=['POST'])
+def import_user(*args, **kwargs):
+    """
+    从文件导入新用户
+    """
+    try:
+        file = request.files['file']
+    except KeyError:
+        return generate_result(1)
+    try:
+        table = excel.load_workbook(file, read_only=True)
+    except InvalidFileException:
+        return generate_result(2, '仅支持.xlsx格式的文件')
+    if 'user' not in table.sheetnames:
+        return generate_result(2, '不存在名称为user的sheet')
+    sheet = table['user']
+    fail_row = []
+    for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=5, values_only=True)):
+        if is_excel_end(row):
+            break
+        new_user = User(iemi=row[0], realName=row[1], phoneNumber=row[2], password=str(row[3]), permission=row[4])
+        new_user.set_password(new_user.password)
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            fail_row.append(index)
+    if len(fail_row) != 0:
+        return generate_result(0, '添加部分用户数据失败', {'fail_row': fail_row})
+    return generate_result(0, '添加用户数据成功')
 
 
 @user_bp.route('/login', methods=['POST'])

@@ -9,7 +9,7 @@ from flask import request, Blueprint
 from openpyxl.utils.exceptions import InvalidFileException
 from sqlalchemy.exc import SQLAlchemyError
 
-from . import generate_result
+from . import generate_result, is_excel_end
 from .. import config
 from ..models.base_model import db
 from ..models.city import City
@@ -21,15 +21,6 @@ from ..models.street import Street
 from ..wraps import token_check, super_admin_required
 
 administration_bp = Blueprint('administration', __name__, url_prefix=config.URL_Prefix + '/administration')
-
-
-def have_empty_str(the_list_like) -> bool:
-    if None in the_list_like:
-        return True
-    for item in the_list_like:
-        if item.strip() == '':
-            return True
-    return False
 
 
 @administration_bp.route('/province', methods=['POST'])
@@ -142,7 +133,7 @@ def import_data(*args, **kwargs):
         sheet = table['行政区']
         district_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=1, values_only=True)):
-            if have_empty_str(row):
+            if is_excel_end(row):
                 break  # 以防出现excel末尾存在大量空值
             the_district = District(name=row[0])
             try:
@@ -156,7 +147,7 @@ def import_data(*args, **kwargs):
         sheet = table['行政区_街道']
         street_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=2, values_only=True)):
-            if have_empty_str(row):
+            if is_excel_end(row):
                 break
             the_district = District.query.filter_by(name=row[0]).first()
             if the_district is not None:
@@ -175,7 +166,7 @@ def import_data(*args, **kwargs):
         sheet = table['行政区_街道_社区']
         community_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=3, values_only=True)):
-            if have_empty_str(row):
+            if is_excel_end(row):
                 break
             the_district = District.query.filter_by(name=row[0]).first()
             if the_district is not None:
@@ -196,7 +187,7 @@ def import_data(*args, **kwargs):
         sheet = table['行政区_街道_社区_小区']
         garden_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=4, values_only=True)):
-            if have_empty_str(row):
+            if is_excel_end(row):
                 break
             the_district = District.query.filter_by(name=row[0]).first()
             if the_district is not None:
