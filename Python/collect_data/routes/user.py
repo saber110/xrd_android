@@ -53,6 +53,8 @@ def register(*args, **kwargs):
 
 
 @user_bp.route('/import_user', methods=['POST'])
+@token_check
+@super_admin_required
 def import_user(*args, **kwargs):
     """
     从文件导入新用户
