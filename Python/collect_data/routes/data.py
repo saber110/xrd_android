@@ -39,6 +39,8 @@ def garden(*args, **kwargs):
     """
     data = request.get_json()
     schema = {
+        'provinceId': {'type': 'integer', 'min': 1},
+        'cityId': {'type': 'integer', 'min': 1},
         'districtId': {'type': 'integer', 'min': 1},
         "streetId": {'type': 'integer', 'min': 1},
         "communityId": {'type': 'integer', 'min': 1},
@@ -344,4 +346,3 @@ def building_info(user_id: int, *args, **kwargs):
         db.session.rollback()
         return generate_result(2)
     return generate_result(0, '提交楼栋信息成功')
-
