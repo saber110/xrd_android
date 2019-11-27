@@ -227,7 +227,7 @@
                   <h4 class="card-title">上传数据</h4>
                 </div>
                 <div class="card-body">
-                  <form id = "administrationUpload" enctype="multipart/form-data">
+                  <form  enctype="multipart/form-data">
                     <div class="row">
                       <div class="col-md-12">
                         <div class="fileinput fileinput-new input-group" data-provides="fileinput">
@@ -241,7 +241,7 @@
 
                             <span class="input-group-text btn-file">
                               <span class="fileinput-exists">更改文件</span>
-                              <input type="file" name="..." multiple>
+                              <input type="file" id = "administrationUpload" name="..." multiple>
                             </span>
                             <button type="button" id="btnAdministrationUpload" class="btn btn-primary pull-right" onclick="adminUpdateFun()">上传文件</button>
                           </span>
