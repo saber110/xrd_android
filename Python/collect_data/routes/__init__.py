@@ -57,8 +57,29 @@ def generate_validator(schema: dict) -> cerberus.Validator:
 
 
 def my_send_file(filename_or_fp, mimetype=None, attachment_filename=None):
+    """
+    发送中文名称的文件
+    :param filename_or_fp:
+    :param mimetype:
+    :param attachment_filename:
+    :return:
+    """
     rv = send_file(filename_or_fp, mimetype)
     if attachment_filename is not None:
         attachment_filename = quote(attachment_filename)
         rv.headers['Content-Disposition'] = f"attachment;filename*=utf-8''{attachment_filename}"
     return rv
+
+
+def is_excel_end(the_list_like) -> bool:
+    """
+    用于判断excel表格是否终止
+    :param the_list_like:
+    :return:
+    """
+    if None in the_list_like:
+        return True
+    for item in the_list_like:
+        if str(item).strip() == '':
+            return True
+    return False

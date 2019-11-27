@@ -39,6 +39,7 @@ class GardenBaseInfo(BaseModel):
     askRecode = db.Column(db.Text, nullable=False, comment='询价记录')
     closed = db.Column(db.String(1), nullable=False, comment='是否封闭')
     managementKind = db.Column(db.Text, nullable=False, comment='物业管理分类')
+    beginPrice = db.Column(db.Text, comment='价格初判')
     otherInfo = db.Column(db.Text, comment='小区概况表其它信息备注')
     neighborGarden = db.Column(db.Text, comment='相邻小区')
     mainRoad = db.Column(db.Text, comment='交通干道')
