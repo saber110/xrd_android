@@ -227,7 +227,7 @@
                   <h4 class="card-title">上传数据</h4>
                 </div>
                 <div class="card-body">
-                  <form>
+                  <form id = "administrationUpload" enctype="multipart/form-data">
                     <div class="row">
                       <div class="col-md-12">
                         <div class="fileinput fileinput-new input-group" data-provides="fileinput">
@@ -243,12 +243,11 @@
                               <span class="fileinput-exists">更改文件</span>
                               <input type="file" name="..." multiple>
                             </span>
-                            <button type="submit" class="btn btn-primary pull-right">上传文件</button>
+                            <button type="button" id="btnAdministrationUpload" class="btn btn-primary pull-right" onclick="adminUpdateFun()">上传文件</button>
                           </span>
                         </div>
                       </div>
                     </div>
-
                   </form>
                 </div>
               </div>
@@ -304,7 +303,8 @@
   <script src="../assets/demo/demo.js"></script>
   
   <script src="../assets/js/jquery.nestable.js"></script>
-
+  <script type="text/javascript" src="../assets/js/interface.js"></script>
+  
   <script>
     $(document).ready(function() {
       $().ready(function() {

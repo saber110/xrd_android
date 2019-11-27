@@ -115,7 +115,7 @@
             <form class="navbar-form">
               <div class="input-group no-border">
                 <input type="text" value="" class="form-control" placeholder="Search...">
-                <button type="submit" class="btn btn-white btn-round btn-just-icon">
+                <button type="button" class="btn btn-white btn-round btn-just-icon">
                   <i class="material-icons">search</i>
                   <div class="ripple-container"></div>
                 </button>
@@ -174,30 +174,30 @@
                 <div class="card-header card-header-tabs card-header-primary">
                   <form class="form">
                     <span id="city_china_val" class="bmd-form-group"><div class="input-group no-border">
-                        <select class="province other form-control" data-first-title="选择省">
+                        <select class="province other form-control" data-first-title="选择省" id = "province">
                           <option value="">请选择</option>
-                          <option value="湖南省" selected>湖南省</option>
+                          <!-- <option value="湖南省" selected>湖南省</option> -->
                         </select>
-                        <select class="city form-control" data-first-title="选择市">
+                        <select class="city form-control" data-first-title="选择市"  id = "city">
                           <option value="">请选择</option>
-                          <option value="长沙市" selected>长沙市</option>
+                          <!-- <option value="长沙市" selected>长沙市</option> -->
                         </select>
-                        <select class="area form-control" data-first-title="选择地区">
+                        <select class="area form-control" data-first-title="选择地区" id = "district">
                           <option value="">请选择</option>
-                          <option value="芙蓉区" selected>芙蓉区</option>
+                          <!-- <option value="芙蓉区" selected>芙蓉区</option> -->
                         </select>
-                        <select class="street form-control" data-first-title="选择地区">
+                        <select class="street form-control" data-first-title="选择街道" id = "street">
                           <option value="">请选择</option>
-                          <option value="文艺路街道" selected>文艺路街道</option>
+                          <!-- <option value="文艺路街道" selected>文艺路街道</option> -->
                         </select>
-                        <select class="community form-control" data-first-title="选择地区">
+                        <select class="community form-control" data-first-title="选择社区" id = "community">
                           <option value="">请选择</option>
-                          <option value="识字岭社区" selected>识字岭社区</option>
+                          <!-- <option value="识字岭社区" selected>识字岭社区</option> -->
                         </select>
-                      <button type="submit" class="btn btn-white btn-round btn-just-icon">
+                      <!-- <button type="submit" class="btn btn-white btn-round btn-just-icon">
                         <i class="material-icons">search</i>
                         <div class="ripple-container"></div>
-                      </button>
+                      </button> -->
                     </div>
                   </span>
                   </form>
@@ -206,21 +206,27 @@
                     <div class="nav-tabs-wrapper">
                       <span class="nav-tabs-title">Tasks:</span>
                       <ul class="nav nav-tabs" data-tabs="tabs">
-                        <li class="nav-item">
-                          <a class="nav-link active" href="#profile" data-toggle="tab">
-                            <i class="material-icons">bug_report</i> 表一
+                        <li class="nav-item" id = "getTable1" onclick="getExcelDataOfTable(1, 'gardenInfo')">
+                          <a class="nav-link active" href="#table1" data-toggle="tab">
+                            <i class="material-icons">bug_report</i> 小区概况表
+                            <div class="ripple-container"></div>
+                          </a>
+                        </li>
+                        <li class="nav-item" id = "getTable2" onclick="getExcelDataOfTable(2, 'buildingInfo')">
+                          <a class="nav-link" href="#table2" data-toggle="tab">
+                            <i class="material-icons">code</i> 楼幢调查表
                             <div class="ripple-container"></div>
                           </a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="#messages" data-toggle="tab">
-                            <i class="material-icons">code</i> 表二
+                          <a class="nav-link" id = "getTable3" href="#table3" data-toggle="tab">
+                            <i class="material-icons">cloud</i> 小区信息数据导入表
                             <div class="ripple-container"></div>
                           </a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="#settings" data-toggle="tab">
-                            <i class="material-icons">cloud</i> 表三
+                          <a class="nav-link" id = "getTable4" href="#table4" data-toggle="tab">
+                            <i class="material-icons">cloud</i> 楼幢信息数据导入表
                             <div class="ripple-container"></div>
                           </a>
                         </li>
@@ -230,15 +236,18 @@
                 </div>
                 <div class="card-body" style="overflow-x:auto">
                   <div class="tab-content">
-                    <div class="tab-pane active" id="profile" >
-                      <div id="spreadsheet" style="padding-right:10px"></div>
+                    <div class="tab-pane active" id="table1" >
+                      <div id="spreadsheet1" style="padding-right:10px"></div>
                     </div>
-                    <div class="tab-pane" id="messages">
-                      <div id="spreadsheet" style="padding-right:10px"></div>
+                    <div class="tab-pane" id="table2">
+                      <div id="spreadsheet2" style="padding-right:10px"></div>
 
                     </div>
-                    <div class="tab-pane" id="settings">
-                      <div id="spreadsheet" style="padding-right:10px"></div>
+                    <div class="tab-pane" id="table3">
+                      <div id="spreadsheet3" style="padding-right:10px"></div>
+                    </div>
+                    <div class="tab-pane" id="table4">
+                      <div id="spreadsheet4" style="padding-right:10px"></div>
                     </div>
                   </div>
                 </div>
@@ -291,13 +300,32 @@
   <script src="../assets/js/plugins/bootstrap-notify.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
-  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-  <script src="../assets/demo/demo.js"></script>
+  <script type="text/javascript" src="../assets/js/interface.js"></script>
   <!-- excel -->
   <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
   <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
-  <script>
 
+  <script type="text/javascript" src="../assets/js/plugins/city.js"></script>
+  <script type="text/javascript">
+    function getExcelDataOfTable(tableId, idName) {
+      var communityId = communitySelect.options[communitySelect.options.selectedIndex].value;
+      var excelData = getExcelData(tableId, idName, communityId);
+      var main = document.getElementById('spreadsheet' + tableId);
+      $("#getTable" + tableId).removeAttr("onclick");
+      for(var p in excelData){
+        var div = document.createElement("div");
+        div.id = 'spreadsheet' + tableId + p;
+        div.innerHTML = excelData[p].name;
+        main.appendChild(div);
+
+        // jexcel(document.getElementById('spreadsheet1' + p), {
+        //   data: excelData[p].gardenInfo,
+        //   columns: excelData[p].header
+        // });
+      }
+    }
+  </script>
+  <script>
     document.addEventListener('DOMContentLoaded', function() {
       var data = [
           ['BR', 'Cheese', 1],
@@ -306,8 +334,9 @@
           ['GB', 'Oranges', 0],
       ];
 
-      table = jexcel(document.getElementById('spreadsheet'), {
-          data:data,
+      tableTest = jexcel(document.getElementById('spreadsheet1'), {
+          // data:getExcelData(1, 'gardenId', 1).gardenInfo
+          data: data,
           columns: [
               {
                   title: '采集人员',
@@ -451,27 +480,18 @@
                   width:'100'
               },
           ],
-          // nestedHeaders:[
-          //     [
-          //         {
-          //             title: '表一',
-          //             colspan: '3',
-          //         },
-          //     ],
-          //     [
-          //         {
-          //             title: '特征码',
-          //             colspan: '1',
-          //         },
-          //         {
-          //             title: ' 数据',
-          //             colspan: '2'
-          //         }
-          //     ],
-          // ],
+          nestedHeaders:[
+              [
+                  {
+                      title: '表一',
+                      colspan: '30',
+                  },
+              ],
+          ],
           columnDrag:true,
       });
     });
+
   </script>
   <script>
     $(document).ready(function() {
@@ -644,8 +664,8 @@
       });
     });
   </script>
-  <script src="../assets/js/jquery.cxselect.js"></script>
-  <script>
+  <!-- <script src="../assets/js/jquery.cxselect.js"></script> -->
+<!--   <script>
   (function() {
     var urlChina = '../assets/js/data.min.js';
     var urlGlobal = 'js/globalData.min.json';
@@ -763,7 +783,7 @@
       };
     });
   })();
-  </script>
+  </script> -->
 </body>
 
 </html>

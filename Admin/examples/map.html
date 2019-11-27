@@ -100,7 +100,32 @@
         <div class="container-fluid">
           <div class="navbar-wrapper">
             <a class="navbar-brand">地图数据管理</a>
+
           </div>
+            <span id="city_china_val" class="bmd-form-group">
+              <div class="input-group no-border">
+                <select class="province other form-control" data-first-title="选择省" id = "province">
+                  <option value="">请选择</option>
+                  <!-- <option value="湖南省" selected>湖南省</option> -->
+                </select>
+                <select class="city form-control" data-first-title="选择市"  id = "city">
+                  <option value="">请选择</option>
+                  <!-- <option value="长沙市" selected>长沙市</option> -->
+                </select>
+                <select class="area form-control" data-first-title="选择地区" id = "district">
+                  <option value="">请选择</option>
+                  <!-- <option value="芙蓉区" selected>芙蓉区</option> -->
+                </select>
+                <select class="street form-control" data-first-title="选择街道" id = "street">
+                  <option value="">请选择</option>
+                  <!-- <option value="文艺路街道" selected>文艺路街道</option> -->
+                </select>
+                <select class="community form-control" data-first-title="选择社区" id = "community">
+                  <option value="">请选择</option>
+                  <!-- <option value="识字岭社区" selected>识字岭社区</option> -->
+                </select>
+              </div>
+            </span>
           <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
             <span class="sr-only">Toggle navigation</span>
             <span class="navbar-toggler-icon icon-bar"></span>
@@ -161,8 +186,13 @@
         </div>
       </nav>
       <!-- End Navbar -->
-
+      <div class="content">
+        <ul class="nav">
+          <span class="input-group " id = "neighboutLists">
+          </span>
+        </ul>
       <div id="map"></div>
+      </div>
     </div>
   </div>
   <!--   Core JS Files   -->
@@ -198,16 +228,64 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
   <!-- Library for adding dinamically elements -->
   <script src="../assets/js/plugins/arrive.min.js"></script>
-  <!--  Google Maps Plugin    -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2Yno10-YTnLjjn_Vtk0V8cdcY5lC4plU"></script>
   <!-- Chartist JS -->
   <script src="../assets/js/plugins/chartist.min.js"></script>
   <!--  Notifications Plugin    -->
   <script src="../assets/js/plugins/bootstrap-notify.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
-  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-  <script src="../assets/demo/demo.js"></script>
+  <script type="text/javascript" src="../assets/js/interface.js"></script>
+  <script type="text/javascript" src="../assets/js/plugins/city.js"></script>
+  <script type="text/javascript">
+    communitySelect.onchange = function() {
+      var communityId = communitySelect.options[communitySelect.options.selectedIndex].value;
+      var gardens = getGardenListOfCommunity(communityId);
+      var neighboutLists = document.getElementById("neighboutLists");
+      for(var p in gardens){
+        var li = document.createElement("li");
+        li.className = "nav-item";
+        var a = document.createElement("a");
+        a.className = "nav-link";
+        a.id = "gardenId" + gardens[p].id;
+        a.innerHTML = gardens[p].name;
+        a.href = "#";
+        a.setAttribute("onclick" ,"mapLabel(" + gardens[p].id +", "+ BAIDU_MAP + " )");
+        li.appendChild(a);
+        neighboutLists.appendChild(li);
+      }
+    };
+  </script>
+  <script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=PpyyQWRBVwW0cObcp1KGGIXGSjIesAl3"></script>
+  <script type="text/javascript">
+    //百度地图API功能
+    var mapbd = new BMap.Map("map");            // 创建Map实例
+    mapbd.centerAndZoom("北京",11);                 
+    mapbd.enableScrollWheelZoom();                 //启用滚轮放大缩小
+    mapbd.addControl(new BMap.MapTypeControl({
+    mapTypes:[
+            BMAP_NORMAL_MAP,
+            BMAP_HYBRID_MAP
+        ]}));
+    mapbd.addEventListener("click",function(e){
+      console.log(e.point.lng + "," + e.point.lat);
+    });
+  
+  </script>
+  <script type="text/javascript">
+    function mapLabel(gardenId, mapId) {
+      var mapData = getMapDataFun(1, BAIDU_MAP);
+      for(var p in mapData) {
+        var point = new BMap.Point(mapData[p].longitude, mapData[p].latitude);
+        var opts = {
+          position : point    // 指定文本标注所在的地理位置
+        }
+        var label = new BMap.Label(mapData[p].name, opts);  // 创建文本标注对象
+        mapbd.addOverlay(label);
+      }
+      // 设置地图中心
+      mapbd.centerAndZoom(new BMap.Point(mapData[0].longitude, mapData[0].latitude),15);      
+    }
+  </script>
   <script>
     $(document).ready(function() {
       $().ready(function() {
@@ -377,12 +455,6 @@
 
         });
       });
-    });
-  </script>
-  <script>
-    $(document).ready(function() {
-      // Javascript method's body can be found in assets/js/demos.js
-      demo.initGoogleMaps();
     });
   </script>
 </body>
