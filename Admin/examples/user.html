@@ -194,15 +194,14 @@
           <div class="row">
             <div class="col-md-6">
               <div class="card">
-                <form id = "userUpload" enctype="multipart/form-data">
+                <form enctype="multipart/form-data">
                   <div class="card-header card-header-primary">
                     <div class="row">
                         <div class="col-md-12">
                           <span>
                             <h4 class="card-title">用户添加
-                              <button type="submit" class="btn btn-primary pull-right">上传文件</button>                         
+                              <button type="button" onclick="userUploadFun()" class="btn btn-primary pull-right">上传文件</button>                         
                             </h4>
-                            <p class="card-category">密码自动生成</p>
                           </span>
                         </div>
                       </div>                  
@@ -221,7 +220,7 @@
 
                               <span class="input-group-text btn-file">
                                 <span class="fileinput-exists">更改文件</span>
-                                <input type="file" name="..." multiple>
+                                <input type="file" id = "userUpload" name="..." multiple>
                               </span>
                             </span>
                           </div>
@@ -292,31 +291,7 @@
     var Lists = getUserLists();
     console.log(Lists);
     document.addEventListener('DOMContentLoaded', function() {
-      var data = [
-          {
-            iemi: "11111111111",
-            name:'Paul Hodel',
-            phoneNum:'3',
-            privilidge: 1,
-            valid: 1
-          },
-          {
-            iemi: "11111111111",
-            name:'Paul Hodel',
-            phoneNum:'3',
-            privilidge: 1,
-            valid:1
-          },
-          {
-            iemi: "11111111111",
-            name:'Paul Hodel',
-            phoneNum:'3',
-            privilidge: 1,
-            valid:1
-          }
-      ];
-
-      table = jexcel(document.getElementById('spreadsheet'), {
+      jexcel(document.getElementById('spreadsheet'), {
           data:Lists.all_info,
           columns: [
               {
@@ -344,24 +319,6 @@
                   width:'100'
               }
           ],
-          // nestedHeaders:[
-          //     [
-          //         {
-          //             title: 'Supermarket information',
-          //             colspan: '3',
-          //         },
-          //     ],
-          //     [
-          //         {
-          //             title: 'Location',
-          //             colspan: '1',
-          //         },
-          //         {
-          //             title: ' Other Information',
-          //             colspan: '2'
-          //         }
-          //     ],
-          // ],
           columnDrag:true,
       });
     });

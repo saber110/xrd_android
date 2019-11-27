@@ -266,7 +266,7 @@ function adminUpdateFun() {
 function uploadFun(id) {
 	var formData = new FormData();
 	formData.append("token",getCookie("token"));
-	formData.append("file", document.getElementById(id));
+	formData.append("file", document.getElementById(id).files[0]);
 	$.ajax({
 		url: fileUpload,
 		method: "POST",
