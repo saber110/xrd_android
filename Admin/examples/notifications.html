@@ -170,44 +170,34 @@
               <div class="card card-plain">
                 <div class="card-header card-header-tabs card-header-primary">
                   <form class="form">
-                    <span id="city_china_val" class="bmd-form-group">
-                      <div class="input-group no-border">
-                        <select class="province other form-control" data-first-title="选择省">
+                    <span id="city_china_val" class="bmd-form-group"><div class="input-group no-border">
+                        <select class="province other form-control" data-first-title="选择省" id = "province">
                           <option value="">请选择</option>
-                          <option value="湖南省" selected>湖南省</option>
+                          <!-- <option value="湖南省" selected>湖南省</option> -->
                         </select>
-                        <select class="city form-control" data-first-title="选择市">
+                        <select class="city form-control" data-first-title="选择市"  id = "city">
                           <option value="">请选择</option>
-                          <option value="长沙市" selected>长沙市</option>
+                          <!-- <option value="长沙市" selected>长沙市</option> -->
                         </select>
-                        <select class="area form-control" data-first-title="选择地区">
+                        <select class="area form-control" data-first-title="选择地区" id = "district">
                           <option value="">请选择</option>
-                          <option value="芙蓉区" selected>芙蓉区</option>
+                          <!-- <option value="芙蓉区" selected>芙蓉区</option> -->
                         </select>
-                        <select class="street form-control" data-first-title="选择地区">
+                        <select class="street form-control" data-first-title="选择街道" id = "street">
                           <option value="">请选择</option>
-                          <option value="文艺路街道" selected>文艺路街道</option>
+                          <!-- <option value="文艺路街道" selected>文艺路街道</option> -->
                         </select>
-                        <select class="community form-control" data-first-title="选择地区">
+                        <select class="community form-control" data-first-title="选择社区" id = "community">
                           <option value="">请选择</option>
-                          <option value="识字岭社区" selected>识字岭社区</option>
+                          <!-- <option value="识字岭社区" selected>识字岭社区</option> -->
                         </select>
-                        <button type="submit" class="btn btn-white btn-round btn-just-icon">
-                          <i class="material-icons">search</i>
-                          <div class="ripple-container"></div>
-                        </button>
-                      </div>
-                    </span>
+                    </div>
+                  </span>
                   </form>
-
                 </div>
                 <div class="row">
                   <ul class="nav">
-                    <span class="input-group ">
-                    <li class="nav-item  "><a href="#" class="nav-link">小区1</a></li>
-                    <li class="nav-item  "><a href="#" class="nav-link">小区2</a></li>
-                    <li class="nav-item  "><a href="#" class="nav-link">小区3</a></li>
-                    <li class="nav-item  "><a href="#" class="nav-link">小区4</a></li>
+                    <span class="input-group " id = "neighboutLists">
                     </span>
                   </ul>
                 </div>
@@ -292,10 +282,28 @@
   <script src="../assets/js/plugins/bootstrap-notify.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
-  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-  <script src="../assets/demo/demo.js"></script>
   <!-- album -->
   <script src="../assets/js/jquery.bsPhotoGallery.js"></script>
+  <script type="text/javascript" src="../assets/js/interface.js"></script>
+  <script type="text/javascript" src="../assets/js/plugins/city.js"></script>
+  <script type="text/javascript">
+    communitySelect.onchange = function() {
+      var communityId = communitySelect.options[communitySelect.options.selectedIndex].value;
+      var gardens = getGardenListOfCommunity(communityId);
+      var neighboutLists = document.getElementById("neighboutLists");
+      for(var p in gardens){
+        var li = document.createElement("li");
+        li.className = "nav-item";
+        var a = document.createElement("a");
+        a.className = "nav-link";
+        a.id = "gardenId" + gardens[p].id;
+        a.innerHTML = gardens[p].name;
+        a.href = "#";
+        li.appendChild(a);
+        neighboutLists.appendChild(li);
+      }
+    };
+  </script>
   <script>
     $(document).ready(function(){
       $('ul.first').bsPhotoGallery({
@@ -474,12 +482,6 @@
 
         });
       });
-    });
-  </script>
-  <script>
-    $(document).ready(function() {
-      //init DateTimePickers
-      md.initFormExtendedDatetimepickers();
     });
   </script>
 </body>

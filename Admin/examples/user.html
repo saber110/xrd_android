@@ -31,8 +31,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
   <!-- CSS Files -->
   <link href="../assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
-  <!-- CSS Just for demo purpose, don't include it in your project -->
-  <link href="../assets/demo/demo.css" rel="stylesheet" />
   <!-- file upload -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/css/jasny-bootstrap.min.css" />
   <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
@@ -43,11 +41,6 @@
 <body class="">
   <div class="wrapper ">
     <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
-      <!--
-        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
-
-        Tip 2: you can also add an image using data-image tag
-    -->
       <div class="logo">
         <a href="http://www.creative-tim.com" class="simple-text logo-normal">
           数据管理
@@ -201,7 +194,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="card">
-                <form>
+                <form id = "userUpload" enctype="multipart/form-data">
                   <div class="card-header card-header-primary">
                     <div class="row">
                         <div class="col-md-12">
@@ -244,11 +237,10 @@
     </div>
   </div>
   <!--   Core JS Files   -->
-  <script type="text/javascript" src="../assets/js/interface.js"></script>
-    <script type="text/javascript">
+  <script type="text/javascript">
     function testGetJson() {
       // console.log(table.getJson());
-      loginFun(1,1);
+      getUserLists();
       // updateUser(table.getJson());
     }
   </script>
@@ -284,24 +276,21 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
   <!-- Library for adding dinamically elements -->
   <script src="../assets/js/plugins/arrive.min.js"></script>
-  <!--  Google Maps Plugin    -->
-  <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script> -->
   <!-- Chartist JS -->
   <script src="../assets/js/plugins/chartist.min.js"></script>
   <!--  Notifications Plugin    -->
   <script src="../assets/js/plugins/bootstrap-notify.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
-  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-  <script src="../assets/demo/demo.js"></script>
   <!-- file upload -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/js/jasny-bootstrap.min.js"></script>
   <!-- excel -->
   <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
   <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
-
+  <script type="text/javascript" src="../assets/js/interface.js"></script>
   <script>
-
+    var Lists = getUserLists();
+    console.log(Lists);
     document.addEventListener('DOMContentLoaded', function() {
       var data = [
           {
@@ -328,7 +317,7 @@
       ];
 
       table = jexcel(document.getElementById('spreadsheet'), {
-          data:data,
+          data:Lists.all_info,
           columns: [
               {
                   title: 'IEMI',
