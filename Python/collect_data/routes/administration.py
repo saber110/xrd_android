@@ -23,6 +23,122 @@ from ..wraps import token_check, super_admin_required
 administration_bp = Blueprint('administration', __name__, url_prefix=config.URL_Prefix + '/administration')
 
 
+def add_province(province_name):
+    the_province = Province.query.filter_by(name=province_name).first()
+    if the_province is None:
+        the_province = Province(name=province_name)
+        try:
+            db.session.add(the_province)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            print(str(e))
+            db.session.rollback()
+            return None
+    return {'province': the_province}
+
+
+def add_city(province_name, city_name):
+    result = add_province(province_name)
+    if result is None:
+        return None
+    the_province = result['province']
+    the_city = City.query.filter_by(provinceId=the_province.id, name=city_name).first()
+    if the_city is None:
+        the_city = City(provinceId=the_province.id, name=city_name)
+        try:
+            db.session.add(the_city)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            print(str(e))
+            db.session.rollback()
+            return None
+    result['city'] = the_city
+    return result
+
+
+def add_district(province_name, city_name, district_name):
+    result = add_city(province_name, city_name)
+    if result is None:
+        return None
+    the_city = result['city']
+    the_district = District.query.filter_by(cityId=the_city.id, name=district_name).first()
+    if the_district is None:
+        the_district = District(cityId=the_city.id, name=district_name)
+        try:
+            db.session.add(the_district)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            print(str(e))
+            db.session.rollback()
+            return None
+    result['district'] = the_district
+    return result
+
+
+def add_street(province_name, city_name, district_name, street_name):
+    result = add_district(province_name, city_name, district_name)
+    if result is None:
+        return None
+    the_district = result['district']
+    the_street = Street.query.filter_by(districtId=the_district.id, name=street_name).first()
+    if the_street is None:
+        the_street = Street(districtId=the_district.id, name=street_name)
+        try:
+            db.session.add(the_street)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            print(str(e))
+            db.session.rollback()
+            return None
+    result['street'] = the_street
+    return result
+
+
+def add_community(province_name, city_name, district_name, street_name, community_name):
+    result = add_street(province_name, city_name, district_name, street_name)
+    if result is None:
+        return None
+    the_street = result['street']
+    the_community = Community.query.filter_by(streetId=the_street.id, name=community_name).first()
+    if the_community is None:
+        the_community = Community(streetId=the_street.id, name=community_name)
+        try:
+            db.session.add(the_community)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            print(str(e))
+            db.session.rollback()
+            return None
+    result['community'] = the_community
+    return result
+
+
+def add_garden(province_name, city_name, district_name, street_name, community_name, garden_name):
+    result = add_community(province_name, city_name, district_name, street_name, community_name)
+    if result is None:
+        return None
+    the_community = result['community']
+    the_street = result['street']
+    the_district = result['district']
+    the_city = result['city']
+    the_province = result['province']
+    the_garden = Garden.query.filter_by(communityId=the_community.id, streetId=the_street.id,
+                                        districtId=the_district.id,
+                                        cityId=the_city.id, provinceId=the_province.id, name=garden_name).first()
+    if the_garden is None:
+        the_garden = Garden(communityId=the_community.id, streetId=the_street.id, districtId=the_district.id,
+                            cityId=the_city.id, provinceId=the_province.id, name=garden_name)
+        try:
+            db.session.add(the_garden)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            print(str(e))
+            db.session.rollback()
+            return None
+    result['garden'] = the_garden
+    return result
+
+
 @administration_bp.route('/province', methods=['POST'])
 @token_check
 def province(*args, **kwargs):
@@ -129,83 +245,59 @@ def import_data(*args, **kwargs):
         return generate_result(2, '仅支持.xlsx格式的文件')
     sheet_name_list = table.sheetnames
     fail_dict = {}
-    if '行政区' in sheet_name_list:
-        sheet = table['行政区']
+    if '省份' in sheet_name_list:
+        sheet = table['省份']
         district_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=1, values_only=True)):
             if is_excel_end(row):
                 break  # 以防出现excel末尾存在大量空值
-            the_district = District(name=row[0])
-            try:
-                db.session.add(the_district)
-                db.session.commit()
-            except SQLAlchemyError:
-                db.session.rollback()
+            if add_province(*row) is None:
                 district_fail_row.append(index + 1)
-        fail_dict['行政区'] = district_fail_row
-    if '行政区_街道' in sheet_name_list:
-        sheet = table['行政区_街道']
+        fail_dict['省份'] = district_fail_row
+    if '省份_城市' in sheet_name_list:
+        sheet = table['省份_城市']
         street_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=2, values_only=True)):
             if is_excel_end(row):
                 break
-            the_district = District.query.filter_by(name=row[0]).first()
-            if the_district is not None:
-                the_street = Street(districtId=the_district.id, name=row[1])
-                try:
-                    db.session.add(the_street)
-                    db.session.commit()
-                    continue
-                except SQLAlchemyError:
-                    db.session.rollback()
-                    street_fail_row.append(index + 1)
-                    continue
-            street_fail_row.append(index + 1)
-        fail_dict['行政区_街道'] = street_fail_row
-    if '行政区_街道_社区' in sheet_name_list:
-        sheet = table['行政区_街道_社区']
-        community_fail_row = []
+            if add_city(*row) is None:
+                street_fail_row.append(index + 1)
+        fail_dict['省份_城市'] = street_fail_row
+    if '省份_城市_行政区' in sheet_name_list:
+        sheet = table['省份_城市_行政区']
+        district_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=3, values_only=True)):
             if is_excel_end(row):
-                break
-            the_district = District.query.filter_by(name=row[0]).first()
-            if the_district is not None:
-                the_street = Street.query.filter_by(districtId=the_district.id, name=row[1]).first()
-                if the_street is not None:
-                    the_community = Community(streetId=the_street.id, name=row[2])
-                    try:
-                        db.session.add(the_community)
-                        db.session.commit()
-                        continue
-                    except SQLAlchemyError:
-                        db.session.rollback()
-                        community_fail_row.append(index + 1)
-                        continue
-            community_fail_row.append(index + 1)
-        fail_dict['行政区_街道_社区'] = community_fail_row
-    if '行政区_街道_社区_小区' in sheet_name_list:
-        sheet = table['行政区_街道_社区_小区']
-        garden_fail_row = []
+                break  # 以防出现excel末尾存在大量空值
+            if add_district(*row) is None:
+                district_fail_row.append(index + 1)
+        fail_dict['省份_城市_行政区'] = district_fail_row
+    if '省份_城市_行政区_街道' in sheet_name_list:
+        sheet = table['省份_城市_行政区_街道']
+        street_fail_row = []
         for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=4, values_only=True)):
             if is_excel_end(row):
                 break
-            the_district = District.query.filter_by(name=row[0]).first()
-            if the_district is not None:
-                the_street = Street.query.filter_by(districtId=the_district.id, name=row[1]).first()
-                if the_street is not None:
-                    the_community = Community.query.filter_by(streetId=the_street.id, name=row[2]).first()
-                    if the_community is not None:
-                        the_garden = Garden(communityId=the_community.id, streetId=the_street.id,
-                                            districtId=the_district.id, name=row[3])
-                        try:
-                            db.session.add(the_garden)
-                            db.session.commit()
-                            continue
-                        except SQLAlchemyError:
-                            db.session.rollback()
-                            garden_fail_row.append(index + 1)
-                            continue
-            garden_fail_row.append(index + 1)
-        fail_dict['行政区_街道_社区_小区'] = garden_fail_row
+            if add_street(*row) is None:
+                street_fail_row.append(index + 1)
+        fail_dict['省份_城市_行政区_街道'] = street_fail_row
+    if '省份_城市_行政区_街道_社区' in sheet_name_list:
+        sheet = table['省份_城市_行政区_街道_社区']
+        community_fail_row = []
+        for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=5, values_only=True)):
+            if is_excel_end(row):
+                break
+            if add_community(*row) is None:
+                community_fail_row.append(index + 1)
+        fail_dict['省份_城市_行政区_街道_社区'] = community_fail_row
+    if '省份_城市_行政区_街道_社区_小区' in sheet_name_list:
+        sheet = table['省份_城市_行政区_街道_社区_小区']
+        garden_fail_row = []
+        for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=6, values_only=True)):
+            if is_excel_end(row):
+                break
+            if add_garden(*row) is None:
+                garden_fail_row.append(index + 1)
+        fail_dict['省份_城市_行政区_街道_社区_小区'] = garden_fail_row
 
     return generate_result(0, '导入数据成功', {'fail_rows': fail_dict})
