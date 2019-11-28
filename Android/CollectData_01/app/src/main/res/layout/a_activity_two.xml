@@ -76,7 +76,7 @@
                        android:layout_height="wrap_content">
                        <EditText
                            android:textSize="16sp"
-                           android:hint="@string/Password"
+                           android:hint="@string/oldPassword"
                            android:textColor="#f0f7f4"
                            android:id="@+id/et_password"
                            android:layout_width="match_parent"
@@ -103,7 +103,7 @@
                        <EditText
                            android:textSize="16sp"
                            android:textColor="#f0f7f4"
-                           android:hint="@string/repeat_password"
+                           android:hint="@string/newPassword"
                            android:id="@+id/et_repeatpassword"
                            android:layout_width="match_parent"
                            android:layout_height="wrap_content"

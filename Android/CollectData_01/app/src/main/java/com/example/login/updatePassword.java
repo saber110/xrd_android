@@ -8,15 +8,18 @@ import android.transition.TransitionInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.collectdata_01.R;
+import com.example.iemi.getIemi;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class register extends AppCompatActivity {
-
+public class updatePassword extends AppCompatActivity {
+    private EditText etUsername;
+    private EditText etPassword;
     private FloatingActionButton fab;
     private CardView cvAdd;
 
@@ -24,7 +27,6 @@ public class register extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_activity_two);
-        ShowEnterAnimation();
         initView();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,63 +37,14 @@ public class register extends AppCompatActivity {
     }
 
     private void initView() {
+        etUsername = findViewById(R.id.et_username);
         fab = findViewById(R.id.fab);
         cvAdd = findViewById(R.id.cv_add);
+        etUsername.setText(getIemi.getIMEI(this));
+        etUsername.setFocusable(false);
+        etUsername.setFocusableInTouchMode(false);
     }
 
-    private void ShowEnterAnimation() {
-        Transition transition = TransitionInflater.from(this).inflateTransition(R.transition.fabtransition);
-        getWindow().setSharedElementEnterTransition(transition);
-
-        transition.addListener(new Transition.TransitionListener() {
-            @Override
-            public void onTransitionStart(Transition transition) {
-                cvAdd.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onTransitionEnd(Transition transition) {
-                transition.removeListener(this);
-                animateRevealShow();
-            }
-
-            @Override
-            public void onTransitionCancel(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionPause(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionResume(Transition transition) {
-
-            }
-
-
-        });
-    }
-
-    public void animateRevealShow() {
-        Animator mAnimator = ViewAnimationUtils.createCircularReveal(cvAdd, cvAdd.getWidth()/2,0, fab.getWidth() / 2, cvAdd.getHeight());
-        mAnimator.setDuration(500);
-        mAnimator.setInterpolator(new AccelerateInterpolator());
-        mAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-            }
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-                cvAdd.setVisibility(View.VISIBLE);
-                super.onAnimationStart(animation);
-            }
-        });
-        mAnimator.start();
-    }
 
     public void animateRevealClose() {
         Animator mAnimator = ViewAnimationUtils.createCircularReveal(cvAdd,cvAdd.getWidth()/2,0, cvAdd.getHeight(), fab.getWidth() / 2);
@@ -103,7 +56,7 @@ public class register extends AppCompatActivity {
                 cvAdd.setVisibility(View.INVISIBLE);
                 super.onAnimationEnd(animation);
                 fab.setImageResource(R.drawable.plus);
-                register.super.onBackPressed();
+                updatePassword.super.onBackPressed();
             }
 
             @Override
@@ -118,3 +71,4 @@ public class register extends AppCompatActivity {
         animateRevealClose();
     }
 }
+

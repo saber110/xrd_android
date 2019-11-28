@@ -1,27 +1,39 @@
 package com.example.login;
 
 import android.Manifest;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 
+import com.alibaba.fastjson.JSON;
 import com.example.collectdata_01.MainActivity;
 import com.example.collectdata_01.R;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.iemi.getIemi;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class login extends AppCompatActivity {
 
@@ -30,6 +42,15 @@ public class login extends AppCompatActivity {
     private EditText etPassword;
     private Button btGo;
     private FloatingActionButton fab;
+    private static String TAG = "Interface";
+    private static String token;
+//    TODO 使用res中的string字符串
+    final private String user = "http://rap2api.taobao.org/app/mock/234350/api/v1/" + "user/";
+    final private String loginApi = user + "login";
+    public static final MediaType JSONDATA
+            = MediaType.get("application/json; charset=utf-8");
+
+    static OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,27 +72,29 @@ public class login extends AppCompatActivity {
         fab = findViewById(R.id.fab);
     }
 
+    public void login(String iemi, String password) throws IOException {
+        Map map = new HashMap<String, String>(5);
+        map.put("iemi", iemi);
+        map.put("password", password);
+        post(loginApi, JSON.toJSONString(map));
+    }
+
     private void setListener() {
         btGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Explode explode = new Explode();
-                explode.setDuration(500);
+                try {
+                    login(etUsername.getText().toString(), etPassword.getText().toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-                getWindow().setExitTransition(explode);
-                getWindow().setEnterTransition(explode);
-                ActivityOptionsCompat oc2 = ActivityOptionsCompat.makeSceneTransitionAnimation(login.this);
-                Intent i2 = new Intent(login.this, MainActivity.class);
-                startActivity(i2, oc2.toBundle());
             }
         });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getWindow().setExitTransition(null);
-                getWindow().setEnterTransition(null);
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(login.this, fab, fab.getTransitionName());
-                startActivity(new Intent(login.this, register.class), options.toBundle());
+                startActivity(new Intent(login.this, updatePassword.class));
             }
         });
     }
@@ -86,6 +109,19 @@ public class login extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         fab.setVisibility(View.VISIBLE);
+    }
+
+    private void loginCallback(String res){
+        Map map = JSON.parseObject(res, HashMap.class);
+//        Map data = map.get("data");
+        if(map.get("code").toString().equals("0")){
+            String data = map.get("data").toString();
+
+            loginSucess(data);
+        }
+        else {
+            loginFailure(map.get("message").toString());
+        }
     }
 
     /**
@@ -123,5 +159,41 @@ public class login extends AppCompatActivity {
         else {
             Log.d("授权tag", "checkPermissions: 手机版本低于23");
         }
+    }
+    public void loginSucess(String data){
+        String[] keyValue = data.substring(1, data.length() - 1).split(":");
+        login.token = keyValue[1];
+        Log.i(TAG, "loginSucess: " + login.token);
+        Intent i2 = new Intent(login.this, MainActivity.class);
+        startActivity(i2);
+    }
+
+    public void loginFailure(String res){
+        Toast.makeText(login.this, res, Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void post(final String url, final String json) throws IOException {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+            RequestBody body = RequestBody.create(json, JSONDATA);
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i(TAG, "onFailure: ");
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    loginCallback(response.body().string());
+                }
+            });
+            }
+        }).start();
     }
 }

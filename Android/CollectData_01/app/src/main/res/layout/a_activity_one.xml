@@ -50,7 +50,6 @@
             android:layout_height="50dp">
             <com.google.android.material.textfield.TextInputLayout
                 android:textColorHint="#c5c5c5"
-                app:hintTextAppearance="@android:style/TextAppearance.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -106,6 +105,7 @@
                     android:textColor="#d3d3d3"
                     >
                 </Button>
+
             </RelativeLayout>
             <TextView
                 android:layout_marginTop="5dp"
@@ -125,7 +125,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:fabSize="normal"
-        android:src="@drawable/plus"
+        android:src="@drawable/ic_word"
         android:transitionName="loginFab"
         android:layout_alignTop="@id/cv"
         android:layout_marginTop="25dp"
