@@ -1,5 +1,7 @@
 package com.example.collectdata_01;
 
+import android.net.Uri;
+
 import com.example.collectdata_01.BaseModel;
 import com.litesuits.orm.db.annotation.Check;
 import com.litesuits.orm.db.annotation.Default;
@@ -26,6 +28,7 @@ public class Users extends BaseModel {
     private String collectTime;
     private String token;
     private String image;
+    private Uri muri;
 
 //    // 性别用 0 - 1 - 2替代,0=男,1=女,2=未知
 //    @Check("userSex >= 0 AND userSex < 3")
@@ -93,4 +96,6 @@ public class Users extends BaseModel {
     public void setImage(String image) {
         this.image = image;
     }
+
+
 }

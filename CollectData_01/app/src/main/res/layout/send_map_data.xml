@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/card_style"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/round_data_usage_black"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/round_data_usage_black_18dp" />
+
+        <TextView
+            android:id="@+id/lat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@+id/round_data_usage_black"
+            android:text="经度"
+            android:textColor="#000000"
+            android:textSize="@dimen/main_text_size" />
+
+        <TextView
+            android:id="@+id/lng"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="60dp"
+            android:text="纬度"
+            android:textColor="#000000"
+            android:textSize="@dimen/main_text_size" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        >
+
+        <ImageView
+            android:id="@+id/round_add_comment_black"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/round_add_comment_black_18dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:layout_toRightOf="@+id/round_add_comment_black"
+            android:text="请输入标记数据"
+            android:textSize="@dimen/main_text_size" />
+    </RelativeLayout>
+    <EditText
+        android:id="@+id/input_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_weight="@android:integer/config_longAnimTime"
+        >
+        <TextView
+            android:id="@+id/huayuan"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:layout_toRightOf="@+id/round_add_comment_black"
+            android:text="花园"
+            android:textSize="@dimen/main_text_size" />
+        <TextView
+            android:id="@+id/louceng"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:layout_toRightOf="@+id/round_add_comment_black"
+            android:text="楼层"
+            android:textSize="@dimen/main_text_size" />
+        <TextView
+            android:id="@+id/lu"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:layout_toRightOf="@+id/round_add_comment_black"
+            android:text="路"
+            android:textSize="@dimen/main_text_size" />
+        <TextView
+            android:id="@+id/qita"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:layout_toRightOf="@+id/round_add_comment_black"
+            android:text="其他"
+            android:textSize="@dimen/main_text_size" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/send_map_button"
+        android:text="保存"
+        android:background="#00EEE6E6"
+        android:layout_gravity="center"
+        android:textSize="@dimen/main_text_size"
+        />
+</LinearLayout>
+
+

@@ -28,6 +28,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.example.collectdata_01.adapter.GardenListAdapter;
 import com.example.collectdata_01.util.BottomUtil;
 import com.example.dialog.ChooseMapDialog;
+import com.example.login.login;
 import com.example.map.baidu_map.BaiduMapActivity;
 import com.example.map.dao.AddGradenResult;
 import com.example.map.dao.SearchGardenResultDao;
@@ -41,10 +42,22 @@ import com.litesuits.orm.db.DataBase;
 import org.devio.takephoto.app.TakePhotoActivity;
 import org.devio.takephoto.model.TImage;
 import org.devio.takephoto.model.TResult;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class MainActivity extends TakePhotoActivity implements AMapLocationListener {
@@ -59,7 +72,6 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
     private TextView neighbourWorking;
     private TextView addGardenBtn;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -70,6 +82,8 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
         photoLayout = (RelativeLayout) findViewById(R.id.zhaopian);
         mapLayout = (RelativeLayout) findViewById(R.id.ditu);
         view = getLayoutInflater().inflate(R.layout.map_enter_dialog_layout, null);
+
+        updataLayout = (RelativeLayout)findViewById(R.id.shangchuan);
 
         recyclerView = view.findViewById(R.id.garden_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -83,7 +97,6 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
         mapLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(MainActivity.this, BaiduMapActivity.class);
                 startActivity(intent);
             }
@@ -109,6 +122,8 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
                             } else {
                                 GardenListAdapter gardenListAdapter = new GardenListAdapter(MainActivity.this, gardenResultDao.getData(), neighbourWorking);
                                 recyclerView.setAdapter(gardenListAdapter);
+
+
                             }
                         } catch (ExecutionException e) {
                             e.printStackTrace();
@@ -142,9 +157,15 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
                             } finally {
                             }
                         }
-
                     }
                 });
+            }
+        });
+
+        updataLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadImg();
             }
         });
 
@@ -228,12 +249,15 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
     private boolean pmflag = true;
     private boolean lmflag = true;
 
+    private String gdid = "1";
     public String locationString;
     public String jpegName;
     /**
      * 数据库引用对象
      */
     static DataBase mainDB;
+
+
 
 
 
@@ -256,42 +280,47 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
 
     //拍照方法
     private void picture(){
-        if(locationString.equals("平面")){
-            pictureKind = Integer.toString(2);
-            if(pmflag){
-                jpegName = "2_小区平面图_001"  +".jpg";
-                pmflag = false;
+        if(neighbourWorking.getText().toString().equals("请选择工作小区")){
+            Toast.makeText(MainActivity.this, "请先输入当前工作小区", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            if(locationString.equals("平面")){
+                pictureKind = Integer.toString(2);
+                if(pmflag){
+                    jpegName = "2_"+ neighbourWorking.getText() + "平面图_001"  +".jpg";
+                    pmflag = false;
+                }
+                else {
+                    jpegName = "2_"+ neighbourWorking.getText() + "平面图_002" + ".jpg";
+                    pmflag = true;
+                }
             }
-            else {
-                jpegName = "2_小区平面图_002" + ".jpg";
-                pmflag = true;
+            if(locationString.equals("入口")){
+                jpegName = "2_"+ neighbourWorking.getText() + "入口_001"  +".jpg";
+                pictureKind = Integer.toString(2);
             }
-        }
-        if(locationString.equals("入口")){
-            jpegName = "2_小区入口_001"  +".jpg";
-            pictureKind = Integer.toString(2);
-        }
-        if(locationString.equals("外")){
-            jpegName = "2_小区外景图_001"  +".jpg";
-            pictureKind = Integer.toString(2);
-        }
-        if(locationString.equals("内")){
-            jpegName = "2_小区内景图_001"  +".jpg";
-            pictureKind = Integer.toString(2);
-        }
-        if(locationString.equals("楼号")){
-            jpegName = "3_小区楼牌号_001"  +".jpg";
-            pictureKind = Integer.toString(3);
-        }
-        else{
-            pictureKind = Integer.toString(3);
-            if(lmflag){
-                jpegName = "3_小区建筑立面_001" + locationString +".jpg";
-                lmflag = false;
+            if(locationString.equals("外")){
+                jpegName = "2_"+ neighbourWorking.getText() + "外景图_001"  +".jpg";
+                pictureKind = Integer.toString(2);
             }
-            else {
-                jpegName = "3_小区建筑立面_002" + locationString +".jpg";
-                lmflag = true;
+            if(locationString.equals("内")){
+                jpegName = "3_"+ neighbourWorking.getText() + "内景图_001"  +".jpg";
+                pictureKind = Integer.toString(2);
+            }
+            if(locationString.equals("楼号")){
+                jpegName = "3_"+ neighbourWorking.getText() + "楼牌号_001"  +".jpg";
+                pictureKind = Integer.toString(3);
+            }
+            else{
+                pictureKind = Integer.toString(3);
+                if(lmflag){
+                    jpegName = "3_"+ neighbourWorking.getText() + "建筑立面_001" + locationString +".jpg";
+                    lmflag = false;
+                }
+                else {
+                    jpegName = "3_"+ neighbourWorking.getText() + "建筑立面_002" + locationString +".jpg";
+                    lmflag = true;
+                }
             }
         }
 
@@ -308,15 +337,21 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             mainDB = LiteOrm.newSingleInstance(this, "imageData.db");
             System.out.println("数据库创建成功");
         }
+        System.out.println(System.currentTimeMillis());
 
-        Users musers = new Users("1", pictureKind, Integer.toString((int) System.currentTimeMillis()), Integer.toString(12345678), jpegName);
+        Users musers = new Users(gdid, locationString, Integer.toString((int) System.currentTimeMillis()), login.token, jpegName);
         System.out.println("用户创建成功");
         mainDB.save(musers);
         System.out.println("保存数据成功");
+//        for(int i = 0; i<=userlist.size(); i++){
+//            System.out.println(userlist.get(i).getCollectTime());
+//
+//        }
+
     }
 
     private void showSingleChoiceDialog(){
-        final String[] items = { "平面","入口","外","内","立面","楼号"};
+        final String[] items = {"平面图","小区入口","外景图","内景图","立面","楼号"};
         yourChoice = -1;
         AlertDialog.Builder singleChoiceDialog =
                 new AlertDialog.Builder(MainActivity.this);
@@ -381,9 +416,9 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
                         //可能没按选择，默认为平面
                         else {
                             Toast.makeText(MainActivity.this,
-                                    "你选择了平面",
+                                    "你选择了平面图",
                                     Toast.LENGTH_SHORT).show();
-                            locationString = "平面";
+                            locationString = "平面图";
                             picture();
                         }
                     }
@@ -426,12 +461,11 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
                 if(str.equals("是")){
                     startActivity(new Intent(MainActivity.this, DrawActivity.class));
                 }
-                else showSingleChoiceDialog();
+                else picture();
             }
         });
         builder.create().show();
     }
-
 
     private void showImg(ArrayList<TImage> images) {
         singleDialog();
@@ -440,6 +474,45 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
 //        startActivity(intent);
         Toast.makeText(MainActivity.this, "已存储", Toast.LENGTH_SHORT).show();
     }
+
+    private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
+    private final OkHttpClient client = new OkHttpClient();
+
+    private void uploadImg(){
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        ArrayList<Users> userlist = mainDB.query(Users.class);
+
+        for(int i = 0 ; i<=userlist.size(); i++){
+            builder.addFormDataPart("gardenId", userlist.get(i).getGardenId());
+            builder.addFormDataPart("pictureKind", userlist.get(i).getpictureKind());
+            builder.addFormDataPart("collectTime", userlist.get(i).getCollectTime());
+            builder.addFormDataPart("token", userlist.get(i).getToken());
+            File f = new File(Environment.getExternalStorageDirectory(), "/temp/" + userlist.get(i).getImage());
+            builder.addFormDataPart("image", f.getName(), RequestBody.create(MEDIA_TYPE_JPEG, f));
+            MultipartBody requestBody = builder.build();
+            Request request = new Request.Builder()
+                    .url("http ://rap2api.taobao.org/app/mock/234350/api/v1/data/garden_picture")
+                    .post(requestBody)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    System.out.println("上传失败"+e.getLocalizedMessage());
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                     System.out.println("上传照片成功：response="+response.body().string());
+                     Toast.makeText(MainActivity.this, "上传成功", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+
+    }
+
+
 
 }
 

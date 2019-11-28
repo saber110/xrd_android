@@ -43,7 +43,7 @@ public class login extends AppCompatActivity {
     private Button btGo;
     private FloatingActionButton fab;
     private static String TAG = "Interface";
-    private static String token;
+    public static String token;
 //    TODO 使用res中的string字符串
     final private String user = "http://rap2api.taobao.org/app/mock/234350/api/v1/" + "user/";
     final private String loginApi = user + "login";

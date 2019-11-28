@@ -252,7 +252,7 @@ public class takePhoto01 extends TakePhotoActivity {
                 if(str.equals("是")){
                     startActivity(new Intent(takePhoto01.this, DrawActivity.class));
                 }
-                else showSingleChoiceDialog();
+                else picture();
             }
         });
         builder.create().show();

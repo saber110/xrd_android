@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_homefirst"
+        android:icon="@drawable/ic_home_white_24dp"
+        android:title="首页"
+        android:tooltipText="drr" />
+
+    <item
+        android:id="@+id/navigation_homesecond"
+        android:icon="@drawable/ic_book_white_24dp"
+        android:title="订单" />
+
+    <item
+        android:id="@+id/navigation_homethird"
+        android:icon="@drawable/ic_music_note_white_24dp"
+        android:title="动态" />
+
+    <item
+        android:id="@+id/navigation_homefourth"
+        android:icon="@drawable/ic_tv_white_24dp"
+        android:title="我的" />
+
+</menu>
+
