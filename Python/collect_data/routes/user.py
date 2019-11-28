@@ -227,3 +227,33 @@ def reset_password(user_id: int, *args, **kwargs):
         User.redis_del(user_id)
         return generate_result(2, '数据更新失败')
     return generate_result(0, '更新密码成功')
+
+
+@user_bp.route('/delete', methods=['POST'])
+@token_check
+@super_admin_required
+def delete(*args, **kwargs):
+    """
+    删除用户
+    :param user_id: 用户id
+    :return:
+    """
+    data = request.get_json()
+    schema = {
+        'userId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+
+    the_user = User.query.get(data['userId'])
+    if the_user is None:
+        return generate_result(2, '用户不存在')
+    try:
+        db.session.delete(the_user)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return generate_result(2, '用户以录入信息无法删除')
+    return generate_result(0, '删除用户成功')
