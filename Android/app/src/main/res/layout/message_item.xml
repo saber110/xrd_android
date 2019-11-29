@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/message_item_shape"
+    android:layout_marginTop="10dp"
+
+    >
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:textSize="20dp"-->
+<!--        android:text="标题"-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:layout_weight="1"-->
+<!--        android:id="@+id/message_item_title"-->
+<!--        />-->
+
+<!--    <EditText-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:gravity="left"-->
+<!--        android:hint="@string/message_hint"-->
+<!--        android:layout_weight="1"-->
+<!--        android:id="@+id/message_content"-->
+<!--        />-->
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:id="@+id/message_item_title"
+        android:hint="@string/message_hint"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/message_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

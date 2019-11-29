@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">数据采集</string>
+
+    <string name="login_success">login success</string>
+    <string name="login">登录系统</string>
+    <string name="Username">设备识别码</string>
+    <string name="Password">密码</string>
+    <string name="oldPassword">旧密码</string>
+    <string name="newPassword">新密码</string>
+    <string name="forgot_your_password"></string>
+    <string name="go">登录</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="next">NEXT</string>
+    <string name="register">REGISTER</string>
+    <string name="label_neighbour">工作小区：</string>
+    <string name="label_neighbour_working">请选择工作小区</string>
+
+    <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--    Data页面的string    -->
+    <string name="data_xiaoqugaikuang">小区概况表</string>
+    <string name="data_louzhuangdiaocha">楼幢调查</string>
+    <string name="data_xiaoquxinxi">小区信息</string>
+    <string name="data_louzhuangxinxi">楼幢信息</string>
+
+    <!-- 信息收集页的string  -->
+    <string name="message_submit">提交信息</string>
+    <string name="message_hint">请在此输入信息...</string>
+    <string name="message_title">信息详情</string>
+
+
+    <string name="cat_single_select">Single-select</string>
+    <string name="cat_multi_select">Multi-select</string>
+    <string name="cat_icon_only">Icon only</string>
+    <string name="cat_button_label_private">Private</string>
+    <string name="cat_button_label_team">Team</string>
+    <string name="cat_button_label_everyone">Everyone</string>
+    <string name="cat_button_label_custom">Custom</string>
+    <string name="cat_button_label_cheese">Cheese</string>
+    <string name="cat_button_label_tomatoes">Tomatoes</string>
+    <string name="cat_button_label_mushrooms">Mushrooms</string>
+
+
+    <string name="cat_textfield_label" translatable="false">Label</string>
+</resources>

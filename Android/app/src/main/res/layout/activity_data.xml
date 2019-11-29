@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--数据采集页面-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#e6e5e5"
+    tools:context="com.example.collectdata.DataActivity">
+
+    <!-- 标题栏  -->
+    <include layout="@layout/ui_title_bar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_marginTop="9dp"
+        android:background="#ffffff"
+        >
+        <!--    上半有内容的部分    -->
+
+        <!--    小区概况表行    -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginTop="3dp"
+            android:id="@+id/data_xiaoqugaikuang"
+            >
+            <!-- 左边图标 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                android:background="@drawable/icon_cricle"
+                android:layout_marginLeft="7dp"
+                android:layout_marginRight="7dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <!--      右侧的内容      -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                >
+
+                <!--上方的内容-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    >
+                    <!-- 中间文字 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/data_xiaoqugaikuang"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="30dp"
+                        android:textSize="20dp"
+                        android:layout_weight="1"
+                        />
+
+                    <!-- 右侧箭头 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=">"
+                        android:textSize="20dp"
+                        android:gravity="center"
+                        android:layout_weight="5"
+                        />
+
+                </LinearLayout>
+                <!--下方的横线-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#8d8b8b"
+                        android:layout_marginBottom="12dp"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <!--    搂幢调查行    -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:id="@+id/data_louzhuangdiaocha"
+            >
+            <!-- 左边图标 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                android:background="@drawable/icon_cricle"
+                android:layout_marginLeft="7dp"
+                android:layout_marginRight="7dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <!--      右侧的内容      -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                >
+
+                <!--上方的内容-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    >
+                    <!-- 中间文字 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/data_louzhuangdiaocha"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="30dp"
+                        android:textSize="20dp"
+                        android:layout_weight="1"
+                        />
+
+                    <!-- 右侧箭头 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=">"
+                        android:textSize="20dp"
+                        android:gravity="center"
+                        android:layout_weight="5"
+                        />
+
+                </LinearLayout>
+                <!--下方的横线-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#8d8b8b"
+                        android:layout_marginBottom="12dp"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <!--    小区信息行    -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:id="@+id/data_xiaoquxinxi"
+            >
+            <!-- 左边图标 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                android:background="@drawable/icon_cricle"
+                android:layout_marginLeft="7dp"
+                android:layout_marginRight="7dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <!--      右侧的内容      -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                >
+
+                <!--上方的内容-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    >
+                    <!-- 中间文字 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/data_xiaoquxinxi"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="30dp"
+                        android:textSize="20dp"
+                        android:layout_weight="1"
+                        />
+
+                    <!-- 右侧箭头 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=">"
+                        android:textSize="20dp"
+                        android:gravity="center"
+                        android:layout_weight="5"
+                        />
+
+                </LinearLayout>
+                <!--下方的横线-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#8d8b8b"
+                        android:layout_marginBottom="12dp"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!--    搂幢信息行    -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:id="@+id/data_louzhuangxinxi"
+            >
+            <!-- 左边图标 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                android:background="@drawable/icon_cricle"
+                android:layout_marginLeft="7dp"
+                android:layout_marginRight="7dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <!--      右侧的内容      -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                >
+
+                <!--上方的内容-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    >
+                    <!-- 中间文字 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/data_louzhuangxinxi"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="30dp"
+                        android:textSize="20dp"
+                        android:layout_weight="1"
+                        />
+
+                    <!-- 右侧箭头 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=">"
+                        android:textSize="20dp"
+                        android:gravity="center"
+                        android:layout_weight="5"
+                        />
+
+                </LinearLayout>
+                <!--下方的横线-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#8d8b8b"
+                        android:layout_marginBottom="12dp"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        >
+
+<!--        下半部分留白-->
+    </LinearLayout>
+
+</LinearLayout>
