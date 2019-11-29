@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.collectdata.MessageActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:textColor="#ffffff"
+        android:text="@string/message_title"
+        android:gravity="center"
+        android:textSize="25dp"
+
+        android:id="@+id/message_title"
+        android:background="#ED6237"
+        />
+
+    <!--信息收集页面-->
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:id="@+id/message_list"
+        >
+    </ListView>
+
+
+    <!--底部提交按钮-->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:textColor="#ffffff"
+        android:id="@+id/message_submit"
+        android:text="@string/message_submit"
+        android:background="@drawable/login_button"
+        android:layout_margin="3dp"
+        />
+
+</LinearLayout>
