@@ -7,7 +7,7 @@
 # 文件上传大小限制
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 # 数据库连接配置
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:V1I#CvyACmM2^0hY@139.199.8.103:9999/dev'
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:V1I#CvyACmM2^0hY@139.199.8.103:9999/dev-dev'
 # 不自动提交
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 # redis 配置

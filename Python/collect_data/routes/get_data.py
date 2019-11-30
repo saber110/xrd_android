@@ -1190,6 +1190,91 @@ def building_base_info(*args, **kwargs):
             'type': 'text',
             'value': ''
         },
+        {
+            "label": " 楼幢综合评价打分",
+            "type": "list",
+            "length": 8
+        },
+        {
+            'label': '小区外视野景观',
+            'key': 'outsideViewScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '中心花园位置',
+            'key': 'centralGardenScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '通风采光情况',
+            'key': 'ventilatedLightingScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '三临情况',
+            'key': 'threeAdventSituationScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '周围环境',
+            'key': 'surroundingsScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '建筑外观',
+            'key': 'buildingAppearanceScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '其他有利',
+            'key': 'otherAdvantagesScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '其他不利',
+            'key': 'otherDisadvantagesScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '楼幢标准层等级初判',
+            'key': 'buildingLevel',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '价格初判',
+            'key': 'unitNumber',
+            'required': False,
+            'changed': True,
+            'type': 'preliminaryPrice',
+            'value': ''
+        },
     ]
     data = request.get_json()
     schema = {

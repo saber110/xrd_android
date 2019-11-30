@@ -85,4 +85,4 @@ class BuildingInfo(BaseModel):
     otherAdvantagesScore = db.Column(db.Float, comment='其他有利')
     otherDisadvantagesScore = db.Column(db.Float, comment='其他不利')
     buildingLevel = db.Column(db.Float, comment='楼幢标准层等级初判')
-    preliminaryPrice = db.Column(db.Float, comment='价格初判')
+    preliminaryPrice = db.Column(db.Text, comment='价格初判')
