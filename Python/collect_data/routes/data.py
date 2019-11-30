@@ -99,8 +99,14 @@ def map_data(user_id: int, *args, **kwargs):
     if data['mapId'] == 1:  # 如果是百度地图则进行转换
         data['longitude'], data['latitude'] = bd09_to_gcj02(data['longitude'], data['latitude'])
     data['userId'] = user_id
-    map_data = MapData(**data)
     try:
+        if 'id' in data:
+            map_data = MapData.query.get(data['id'])
+            if map_data is None:
+                return generate_result(2, '地图数据不存在')
+            map_data.update(**data)
+        else:
+            map_data = MapData(**data)
         db.session.add(map_data)
         db.session.commit()
     except SQLAlchemyError:
@@ -347,6 +353,8 @@ def building_info(user_id: int, *args, **kwargs):
     try:
         if 'id' in data:
             info = BuildingInfo.query.get(data['id'])
+            if info is None:
+                return generate_result(2, '楼幢数据不存在')
             info.update(**data)
         else:
             info = BuildingInfo(**data)
