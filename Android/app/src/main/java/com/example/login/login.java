@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat;
 import com.alibaba.fastjson.JSON;
 import com.example.collectdata_01.MainActivity;
 import com.example.collectdata_01.R;
-import com.example.iemi.getIemi;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +63,7 @@ public class login extends AppCompatActivity {
 
     private void initView() {
         etUsername = findViewById(R.id.et_username);
-        etUsername.setText(getIemi.getIMEI(this));
+//        etUsername.setText(getIemi.getIMEI(this));
         etUsername.setFocusable(false);
         etUsername.setFocusableInTouchMode(false);
         etPassword = findViewById(R.id.et_password);

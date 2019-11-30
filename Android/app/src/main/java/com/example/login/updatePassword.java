@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.collectdata_01.R;
-import com.example.iemi.getIemi;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class updatePassword extends AppCompatActivity {
@@ -40,7 +39,7 @@ public class updatePassword extends AppCompatActivity {
         etUsername = findViewById(R.id.et_username);
         fab = findViewById(R.id.fab);
         cvAdd = findViewById(R.id.cv_add);
-        etUsername.setText(getIemi.getIMEI(this));
+//        etUsername.setText(getIemi.getIMEI(this));
         etUsername.setFocusable(false);
         etUsername.setFocusableInTouchMode(false);
     }
