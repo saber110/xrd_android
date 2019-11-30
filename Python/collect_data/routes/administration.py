@@ -227,6 +227,33 @@ def garden(*args, **kwargs):
     return generate_result(1)
 
 
+@administration_bp.route('/search_garden', methods=['POST'])
+@token_check
+def search_garden(*args, **kwargs):
+    data = request.get_json()
+    if 'gardenName' not in data:
+        return generate_result(1)
+    gardens = Garden.query.filter_by(name=data['gardenName'])
+    if gardens is None:
+        return generate_result(2, '小区不存在')
+    result = []
+    for garden in gardens:
+        community = Community.query.get(garden.communityId)
+        street = Street.query.get(garden.streetId)
+        district = District.query.get(garden.districtId)
+        city = City.query.get(garden.cityId)
+        province = Province.query.get(garden.provinceId)
+        result.append({
+            'gardenName': garden.name,
+            'communityName': community.name,
+            'streetName': street.name,
+            'districtName': district.name,
+            'cityName': city.name,
+            'provinceName': province.name
+        })
+    return generate_result(0, '查找小区成功', data={'gardens': result})
+
+
 @administration_bp.route('/import_data', methods=['POST'])
 @token_check
 @super_admin_required
