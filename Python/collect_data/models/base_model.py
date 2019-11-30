@@ -36,6 +36,31 @@ class BaseModel(db.Model):
             if hasattr(self, k):
                 self.__setattr__(k, kwargs[k])
 
+    def generate_form(self, forbid_column, required=False, changed=True):
+        result = []
+        for col in self.__table__.columns:
+            if col.name not in forbid_column:
+                if type(col.type) is db.Integer or type(col.type) is db.Float:
+                    result.append({
+                        'label': col.comment,
+                        'key': col.name,
+                        'required': required,
+                        'changed': changed,
+                        'type': 'number',
+                        'value': ''
+                    })
+                else:
+                    result.append({
+                        'label': col.comment,
+                        'key': col.name,
+                        'required': required,
+                        'changed': changed,
+                        'type': 'text',
+                        'value': ''
+                    })
+
+        return result
+
     @property
     def to_dict(self):
         return to_dict(self, self.__class__)

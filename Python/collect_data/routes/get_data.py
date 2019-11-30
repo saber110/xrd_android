@@ -12,18 +12,59 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from . import generate_validator, generate_result, my_send_file
 from .. import config
+from ..models.base_model import db
+from ..models.building_import_info import BuildingImportInfo
 from ..models.building_info import BuildingInfo
 from ..models.city import City
 from ..models.community import Community
 from ..models.district import District
 from ..models.garden import Garden
 from ..models.garden_base_info import GardenBaseInfo
+from ..models.garden_import_info import GardenImportInfo
 from ..models.map_data import MapData
 from ..models.street import Street
 from ..utils import gcj02_to_bd09
 from ..wraps import token_check, admin_required
 
 get_data_bp = Blueprint('get_data', __name__, url_prefix=config.URL_Prefix + '/get_data')
+
+
+def set_form_value(form, value):
+    for key in value.keys():
+        if value[key] is None:
+            value[key] = ''
+    for item in form:
+        if item['key'] != '' and item['key'] in value:
+            item['value'] = value[item['key']]
+            if item['type'] == 'multiple':
+                item['value'] = item['value'].split(',')
+    return form
+
+
+def generate_form(columns, forbid_column):
+    result = []
+    for col in columns:
+        if col.name not in forbid_column:
+            if col.type == db.Integer or col.type == db.Float:
+                result.append({
+                    'label': col.comment,
+                    'key': col.name,
+                    'required': False,
+                    'changed': True,
+                    'type': 'number',
+                    'value': ''
+                })
+            else:
+                result.append({
+                    'label': col.comment,
+                    'key': col.name,
+                    'required': False,
+                    'changed': True,
+                    'type': 'text',
+                    'value': ''
+                })
+
+    return result
 
 
 @get_data_bp.route('/map', methods=['POST'])
@@ -60,17 +101,16 @@ def garden_base_info(*args, **kwargs):
     v = generate_validator(schema)
     if not v(data):
         return generate_result(1)
-    try:
-        garden = Garden.query.get(data['gardenId'])
-        city = City.query.get(garden.cityId)
-        district = District.query.get(garden.districtId)
-        street = Street.query.get(garden.streetId)
-        community = Community.query.get(garden.communityId)
-        garden_info = GardenBaseInfo.query.get(data['gardenId'])
-    except SQLAlchemyError:
-        return generate_result(2, '获取数据失败')
+    garden = Garden.query.get(data['gardenId'])
     if garden is None:
         return generate_result(2, '小区不存在')
+
+    city = City.query.get(garden.cityId)
+    district = District.query.get(garden.districtId)
+    street = Street.query.get(garden.streetId)
+    community = Community.query.get(garden.communityId)
+    garden_info = GardenBaseInfo.query.get(data['gardenId'])
+
     result = [
         {
             'label': '市',
@@ -673,15 +713,7 @@ def garden_base_info(*args, **kwargs):
     ]
 
     if garden_info is not None:
-        garden_info = garden_info.to_dict
-        for key in garden_info.keys():
-            if garden_info[key] is None:
-                garden_info[key] = ''
-        for item in result:
-            if item['key'] != '' and item['key'] in garden_info:
-                item['value'] = garden_info[item['key']]
-                if item['type'] == 'multiple':
-                    item['value'] = item['value'].split(',')
+        result = set_form_value(result, garden_info.to_dict)
 
     return generate_result(0, '获取数据成功', {'gardenInfoList': result})
 
@@ -1288,18 +1320,80 @@ def building_base_info(*args, **kwargs):
     except SQLAlchemyError:
         return generate_result(2, '获取数据失败')
     if building_info is None:
-        return generate_result(2, '楼栋信息不存在')
+        return generate_result(2, '楼栋不存在')
     building_info = building_info.to_dict
-    for key in building_info.keys():
-        if building_info[key] is None:
-            building_info[key] = ''
-    for item in result:
-        if item['type'] != 'list' and item['key'] != '' and item['key'] in building_info:
-            item['value'] = building_info[item['key']]
-            if item['type'] == 'multiple':
-                item['value'] = item['value'].split(',')
+    result = set_form_value(result, building_info)
 
     return generate_result(0, '获取数据成功', {'buildingInfoList': result})
+
+
+@get_data_bp.route('/garden_import_info', methods=['POST'])
+@token_check
+def garden_import_info(*args, **kwargs):
+    """
+    获取小区导入数据接口
+    """
+    data = request.get_json()
+    schema = {
+        'gardenId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    garden = Garden.query.get(data['gardenId'])
+    if garden is None:
+        return generate_result(2, '小区不存在')
+    result = [
+        {
+            'label': '小区名称',
+            'key': '',
+            'required': False,
+            'changed': False,
+            'type': 'text',
+            'value': garden.name
+        },
+    ]
+
+    result.extend(GardenImportInfo().generate_form(['id']))
+
+    import_info = GardenImportInfo.query.get(data['gardenId'])
+
+    if import_info is not None:
+        result = set_form_value(result, import_info.to_dict)
+    return generate_result(0, '获取数据成功', {'gardenImportInfoList': result})
+
+
+@get_data_bp.route('/building_import_info', methods=['POST'])
+@token_check
+def building_import_info(*args, **kwargs):
+    data = request.get_json()
+    schema = {
+        'buildingId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    building = BuildingInfo.query.get(data['buildingId'])
+    if building is None:
+        return generate_result(2, '楼幢不存在')
+    result = [
+        {
+            'label': '楼幢名称',
+            'key': '',
+            'required': False,
+            'changed': False,
+            'type': 'text',
+            'value': building.buildingName
+        }
+    ]
+    result.extend(BuildingImportInfo().generate_form(['id']))
+
+    import_info = BuildingImportInfo.query.get(data['buildingId'])
+
+    if import_info is not None:
+        result = set_form_value(result, import_info.to_dict)
+
+    return generate_result(0, '获取楼幢数据成功', data={'buildingImportInfoList': result})
 
 
 @get_data_bp.route('/garden_table', methods=['POST'])
