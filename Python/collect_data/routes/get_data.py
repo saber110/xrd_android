@@ -1354,7 +1354,7 @@ def garden_import_info(*args, **kwargs):
         },
     ]
 
-    result.extend(GardenImportInfo().generate_form(['id']))
+    result.extend(GardenImportInfo().generate_form(['id', 'userId', 'collectTime']))
 
     import_info = GardenImportInfo.query.get(data['gardenId'])
 
@@ -1386,7 +1386,7 @@ def building_import_info(*args, **kwargs):
             'value': building.buildingName
         }
     ]
-    result.extend(BuildingImportInfo().generate_form(['id']))
+    result.extend(BuildingImportInfo().generate_form(['id', 'userId', 'collectTime']))
 
     import_info = BuildingImportInfo.query.get(data['buildingId'])
 

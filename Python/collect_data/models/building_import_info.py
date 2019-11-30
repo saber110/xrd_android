@@ -12,6 +12,8 @@ class BuildingImportInfo(BaseModel):
     楼栋导入信息表
     """
     id = db.Column(db.Integer, db.ForeignKey('building_info.id'), primary_key=True, comment='楼栋id')
+    userId = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, comment='提交信息的用户id')
+    collectTime = db.Column(db.DateTime, nullable=False, comment='信息采集时间')
     buildingEastTo = db.Column(db.Text, comment='楼幢东至')
     buildingWestTo = db.Column(db.Text, comment='楼幢西至')
     buildingNorthTo = db.Column(db.Text, comment='楼幢北至')
