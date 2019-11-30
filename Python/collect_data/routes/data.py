@@ -14,12 +14,14 @@ from . import generate_result, generate_validator, image_upload
 from .. import config
 from ..models.base_model import db
 from ..models.building import Building
+from ..models.building_import_info import BuildingImportInfo
 from ..models.building_info import BuildingInfo
 from ..models.building_picture import BuildingPicture
 from ..models.building_picture_kind import BuildingPictureKind
 from ..models.first_floor_kind import FirstFloorKind
 from ..models.garden import Garden
 from ..models.garden_base_info import GardenBaseInfo
+from ..models.garden_import_info import GardenImportInfo
 from ..models.garden_picture import GardenPicture
 from ..models.garden_picture_kind import GardenPictureKind
 from ..models.map_data import MapData
@@ -300,7 +302,11 @@ def garden_base_info(user_id: int, *args, **kwargs):
     data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
 
     try:
-        base_info = GardenBaseInfo(**data)
+        base_info = GardenBaseInfo.query.get(data['id'])
+        if base_info is None:
+            base_info = GardenBaseInfo(**data)  # 新建
+        else:
+            base_info.update(**data)  # 更新信息
         db.session.add(base_info)
         db.session.commit()
     except SQLAlchemyError:
@@ -339,10 +345,81 @@ def building_info(user_id: int, *args, **kwargs):
     data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
 
     try:
-        info = BuildingInfo(**data)
+        if 'id' in data:
+            info = BuildingInfo.query.get(data['id'])
+            info.update(**data)
+        else:
+            info = BuildingInfo(**data)
         db.session.add(info)
         db.session.commit()
     except SQLAlchemyError:
         db.session.rollback()
         return generate_result(2)
     return generate_result(0, '提交楼栋信息成功')
+
+
+@data_bp.route('/garden_import_info', methods=['POST'])
+@token_check
+def garden_import_info(user_id: int, *args, **kwargs):
+    """
+    添加或修改小区导入信息表
+    :param user_id:  用id
+    :return:
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer'},
+        'collectTime': {'type': 'integer'}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    data['userId'] = user_id
+    data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
+
+    try:
+        import_info = GardenImportInfo.query.get(data['id'])
+        if import_info is None:
+            import_info = GardenImportInfo(**data)  # 新建信息
+        else:
+            import_info.update(**data)  # 更新信息
+
+        db.session.add(import_info)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return generate_result(2)
+    return generate_result(0, '上传小区导入数据成功')
+
+
+@data_bp.route('/building_import_info', methods=['POST'])
+@token_check
+def building_import_info(user_id: int, *args, **kwargs):
+    """
+    添加或修改楼幢导入信息表
+    :param user_id:  用id
+    :return:
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer'},
+        'collectTime': {'type': 'integer'}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    data['userId'] = user_id
+    data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
+
+    try:
+        import_info = BuildingImportInfo.query.get(data['id'])
+        if import_info is None:
+            import_info = BuildingImportInfo(**data)  # 新建信息
+        else:
+            import_info.update(**data)  # 更新信息
+        db.session.add(import_info)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return generate_result(2)
+    return generate_result(0, '上传楼幢导入数据成功')
