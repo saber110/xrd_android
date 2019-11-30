@@ -36,7 +36,7 @@ class BaseModel(db.Model):
             if hasattr(self, k):
                 self.__setattr__(k, kwargs[k])
 
-    def generate_form(self, forbid_column, required=False, changed=True):
+    def generate_form(self, forbid_column, changed=True):
         result = []
         for col in self.__table__.columns:
             if col.name not in forbid_column:
@@ -44,7 +44,7 @@ class BaseModel(db.Model):
                     result.append({
                         'label': col.comment,
                         'key': col.name,
-                        'required': required,
+                        'required': not col.nullable,
                         'changed': changed,
                         'type': 'number',
                         'value': ''
@@ -53,7 +53,7 @@ class BaseModel(db.Model):
                     result.append({
                         'label': col.comment,
                         'key': col.name,
-                        'required': required,
+                        'required': not col.nullable,
                         'changed': changed,
                         'type': 'text',
                         'value': ''
