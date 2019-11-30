@@ -200,8 +200,7 @@ def super_update(*args, **kwargs):
 
 
 @user_bp.route('/reset_password', methods=['POST'])
-@token_check
-def reset_password(user_id: int, *args, **kwargs):
+def reset_password():
     """
     用户更新密码接口
     :return:
@@ -209,13 +208,22 @@ def reset_password(user_id: int, *args, **kwargs):
     data = request.get_json()
     schema = {
         'oldPassword': {'type': 'string', 'maxlength': 64},
-        'newPassword': {'type': 'string', 'maxlength': 64}
+        'newPassword': {'type': 'string', 'maxlength': 64},
+        'iemi': {'type': 'string', 'maxlength': 17}
     }
     v = generate_validator(schema)
     if not v(data):
         return generate_result(1)
     try:
-        user = User.query.get(user_id)
+        user = User.query.filter_by(iemi=data['iemi']).first()
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return generate_result(2, '查询用户失败')
+    if user is None:
+        return generate_result(2, '用户不存在')
+
+    try:
         if not user.check_password(data['oldPassword']):
             return generate_result(2, '密码错误')
         user.reset_password(data['newPassword'])
@@ -224,6 +232,36 @@ def reset_password(user_id: int, *args, **kwargs):
     except SQLAlchemyError:
         db.session.rollback()
         # 回退redis
-        User.redis_del(user_id)
+        User.redis_del(user.id)
         return generate_result(2, '数据更新失败')
     return generate_result(0, '更新密码成功')
+
+
+@user_bp.route('/delete', methods=['POST'])
+@token_check
+@super_admin_required
+def delete(*args, **kwargs):
+    """
+    删除用户
+    :param user_id: 用户id
+    :return:
+    """
+    data = request.get_json()
+    schema = {
+        'userId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+
+    the_user = User.query.get(data['userId'])
+    if the_user is None:
+        return generate_result(2, '用户不存在')
+    try:
+        db.session.delete(the_user)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return generate_result(2, '用户以录入信息无法删除')
+    return generate_result(0, '删除用户成功')

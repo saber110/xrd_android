@@ -692,22 +692,529 @@ def building_base_info(*args, **kwargs):
     """
     获取楼栋基本信息
     """
+    result = [
+        {
+            'label': '楼幢名称',
+            'key': 'buildingName',
+            'required': True,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
+            'label': '楼幢别名',
+            'key': 'buildingAlias',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
+            'label': '楼幢类别',
+            'key': 'buildingKind',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ["住宅(电梯房)", "住宅(楼梯房)", "住宅(洋房)", "单身公寓(住宅)", "单身公寓(非住宅)", "办公写字楼", "别墅(独栋)", "别墅(联排)", "别墅(双拼)",
+                       "叠墅", "自建民房", "其它类型"],
+            'value': ''
+        },
+        {
+            'label': '是否是别墅',
+            'key': 'isVilla',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['是', '否'],
+            'value': ''
+        },
+        {
+            "label": "1F情况说明",
+            "type": "list",
+            "length": 6
+        },
+        {
+            'label': '架空层',
+            'key': 'overheadLayer',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['_', '√'],
+            'value': ''
+        },
+        {
+            'label': '地上车库',
+            'key': 'aboveGroundGarage',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['_', '√'],
+            'value': ''
+        },
+        {
+            'label': '杂物间',
+            'key': 'utilityRoom',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['_', '√'],
+            'value': ''
+        },
+        {
+            'label': '住宅',
+            'key': 'residential',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['_', '√'],
+            'value': ''
+        },
+        {
+            'label': '商铺',
+            'key': 'shop',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['_', '√'],
+            'value': ''
+        },
+        {
+            'label': '一楼其它情况备注',
+            'key': 'firstFloorOtherDescription',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
+            "label": "楼幢层数情况",
+            "type": "list",
+            "length": 12
+        },
+        {
+            'label': '一单元',
+            'key': 'oneUnitLayers',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '二单元',
+            'key': 'twoUnitLayers',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '三单元',
+            'key': 'threeUnitLayers',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '四单元',
+            'key': 'fourUnitLayers',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '五单元',
+            'key': 'fiveUnitLayers',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '六单元',
+            'key': 'sixUnitLayers',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '七单元',
+            'key': 'sevenUnitLayers',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '八单元',
+            'key': 'eightUnitLayers',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '九单元',
+            'key': 'nightUnitLayers',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '十单元',
+            'key': 'tenUnitLayers',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '地上总层',
+            'key': 'floorOverGround',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '地下总层',
+            'key': 'floorUnderGround',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            "label": "物业分类",
+            "key": "propertyKind",
+            "required": False,
+            "changed": True,
+            "type": "radio",
+            "option": ["低层", "多层", "多层_电梯房", "小高层", "高层", "超高层"],
+            "value": ""
+        },
+        {
+            "label": "建筑结构",
+            "key": "buildingStructure",
+            "required": False,
+            "changed": True,
+            "type": "radio",
+            "option": ["钢混结构", "混合结构", "钢及钢混结构", "砖混结构", "砖木结构", "钢结构", "木结构", "简易结构"],
+            "value": ""
+        },
+        {
+            "label": "一梯户数情况",
+            "type": "list",
+            "length": 12
+        },
+        {
+            'label': '一单元',
+            'key': 'oneUnitHouseholds',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '二单元',
+            'key': 'twoUnitHouseholds',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '三单元',
+            'key': 'threeUnitHouseholds',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '四单元',
+            'key': 'fourUnitHouseholds',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '五单元',
+            'key': 'fiveUnitHouseholds',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '六单元',
+            'key': 'sixUnitHouseholds',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '七单元',
+            'key': 'sevenUnitHouseholds',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '八单元',
+            'key': 'eightUnitHouseholds',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '九单元',
+            'key': 'nightUnitHouseholds',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        }, {
+            'label': '十单元',
+            'key': 'tenUnitHouseholds',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '单元数',
+            'key': 'numberOfUnit',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '一梯几户',
+            'key': 'oneLiftNumber',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            "label": "户室号分布情况",
+            "type": "list",
+            "length": 8
+        },
+        {
+            'label': '单元名称',
+            'key': 'unitName',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
+            'label': '室号名称',
+            'key': 'roomName',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
+            'label': '单元号',
+            'key': 'unitNumber',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
+            'label': '楼层号',
+            'key': 'floorNumber',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
+            'label': '楼层差异',
+            'key': 'floorDifferent',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
+            'label': '住宅起始',
+            'key': 'beginFloor',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '店铺层数',
+            'key': 'shopLayer',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '画板',
+            'key': 'palette',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
+            'label': '部位说明',
+            'key': 'locationDescription',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
+            'label': '主要朝向',
+            'key': 'mainTowards',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ["东", "南", "西", "北", "东南", "东北", "西南", "西北"],
+            'value': ''
+        },
+        {
+            'label': '平面布局',
+            'key': 'planeLayout',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ["一般", "较好", "好", "较差", "差"],
+            'value': ''
+        },
+        {
+            'label': '建成年份',
+            'key': 'completedYear',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '装修标准',
+            'key': 'decorationStandard',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ["毛坯房", "简单装修", "中档装修", "高档装修", "豪华装修"],
+            'value': ''
+        },
+        {
+            'label': '装修时间',
+            'key': 'decorationYear',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '房产性质',
+            'key': 'buildingProperty',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ["商品房", "房改房", "经济适用房", "集资房", "私房", "非商品房", "公租房", "安置房"],
+            'value': ''
+        },
+        {
+            'label': '楼幢状态',
+            'key': 'buildingStatus',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['存量', '灭失'],
+            'value': ''
+        },
+        {
+            "label": "顶楼状况",
+            "type": "list",
+            "length": 5
+        },
+        {
+            'label': '顶楼情况',
+            'key': 'roofTopInfo',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ["平层", "跃层", "阁楼", "露台"],
+            'value': ''
+        },
+        {
+            'label': '屋面情况',
+            'key': 'roofInfo',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['坡屋顶', '平屋顶'],
+            'value': ''
+        },
+        {
+            'label': '顶楼露台',
+            'key': 'roofTopTerrace',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['有', '无'],
+            'value': ''
+        },
+        {
+            'label': '顶楼阁楼',
+            'key': 'roofTopAttic',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['有', '无'],
+            'value': ''
+        },
+        {
+            'label': '顶楼跃层',
+            'key': 'roofTopLayer',
+            'required': False,
+            'changed': True,
+            'type': 'radio',
+            "option": ['有', '无'],
+            'value': ''
+        },
+        {
+            'label': '楼栋调查表其他备注信息',
+            'key': 'otherInfo',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+    ]
     data = request.get_json()
     schema = {
         'buildingId': {'type': 'integer', 'min': 1}
     }
     v = generate_validator(schema)
     if not v(data):
-        return generate_result(1)
+        return generate_result(0, data={'buildingInfoList': result})
     try:
         building_info = BuildingInfo.query.get(data['buildingId'])
     except SQLAlchemyError:
         return generate_result(2, '获取数据失败')
-    result = building_info.to_dict
-    for key in result.keys():
-        if result[key] is None:
-            result[key] = ''
-    return generate_result(0, '获取数据成功', {'buildingInfo': result})
+    if building_info is None:
+        return generate_result(2, '楼栋信息不存在')
+    building_info = building_info.to_dict
+    for key in building_info.keys():
+        if building_info[key] is None:
+            building_info[key] = ''
+    for item in result:
+        if item['type'] != 'list' and item['key'] != '' and item['key'] in building_info:
+            item['value'] = building_info[item['key']]
+            if item['type'] == 'multiple':
+                item['value'] = item['value'].split(',')
+
+    return generate_result(0, '获取数据成功', {'buildingInfoList': result})
 
 
 @get_data_bp.route('/garden_table', methods=['POST'])
@@ -892,6 +1399,14 @@ def test(*args, **kwargs):
             "changed": True,
             "type": "text",
             "value": "test5"
-        }
+        },
+        {
+            'label': '地铁站距离',
+            'key': 'subwayDistance',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
     ]
     return generate_result(0, '测试数据', data={'formList': test_list})
