@@ -27,6 +27,25 @@ import static java.lang.String.valueOf;
  */
 public class UploadImgUtil {
 
+    private void post(final String url){
+        OkHttpClient okHttpClient = new OkHttpClient();
+        final Request request = new Request.Builder()
+                .url(url)
+                .get()//默认就是GET请求，可以不写
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("http", "onFailure: ");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("http", "onResponse: " + response.body().string());
+            }
+        });
+    }
 
     private void postFile(final String url, Map<String, String> map, String jpeg) {
         OkHttpClient client = new OkHttpClient();

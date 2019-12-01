@@ -24,6 +24,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,7 +53,11 @@ public class MessageListAdapter extends BaseAdapter {
 
         //初始化BeanList
         try {
-            messageListBean = MessageListBean.getInstance(adapterType);
+            try {
+                messageListBean = MessageListBean.getInstance(adapterType);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } catch (PageInitException e) {
             e.printStackTrace();
             Toast.makeText(context, ConstTools.EXCEPTION_PAGE_INIT,Toast.LENGTH_LONG).show();
@@ -88,10 +93,10 @@ public class MessageListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.i("INDEX","获取条目成功   " + 24);
 
         CommonItemBean commonItemBean = messageListBean.getItemBean(position);
         int type = commonItemBean.type;
-        Log.i("INDEX","获取条目成功   " + position);
 
             switch (type) {
                 case ConstTools.MESSAGE_BEANTYPE_COMMON:
@@ -146,6 +151,8 @@ public class MessageListAdapter extends BaseAdapter {
                 convertView.findViewById(R.id.message_selector_item_togglebutton);
         buttonToggleGroup.setSingleSelection(true);
         List<String> selectorMessage = selectorItemBean.getData();
+        Log.i("selectorMessage", "getSelectorView: " + selectorMessage.size());
+
         for (int i = 0 ; i < selectorMessage.size() ; i ++){
             //初始化Button
             View buttonView = layoutInflater.inflate(R.layout.message_selector_button,null);
@@ -187,6 +194,7 @@ public class MessageListAdapter extends BaseAdapter {
         Log.i("MessageAdapter","二级菜单长度为:" + length);
         View view;
         for (int i = 0 ; i < length ; i ++) {
+            Log.i("i=", i+"");
             CommonItemBean currentItemBean = listItemBean.getInnerItem(i);
             int type = currentItemBean.type;
 //            currentItemBean.setTitle(currentItemBean.getTitle() + "ceshi");

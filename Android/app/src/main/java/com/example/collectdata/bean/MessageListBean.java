@@ -2,16 +2,29 @@ package com.example.collectdata.bean;
 
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.example.collectdata.exception.PageInitException;
 import com.example.collectdata.tools.CacheTools;
 import com.example.collectdata.tools.ConstTools;
 import com.example.collectdata.tools.HttpTools;
 import com.example.collectdata.tools.JsonTools;
+import com.example.login.login;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * 数据收集页列表
@@ -19,14 +32,15 @@ import java.util.List;
 public class MessageListBean {
 
     List<CommonItemBean> list = new ArrayList<>();
-
+//    private static final String ROOT_URL = "http://kms.yinaoxiong.cn:8888/api/v1/get_data/";
+    private static final String ROOT_URL = "http://kms.yinaoxiong.cn:8888/api/v1/get_data/";
     //四个实例
     private static MessageListBean xqgk = null;
     private static MessageListBean lzdc = null;
     private static MessageListBean lzxx = null;
     private static MessageListBean xqxx = null;
-
-    public static MessageListBean getInstance(int type) throws PageInitException {
+    static OkHttpClient client = new OkHttpClient();
+    public static MessageListBean getInstance(int type) throws PageInitException, IOException {
         switch (type){
             case ConstTools.XIAOQUGAIKUANG:
                 if (xqgk == null) {
@@ -68,7 +82,7 @@ public class MessageListBean {
         return xqxx;
     }
 
-    private MessageListBean(int listType) throws PageInitException {
+    private MessageListBean(int listType) throws PageInitException, IOException {
         switch (listType){
             case ConstTools.XIAOQUGAIKUANG:
                 initXiaoQuGaiKuang();
@@ -95,20 +109,12 @@ public class MessageListBean {
     /**
      * 初始化小区概况表
      */
-    private void initXiaoQuGaiKuang() throws PageInitException{
+    private void initXiaoQuGaiKuang() throws PageInitException, IOException {
         //TODO 获取采集人员
         Log.i("MessageListBean","请求搂幢调查表的内容");
-        HttpTools httpTools = new HttpTools();
-        String response = httpTools.request("building_base_info",null);
-
-        try {
-            JsonTools.jsonParasForMessageList(response,this.list);
-            Log.i("ListButtonListener","list转换结果为:" + list);
-        } catch (JSONException e) {
-            Log.i("MessageListBean","请求结果数据格式异常");
-            e.printStackTrace();
-            throw PageInitException.getExceptionInstance();
-        }
+        Map map = new HashMap<String, String>();
+        map.put("token",login.token);
+        post(ROOT_URL+"building_base_info", (HashMap<String, Object>) map);
 
 //        //获取当前日期
 //        Calendar calendar = Calendar.getInstance();
@@ -183,19 +189,23 @@ public class MessageListBean {
     /**
      * 初始化楼幢调查
      */
-    private void initLouZhuangDiaoCha() throws PageInitException{
+    private void initLouZhuangDiaoCha() throws PageInitException, IOException {
         Log.i("MessageListBean","请求搂幢调查表的内容");
-        HttpTools httpTools = new HttpTools();
-        String response = httpTools.request("garden_base_info",null);
-
-        try {
-            JsonTools.jsonParasForMessageList(response,this.list);
-            Log.i("ListButtonListener","list转换结果为:" + list);
-        } catch (JSONException e) {
-            Log.i("MessageListBean","请求结果数据格式异常");
-            e.printStackTrace();
-            throw PageInitException.getExceptionInstance();
-        }
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("token",login.token);
+        map.put("gardenId",1);
+        post(ROOT_URL+"garden_base_info", (HashMap<String, Object>) map);
+//       HttpTools httpTools = new HttpTools();
+//        String response = httpTools.request("garden_base_info",null);
+//
+//        try {
+//            JsonTools.jsonParasForMessageList(response,this.list);
+//            Log.i("ListButtonListener","list转换结果为:" + list);
+//        } catch (JSONException e) {
+//            Log.i("MessageListBean","请求结果数据格式异常");
+//            e.printStackTrace();
+//            throw PageInitException.getExceptionInstance();
+//        }
     }
 
     /**
@@ -226,7 +236,12 @@ public class MessageListBean {
     //TODO 判断是否为InnerItem
     public static void setCurrentSelect(int position,String content){
         try {
-            List<CommonItemBean> beans = MessageListBean.getInstance(CacheTools.pageType).getList();
+            List<CommonItemBean> beans = null;
+            try {
+                beans = MessageListBean.getInstance(CacheTools.pageType).getList();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             SelectorItemBean bean = (SelectorItemBean)beans.get(position);
             bean.setCurrentSelect(content);
         } catch (PageInitException e) {
@@ -239,7 +254,12 @@ public class MessageListBean {
     //TODO 判断是否为InnerItem
     public static String getCurrentSelect(int position) {
         try {
-            List<CommonItemBean> beans = MessageListBean.getInstance(CacheTools.pageType).getList();
+            List<CommonItemBean> beans = null;
+            try {
+                beans = MessageListBean.getInstance(CacheTools.pageType).getList();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             SelectorItemBean bean = (SelectorItemBean)beans.get(position);
             return bean.getCurrentSelect();
         } catch (PageInitException e) {
@@ -247,5 +267,41 @@ public class MessageListBean {
         }
         return null;
     }
+    public void post(final String url, final HashMap<String,Object> map) throws IOException {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("http2", login.token);
+                RequestBody body = RequestBody.create(JSON.toJSONString(map), login.JSONDATA);
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(body)
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        Log.i("http", "onFailure: ");
+                    }
 
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        try {
+//                            Log.i("http2", "onResponse: " + response.body().string());
+                            String result = response.body().string();
+                            JsonTools.funPrint("http2", result);
+                            JsonTools.jsonParasForMessageList(result,list);
+
+                            Log.i("ListButtonListener","list转换结果为:" + list);
+                        }catch (JSONException e) {
+                            Log.i("MessageListBean","请求结果数据格式异常");
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            Log.i("error","未知错误");
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
 }
