@@ -173,7 +173,7 @@ def garden_base_info(*args, **kwargs):
         },
         {
             'label': '小区别名2',
-            'key': 'communityAlias2',
+            'key': 'gardenAlias2',
             'required': False,
             'changed': True,
             'type': 'text',
@@ -1499,21 +1499,7 @@ def building_base_table(*args, **kwargs):
         return generate_result(2, '导出数据失败')
     if len(building_infos) == 0:
         return generate_result(2, '楼幢数据不存在')
-    building_infos_dict_like = []
-    for item in building_infos:
-        item = item.to_dict
-        for key in item.keys():
-            if item[key] is None:
-                item[key] = ''
-        building_infos_dict_like.append(item)
 
-    building_info_cut_by_kind = {}
-    for info in building_infos_dict_like:
-        kind = info['buildingKind']
-        if kind not in building_info_cut_by_kind:
-            building_info_cut_by_kind[kind] = [info]
-        else:
-            building_info_cut_by_kind[kind].append(info)
     # 获取模板文件路径
     father_dictionary = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     file_path = os.path.join(father_dictionary, 'data_template', '楼幢调查表导出模板.xlsx')
@@ -1532,19 +1518,15 @@ def building_base_table(*args, **kwargs):
                       'threeAdventSituationScore', 'surroundingsScore', 'buildingAppearanceScore',
                       'otherAdvantagesScore', 'otherDisadvantagesScore', 'buildingLevel', 'preliminaryPrice']
     wb = excel.load_workbook(file_path)
-    template_sheet = wb.active
-    for key, sheet_data in building_info_cut_by_kind.items():
-        # 根据楼幢类别创建不同的sheet进行存储
-        if key not in wb.sheetnames:
-            ws = wb.copy_worksheet(template_sheet)
-            ws.title = key
-        else:
-            ws = wb[key]
-        for index, row_dict in enumerate(sheet_data):
-            row_data = [index + 1]
-            row_data.extend([row_dict[table_key] for table_key in table_key_list])
-            ws.append(row_data)
-    wb.remove(template_sheet)
+    ws = wb.active
+
+    for item in building_infos:
+        item = item.to_dict
+        for key in item.keys():
+            if item[key] is None:
+                item[key] = ''
+        ws.append([item[table_key] for table_key in table_key_list])
+
     stream = BytesIO()
     wb.save(stream)
     stream.seek(0)
