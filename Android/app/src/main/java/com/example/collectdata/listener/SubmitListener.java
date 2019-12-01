@@ -37,7 +37,7 @@ public class SubmitListener implements View.OnClickListener {
         List<CommonItemBean> beans;
         try {
             beans = MessageListBean.getInstance(CacheTools.pageType).getList();
-        } catch (PageInitException e) {
+        } catch (Exception e) {
             Toast.makeText(activity,e.getMessage(),Toast.LENGTH_LONG).show();
             return ;
         }

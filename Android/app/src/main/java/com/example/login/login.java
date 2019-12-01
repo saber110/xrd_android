@@ -16,14 +16,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSON;
+import com.example.collectdata.bean.CommonItemBean;
+import com.example.collectdata.bean.MessageListBean;
+import com.example.collectdata.tools.JsonTools;
 import com.example.collectdata_01.MainActivity;
 import com.example.collectdata_01.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -44,7 +49,7 @@ public class login extends AppCompatActivity {
     private static String TAG = "Interface";
     public static String token;
 //    TODO 使用res中的string字符串
-    final private String user = "http://rap2api.taobao.org/app/mock/234350/api/v1/" + "user/";
+    final private String user = "http://kms.yinaoxiong.cn:8888/api/v1/" + "user/";//http://192.168.43.84:5000/api/v1/get_data/
     final private String loginApi = user + "login";
     public static final MediaType JSONDATA
             = MediaType.get("application/json; charset=utf-8");
@@ -64,9 +69,12 @@ public class login extends AppCompatActivity {
     private void initView() {
         etUsername = findViewById(R.id.et_username);
 //        etUsername.setText(getIemi.getIMEI(this));
+        etUsername.setText("1");
+
         etUsername.setFocusable(false);
         etUsername.setFocusableInTouchMode(false);
         etPassword = findViewById(R.id.et_password);
+        etPassword.setText("1");
         btGo = findViewById(R.id.bt_go);
         fab = findViewById(R.id.fab);
     }
@@ -161,7 +169,7 @@ public class login extends AppCompatActivity {
     }
     public void loginSucess(String data){
         String[] keyValue = data.substring(1, data.length() - 1).split(":");
-        login.token = keyValue[1];
+        login.token = keyValue[1].substring(1,keyValue[1].length()-1);
         Log.i(TAG, "loginSucess: " + login.token);
         Intent i2 = new Intent(login.this, MainActivity.class);
         startActivity(i2);
@@ -195,4 +203,5 @@ public class login extends AppCompatActivity {
             }
         }).start();
     }
+
 }
