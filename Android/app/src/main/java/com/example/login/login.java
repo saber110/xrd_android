@@ -90,6 +90,7 @@ public class login extends AppCompatActivity {
         btGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                btGo.setText("登录中...");
                 try {
                     login(etUsername.getText().toString(), etPassword.getText().toString());
                 } catch (IOException e) {
@@ -173,6 +174,7 @@ public class login extends AppCompatActivity {
         Log.i(TAG, "loginSucess: " + login.token);
         Intent i2 = new Intent(login.this, MainActivity.class);
         startActivity(i2);
+        login.this.finish();
     }
 
     public void loginFailure(String res){
