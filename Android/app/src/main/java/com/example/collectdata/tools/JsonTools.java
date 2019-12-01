@@ -26,8 +26,10 @@ public class JsonTools {
         }
         JSONObject dataJsonObj = (JSONObject)jsonObject.get("data");
         JSONArray formList = null;
-        if(CacheTools.pageType==1) formList = (JSONArray)dataJsonObj.get("buildingInfoList");
-        else if(CacheTools.pageType==3) formList = (JSONArray)dataJsonObj.get("gardenInfoList");
+        if(CacheTools.pageType==1) formList = (JSONArray)dataJsonObj.get("gardenInfoList");
+        else if(CacheTools.pageType==2) formList = (JSONArray)dataJsonObj.get("buildingInfoList");
+        else if(CacheTools.pageType==3) formList = (JSONArray)dataJsonObj.get("gardenImportInfoList");
+        else if(CacheTools.pageType==4) formList = (JSONArray)dataJsonObj.get("buildingImportInfoList");
 
         funPrint("dataJsonObj" ,dataJsonObj.toString());
         int formListLength = formList.length();
