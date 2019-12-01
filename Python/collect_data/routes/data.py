@@ -127,6 +127,7 @@ def garden_picture_kind(*args, **kwargs):
 
 
 @data_bp.route('/garden_picture', methods=['POST'])
+@token_check
 def garden_picture(user_id: int, *args, **kwargs):
     """
     上传小区图片
