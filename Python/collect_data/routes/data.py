@@ -149,14 +149,14 @@ def garden_picture(user_id: int, *args, **kwargs):
         db.session.rollback()
         return generate_result(2)
     number = f"{len(pictures) + 1:03d}"
-    file_path = f'origin/{garden.id}/2_{garden.name}_{picture_kind}_{number}.'
-    file_path = image_upload.save(image, name=file_path)
-    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, file_path)
-    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST,
-                                   f'compressed/{garden.id}/2_{garden.name}_{picture_kind}_{number}.jpg')
+    origin_file_path = f'origin/{garden.id}/2_{garden.name}_{picture_kind}_{number}.'
+    origin_file_path = image_upload.save(image, name=origin_file_path)
+    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
+    compressed_file_path = f'compressed/{garden.id}/2_{garden.name}_{picture_kind}_{number}.jpg'
+    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = GardenPicture(gardenId=garden_id, pictureKind=picture_kind, collectTime=collect_time,
-                            filePath=file_path,
+                            originFilePath=origin_file_path, compressed_file_path=compressed_file_path,
                             syncTime=datetime.now(), userId=user_id)
     try:
         db.session.add(picture)
@@ -206,14 +206,14 @@ def building_picture(user_id: int, *args, **kwargs):
         db.session.rollback()
         return generate_result(2)
     number = f"{len(pictures) + 1:03d}"
-    file_path = f'origin/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
-    file_path = image_upload.save(image, name=file_path)
-    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, file_path)
-    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST,
-                                   f'compressed/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.jpg')
+    origin_file_path = f'origin/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
+    origin_file_path = image_upload.save(image, name=origin_file_path)
+    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
+    compressed_file_path = f'compressed/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.jpg'
+    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = BuildingPicture(buildingId=building_id, pictureKind=picture_kind, collectTime=collect_time,
-                              filePath=file_path,
+                              originFilePath=origin_file_path, compressedFilePath=compressed_file_path,
                               syncTime=datetime.now(), userId=user_id)
     try:
         db.session.add(picture)
@@ -248,14 +248,15 @@ def other_picture(user_id: int, *args, **kwargs):
     except SQLAlchemyError:
         return generate_result(2)
     number = f"{len(pictures) + 1:03d}"
-    file_path = f'origin/{garden.id}/4_{garden.name}_{number}.'
-    file_path = image_upload.save(image, name=file_path)
-    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, file_path)
-    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST,
-                                   f'compressed/{garden.id}/4_{garden.name}_{number}.jpg')
+    origin_file_path = f'origin/{garden.id}/4_{garden.name}_{number}.'
+    origin_file_path = image_upload.save(image, name=origin_file_path)
+    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
+    compressed_file_path = f'compressed/{garden.id}/4_{garden.name}_{number}.jpg'
+    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = OtherPicture(gardenId=garden_id, collectTime=collect_time,
-                           filePath=file_path, syncTime=datetime.now(), userId=user_id)
+                           originFilePath=origin_file_path, compressedFilePath=compressed_file_path,
+                           syncTime=datetime.now(), userId=user_id)
     try:
         db.session.add(picture)
         db.session.commit()
@@ -333,7 +334,7 @@ def first_floor_kind(*args, **kwargs):
 
 @data_bp.route('/building_base_info', methods=['POST'])
 @token_check
-def building_info(user_id: int, *args, **kwargs):
+def building_base_info(user_id: int, *args, **kwargs):
     """
     楼栋调查表
     :param user_id: 用户id
