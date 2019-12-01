@@ -156,12 +156,13 @@ def garden_picture(user_id: int, *args, **kwargs):
     compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = GardenPicture(gardenId=garden_id, pictureKind=picture_kind, collectTime=collect_time,
-                            originFilePath=origin_file_path, compressed_file_path=compressed_file_path,
+                            originFilePath=origin_file_path, compressedFilePath=compressed_file_path,
                             syncTime=datetime.now(), userId=user_id)
     try:
         db.session.add(picture)
         db.session.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
+        print(str(e))
         db.session.rollback()
         os.remove(origin_path)
         os.remove(compressed_path)
@@ -218,7 +219,8 @@ def building_picture(user_id: int, *args, **kwargs):
     try:
         db.session.add(picture)
         db.session.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
+        print(str(e))
         db.session.rollback()
         os.remove(origin_path)
         os.remove(compressed_path)
@@ -260,7 +262,8 @@ def other_picture(user_id: int, *args, **kwargs):
     try:
         db.session.add(picture)
         db.session.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
+        print(str(e))
         db.session.rollback()
         os.remove(origin_path)
         os.remove(compressed_path)
