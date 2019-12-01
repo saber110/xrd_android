@@ -9,10 +9,11 @@ from flask import request, Blueprint
 from openpyxl.utils.exceptions import InvalidFileException
 from sqlalchemy.exc import SQLAlchemyError
 
-from . import generate_result, generate_validator, is_excel_end
+from . import generate_result, generate_validator
 from .. import config
 from ..models.base_model import db
 from ..models.user import User
+from ..utils import is_excel_end
 from ..wraps import token_check, super_admin_required
 
 user_bp = Blueprint('user', __name__, url_prefix=config.URL_Prefix + '/user')

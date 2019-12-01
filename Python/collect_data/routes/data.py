@@ -342,7 +342,8 @@ def building_info(user_id: int, *args, **kwargs):
     schema = {
         "gardenId": {'type': 'integer', 'min': 1},
         "collectTime": {'type': 'integer', 'min': 1},
-        "buildingName": {'type': 'string'}
+        "buildingName": {'type': 'string'},
+        "buildingKind": {'type': 'string'}
     }
     v = generate_validator(schema)
     if not v(data):

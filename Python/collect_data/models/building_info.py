@@ -17,7 +17,7 @@ class BuildingInfo(BaseModel):
     collectTime = db.Column(db.DateTime, nullable=False, comment='信息采集时间')
     buildingName = db.Column(db.Text, nullable=False, comment='建筑名')
     buildingAlias = db.Column(db.Text, comment='楼栋别名')
-    buildingKind = db.Column(db.Text, comment='楼栋类别')
+    buildingKind = db.Column(db.Text, nullable=False, comment='楼栋类别')
     isVilla = db.Column(db.Text, comment='是否是别墅')
     overheadLayer = db.Column(db.Text, comment='架空层')
     aboveGroundGarage = db.Column(db.Text, comment='地上车库')
