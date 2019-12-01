@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 允许程序读写手机状态和身份 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 允许程序访问CellID或WiFi热点来获取粗略的位置 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -20,8 +20,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DrawActivity"></activity>
-
+        <activity android:name="com.example.collectdata.BuweiActivity"
+            android:screenOrientation="landscape">
+        </activity>
+        <activity android:name=".DrawActivity" />
         <activity
             android:name="com.example.collectdata.MessageActivity"
             android:windowSoftInputMode="adjustPan" />
@@ -40,17 +42,17 @@
         <activity android:name=".ResultActivity" />
         <activity android:name=".CollectActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name="com.example.login.updatePassword"/>
-
+        <activity android:name="com.example.login.updatePassword" />
         <activity android:name="com.example.login.login">
-            <!-- <activity android:name="com.example.map.baidu_map.BaiduMapActivity"> -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <!-- <activity android:name="MainActivity"> -->
+
+            <!-- <activity android:name="com.example.map.baidu_map.BaiduMapActivity"> -->
+
+        </activity> <!-- <activity android:name="MainActivity"> -->
         <!-- &lt;!&ndash;        <activity android:name="com.example.map.baidu_map.BaiduMapActivity">&ndash;&gt; -->
         <!-- <intent-filter> -->
         <!-- <action android:name="android.intent.action.MAIN" /> -->
