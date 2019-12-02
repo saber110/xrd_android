@@ -8,7 +8,7 @@ import os
 from io import BytesIO
 
 import openpyxl as excel
-from flask import request, Blueprint
+from flask import request, Blueprint, send_from_directory
 from sqlalchemy.exc import SQLAlchemyError
 
 from . import generate_validator, generate_result, my_send_file
@@ -1673,3 +1673,21 @@ def building_table(*args, **kwargs):
     wb.save(stream)
     stream.seek(0)
     return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '楼幢信息_数据导入表.xlsx')
+
+
+@get_data_bp.route('/picture', methods=['GET'])
+@token_check
+@admin_required
+def picture(*args, **kwargs):
+    """
+    根据图片路径获取图片
+    :return:
+    """
+    relative_path = request.args.get('path', '')
+    if relative_path == '':
+        return generate_result(1)
+    abs_path = os.path.join(config.UPLOADED_IMAGES_DEST, relative_path)
+    if not os.path.exists(abs_path):
+        return generate_result(2, '图片不存在')
+    dir_path, filename = os.path.split(abs_path)
+    return send_from_directory(dir_path, filename)

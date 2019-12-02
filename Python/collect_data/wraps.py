@@ -24,7 +24,9 @@ def get_token():
         try:
             token = request.form['token']
         except KeyError:
-            return generate_result(1, message='请求参数错误，token不存在')
+            token = request.args.get('token', '')
+            if token == '':
+                return generate_result(1, message='请求参数错误，token不存在')
     return token
 
 
@@ -35,13 +37,12 @@ def token_check(f):
 
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if request.method == 'POST':
-            token = get_token()
-            user_id = User.verify_auth_token(token)
-            if user_id is not None:
-                return f(user_id=int(user_id), *args, **kwargs)
-            else:
-                abort(401)
+        token = get_token()
+        user_id = User.verify_auth_token(token)
+        if user_id is not None:
+            return f(user_id=int(user_id), *args, **kwargs)
+        else:
+            abort(401)
 
     return wrapper
 
@@ -54,11 +55,10 @@ def admin_required(f):
 
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if request.method == 'POST':
-            token = get_token()
-            if User.verify_permission(token, 1):
-                return f(*args, **kwargs)
-            abort(401)
+        token = get_token()
+        if User.verify_permission(token, 1):
+            return f(*args, **kwargs)
+        abort(401)
 
     return wrapper
 
@@ -71,10 +71,9 @@ def super_admin_required(f):
 
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if request.method == 'POST':
-            token = get_token()
-            if User.verify_permission(token, 2):
-                return f(*args, **kwargs)
-            abort(401)
+        token = get_token()
+        if User.verify_permission(token, 2):
+            return f(*args, **kwargs)
+        abort(401)
 
     return wrapper
