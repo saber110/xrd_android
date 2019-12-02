@@ -246,6 +246,11 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             mainDB = LiteOrm.newSingleInstance(this, "imageData.db");
             System.out.println("数据库创建成功");
         }
+        Intent intent11 = getIntent();
+        String flagMessage = intent11.getStringExtra("flag");
+        if(flagMessage != null){
+            showSingleChoiceDialog();
+        }
     }
 
     /**

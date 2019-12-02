@@ -2,6 +2,7 @@ package com.example.collectdata_01.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -55,10 +56,11 @@ public class BottomUtil {
 
                                                                    break;
                                                                case 1:
-                                                                   context.startActivity(new Intent(context, takePhoto01.class));
+                                                                   Intent intent =new Intent(context,MainActivity.class);
+                                                                   intent.putExtra("flag", "true");
+                                                                   context.startActivity(intent);
                                                                    break;
                                                                case 2:
-
                                                                    context.startActivity(new Intent(context, ResultActivity.class));
                                                                    break;
                                                                case 3:
