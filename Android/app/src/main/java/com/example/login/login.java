@@ -49,7 +49,8 @@ public class login extends AppCompatActivity {
     private static String TAG = "Interface";
     public static String token;
 //    TODO 使用res中的string字符串
-    final private String user = "http://kms.yinaoxiong.cn:8888/api/v1/" + "user/";//http://192.168.43.84:5000/api/v1/get_data/
+    final private String user = "http://kms.yinaoxiong.cn:8888/api/v1/" + "user/";
+//    final private String user = "http://rap2api.taobao.org/app/mock/234350/api/v1/user/";
     final private String loginApi = user + "login";
     public static final MediaType JSONDATA
             = MediaType.get("application/json; charset=utf-8");

@@ -2,12 +2,15 @@ package com.example.map.dao;
 
 public class AddGradenDao {
 
+
     /**
      * token :
      * districtId : 1
      * streetId : 1
      * communityId : 1
      * gardenName : 测试小区
+     * cityId : 1
+     * provinceId : 1
      */
 
     private String token;
@@ -15,6 +18,8 @@ public class AddGradenDao {
     private int streetId;
     private int communityId;
     private String gardenName;
+    private int cityId;
+    private int provinceId;
 
     public String getToken() {
         return token;
@@ -54,5 +59,21 @@ public class AddGradenDao {
 
     public void setGardenName(String gardenName) {
         this.gardenName = gardenName;
+    }
+
+    public int getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
+    }
+
+    public int getProvinceId() {
+        return provinceId;
+    }
+
+    public void setProvinceId(int provinceId) {
+        this.provinceId = provinceId;
     }
 }

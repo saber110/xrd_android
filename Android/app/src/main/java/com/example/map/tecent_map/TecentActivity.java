@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.location.Location;
@@ -20,9 +19,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.collectdata_01.R;
-import com.example.dao.MapMarkerDataDao;
 import com.example.dialog.CreatDialog;
 import com.example.map.baidu_map.BaiduMapActivity;
+import com.example.map.dao.MapMarkerDataDao;
 import com.example.map.google.GoogleMapActivity;
 import com.example.map.net.GetMarkerData;
 import com.example.map.net.SendMapMsg;
@@ -83,6 +82,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         initLoc();
         initMark();
     }
+
     private void initMark() {
         // 2代表腾讯
         GetMarkerData getMarkerData = new GetMarkerData(gardenId, 2);
@@ -93,30 +93,20 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 for (MapMarkerDataDao.DataBean.MapDataBean mapDataBean :
                         mapMarkerDataDao.getData().getMap_data()) {
                     MarkerOptions options = new MarkerOptions().position(new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude())).
-                            icon(BitmapDescriptorFactory.fromBitmap(zoomImg(drawBitMap(mapDataBean.getName()))));
+                            icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(mapDataBean.getName())));
                     tencentMap.addMarker(options);
                 }
+                if (mapMarkerDataDao.getData().getMap_data().size() != 0) {
+                    MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(0);
+                    tencentMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+                    tencentMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude())));
+                }
             }
+
         } catch (Exception e) {
 
         }
     }
-
-    public static Bitmap zoomImg(Bitmap bm) {
-        //获得图片的宽高
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        //计算缩放比例
-        float scaleWidth = ((float) 100) / width;
-        float scaleHeight = ((float) 100) / height;
-        //取得想要缩放的matrix参数
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        //得到新的图片
-        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
-    }
-
 
     private Bitmap drawBitMap(String str) {
         float scale = this.getResources().getDisplayMetrics().density;
@@ -198,6 +188,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         tencentMap = mapview.getMap();
         uiSettings = tencentMap.getUiSettings();
         uiSettings.setMyLocationButtonEnabled(true);
+        uiSettings.setRotateGesturesEnabled(false);
         // 设置卫星地图
         tencentMap.setSatelliteEnabled(true);
         MyLocationStyle myLocationStyle = new MyLocationStyle();
@@ -262,14 +253,12 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
     @Override
     protected void onStart() {
-//  TODO Auto-generated method stub
         super.onStart();
         mapview.onStart();
     }
 
     @Override
     protected void onResume() {
-// TODO Auto-generated method stub
         super.onResume();
         mapview.onResume();
     }
@@ -326,7 +315,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                         String result = (String) asyncTask.get();
                         if (result != null) {
                             Toast.makeText(TecentActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
-                            MarkerOptions options = new MarkerOptions(latLng).icon(BitmapDescriptorFactory.fromBitmap(zoomImg(drawBitMap(name.getText().toString()))));
+                            MarkerOptions options = new MarkerOptions(latLng).icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(name.getText().toString())));
                             tencentMap.addMarker(options);
                         }
                     } catch (ExecutionException e) {
@@ -360,11 +349,11 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         changeView.findViewById(R.id.change_data_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(title.getText().length() == 0) {
-                    Toast.makeText(getApplicationContext(),"请输入修改数据",Toast.LENGTH_SHORT).show();
-                }else{
+                if (title.getText().length() == 0) {
+                    Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
+                } else {
                     if (changeMarkData()) {
-                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(zoomImg(drawBitMap(title.getText().toString()))));
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawBitMap(title.getText().toString())));
                     }
                     changeDialog.cancel();
                 }
@@ -374,22 +363,23 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     }
 
 
-
     /**
      * 修改marker
+     *
      * @return
      */
-    private boolean changeMarkData(){
+    private boolean changeMarkData() {
 
-        return false;
+        return true;
     }
 
     /**
      * 删除marker
+     *
      * @return
      */
-    private boolean deleteMark(){
-        return false;
+    private boolean deleteMark() {
+        return true;
     }
 
 
@@ -399,7 +389,8 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         private OnLocationChangedListener mChangedListener;
         private TencentLocationManager locationManager;
         private TencentLocationRequest locationRequest;
-        private boolean flag = true;
+        // 开始不移动位置
+        private boolean flag = false;
 
         public LocationListener(Context context) {
             mContext = context;
