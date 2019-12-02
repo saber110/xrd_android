@@ -23,6 +23,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -78,6 +79,7 @@ public class DrawActivity extends AppCompatActivity {
             public void onClick(DialogInterface arg0, int arg1) {
                 // TODO Auto-generated method stub
                 arg0.dismiss();
+                startActivity(new Intent(DrawActivity.this, MainActivity.class));
             }
         });
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -96,15 +98,14 @@ public class DrawActivity extends AppCompatActivity {
                     Toast.makeText(context, "请继续作图或者选择导入图片", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(context, "正在为您返回拍照", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(DrawActivity.this, takePhoto01.class));
+                    Toast.makeText(context, "返回主页", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(DrawActivity.this, MainActivity.class));
                 }
             }
         });
         builder.create().show();
 
     }
-
 
     public void onBtnClick(View v){
         Button btn = (Button)v;
@@ -122,12 +123,14 @@ public class DrawActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(DrawActivity.this, PERMISSIONS,1);
             }
 
-            saveBitmap(bitmap ,"test.jpg");
+            if(flag){
+                saveBitmap(bitmap, jpeg);
+            }
+            else {
+                saveBitmap(bitmap ,"涂鸦_"+ jpeg);
+            }
             System.out.println("save ok...");
-
             singleDialog();
-
-
         }
         if(str.equals("导入")){
             if (ContextCompat.checkSelfPermission(DrawActivity.this,
@@ -141,8 +144,6 @@ public class DrawActivity extends AppCompatActivity {
                 startActivityForResult(intent, PICK_PHOTO); // 打开相册
                 count++;
             }
-
-
         }
     }
 
@@ -161,7 +162,6 @@ public class DrawActivity extends AppCompatActivity {
                         handleImageBeforeKitKat(data);
                     }
                 }
-
                 break;
             default:
                 break;
@@ -180,16 +180,28 @@ public class DrawActivity extends AppCompatActivity {
                 // 解析出数字格式的id
                 String selection = MediaStore.Images.Media._ID + "=" + id;
                 imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+                File file = new File(imagePath);
+                jpeg = file.getName();
+                System.out.println("me");
             } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
                 Uri contentUri = ContentUris.withAppendedId(Uri.parse("content: //downloads/public_downloads"), Long.valueOf(docId));
                 imagePath = getImagePath(contentUri, null);
+                File file = new File(imagePath);
+                jpeg = file.getName();
+                System.out.println("do");
             }
         } else if ("content".equalsIgnoreCase(uri.getScheme())) {
             // 如果是content类型的Uri，则使用普通方式处理
             imagePath = getImagePath(uri, null);
+            File file = new File(imagePath);
+            jpeg = file.getName();
+            System.out.println("content");
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             // 如果是file类型的Uri，直接获取图片路径即可
             imagePath = uri.getPath();
+            File file = new File(imagePath);
+            jpeg = file.getName();
+            System.out.println("uri");
         }
         // 根据图片路径显示图片
         displayImage(imagePath);
@@ -210,7 +222,7 @@ public class DrawActivity extends AppCompatActivity {
         // 通过Uri和selection来获取真实的图片路径
         Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
         if (cursor != null) {
-            if (cursor.moveToFirst()) {
+            if (cursor.moveToFirst()){
                 path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
             }
             cursor.close();
@@ -218,19 +230,27 @@ public class DrawActivity extends AppCompatActivity {
         return path;
     }
 
+    Bitmap bitmap2;
     private void displayImage(String imagePath) {
         if (imagePath != null) {
-            Bitmap bitmap2 = BitmapFactory.decodeFile(imagePath);
+            bitmap2 = BitmapFactory.decodeFile(imagePath);
+            System.out.println("调用了display方法");
+            bitmap = null;
             if(bitmap == null) {
-                bitmap = Bitmap.createBitmap(imageview.getWidth(), imageview.getHeight(), Bitmap.Config.RGB_565);
+                WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+                int height = wm.getDefaultDisplay().getHeight();
+                int weight = wm.getDefaultDisplay().getWidth();
+                bitmap = Bitmap.createBitmap(weight, height, Bitmap.Config.RGB_565);
                 canvas = new Canvas(bitmap);
+                System.out.println("=null");
             }
             Rect src=new Rect(0,0,bitmap2.getWidth(),bitmap2.getHeight());//src是对bitmap裁剪
-            Rect dst=new Rect(0,0,imageview.getWidth(),imageview.getHeight());//dsc是将图片绘制到View的哪个位置
+            Rect dst=new Rect(0, 0, bitmap2.getWidth(), bitmap2.getHeight());//dsc是将图片绘制到View的哪个位置
             canvas.drawBitmap(bitmap2,src,dst,paint);
             imageview.setImageBitmap(bitmap);
         } else {
             Toast.makeText(this, "获取相册图片失败", Toast.LENGTH_SHORT).show();
+            System.out.println("获取相册图片失败");
         }
     }
 
@@ -243,7 +263,7 @@ public class DrawActivity extends AppCompatActivity {
         File file ;
         if(Build.BRAND .equals("Xiaomi") ){ // 小米手机
             fileName = Environment.getExternalStorageDirectory().getPath()+"/DCIM/Camera/"+bitName ;
-        }else{  // Meizu 、Oppo
+        }else{  //Meizu 、Oppo
             Log.v("qwe","002");
             fileName = Environment.getExternalStorageDirectory().getPath()+"/DCIM/"+bitName ;
         }
@@ -262,7 +282,6 @@ public class DrawActivity extends AppCompatActivity {
                 out.close();
                 // 插入图库
                 MediaStore.Images.Media.insertImage(this.getContentResolver(), file.getAbsolutePath(), bitName, null);
-
             }
         }
         catch (FileNotFoundException e)
@@ -276,16 +295,23 @@ public class DrawActivity extends AppCompatActivity {
         }
         // 发送广播，通知刷新图库的显示
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + fileName)));
-
     }
 
+
+    String jpeg;
+    private boolean flag = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
-
-
         imageview = findViewById(R.id.image);
+        //新页面接收数据
+        Bundle bundle = this.getIntent().getExtras();
+        //接收name值
+        jpeg = bundle.getString("jpeg");
+        System.out.println(jpeg);
+        String filepath1 = Environment.getExternalStorageDirectory()+ "/temp/" + jpeg;
+        displayImage(filepath1);
         imageview.setOnTouchListener(new View.OnTouchListener() {
             float x1,y1,x2,y2;
             @Override
@@ -295,6 +321,7 @@ public class DrawActivity extends AppCompatActivity {
                     canvas = new Canvas(bitmap);
                     paint.setColor(Color.WHITE);
                     paint.setStyle(Paint.Style.FILL);
+                    System.out.println("执行了这个方法");
                     canvas.drawRect(0f,0f,v.getWidth(),v.getHeight(),paint);
                 }
                 paint.setColor(Color.RED);
@@ -302,22 +329,25 @@ public class DrawActivity extends AppCompatActivity {
                 paint.setStrokeWidth(5f);
                 //实心
                 paint.setStyle(Paint.Style.FILL);
+                System.out.println(v.getWidth());
 
                 int action = e.getAction();
                 if(action == MotionEvent.ACTION_DOWN){
                     x1 = e.getX();
                     y1 = e.getY();
+                    System.out.println(x1);
                 }
                 if(action == MotionEvent.ACTION_MOVE){
                     x2 = e.getX();
+                    System.out.println(x2);
                     y2 = e.getY();
                     if(str.equals("开始")){
                         canvas.drawLine(x1,y1,x2,y2,paint);
+                        flag = false;
                         x1 = x2;
                         y1 = y2;
                     }
                 }
-
                 imageview.setImageBitmap(bitmap);
                 return true;
             }
