@@ -32,170 +32,102 @@
   <link href="../assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
   <!-- CSS Just for demo purpose, don't include it in your project -->
   <link href="../assets/demo/demo.css" rel="stylesheet" />
+  <!-- album -->
+  <link href="../assets/css/jquery.bsPhotoGallery.css" rel="stylesheet">
 </head>
 
 <body class="">
   <div class="wrapper ">
-    <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
-      <!--
-        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
-
-        Tip 2: you can also add an image using data-image tag
-    -->
-      <div class="logo">
-        <a href="http://www.creative-tim.com" class="simple-text logo-normal">
-          数据管理
-        </a>
-      </div>
-      <div class="sidebar-wrapper">
-        <ul class="nav">
-          <li class="nav-item ">
-            <a class="nav-link" href="./dashboard.html">
-              <i class="material-icons">dashboard</i>
-              <p>控制面板</p>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="./user.html">
-              <i class="material-icons">person</i>
-              <p>用户数据管理</p>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="./tables.html">
-              <i class="material-icons">content_paste</i>
-              <p>行政区划数据</p>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="./typography.html">
-              <i class="material-icons">library_books</i>
-              <p>采集数据管理</p>
-            </a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="./icons.html">
-              <i class="material-icons">bubble_chart</i>
-              <p>项目情况统计</p>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="./map.html">
-              <i class="material-icons">location_ons</i>
-              <p>地图数据管理</p>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="./notifications.html">
-              <i class="material-icons">photo_library</i>
-              <p>照片数据管理</p>
-            </a>
-          </li>
-        </ul>
-      </div>
+    <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg" id = "sidebar">
     </div>
     <div class="main-panel">
       <!-- Navbar -->
-      <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
-        <div class="container-fluid">
-          <div class="navbar-wrapper">
-            <a class="navbar-brand">项目情况统计</a>
-          </div>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="navbar-toggler-icon icon-bar"></span>
-            <span class="navbar-toggler-icon icon-bar"></span>
-            <span class="navbar-toggler-icon icon-bar"></span>
-          </button>
-          <div class="collapse navbar-collapse justify-content-end">
-            <form class="navbar-form">
-              <div class="input-group no-border">
-                <input type="text" value="" class="form-control" placeholder="Search...">
-                <button type="submit" class="btn btn-white btn-round btn-just-icon">
-                  <i class="material-icons">search</i>
-                  <div class="ripple-container"></div>
-                </button>
-              </div>
-            </form>
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link" href="#pablo">
-                  <i class="material-icons">dashboard</i>
-                  <p class="d-lg-none d-md-block">
-                    Stats
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="material-icons">notifications</i>
-                  <span class="notification">5</span>
-                  <p class="d-lg-none d-md-block">
-                    Some Actions
-                  </p>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                  <a class="dropdown-item" href="#">Mike John responded to your email</a>
-                  <a class="dropdown-item" href="#">You have 5 new tasks</a>
-                  <a class="dropdown-item" href="#">You're now friend with Andrew</a>
-                  <a class="dropdown-item" href="#">Another Notification</a>
-                  <a class="dropdown-item" href="#">Another One</a>
-                </div>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link" href="#pablo" id="navbarDropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="material-icons">person</i>
-                  <p class="d-lg-none d-md-block">
-                    Account
-                  </p>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
-                  <a class="dropdown-item" href="#">Profile</a>
-                  <a class="dropdown-item" href="#">Settings</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Log out</a>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
+      <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top " id = "navbar">
       </nav>
       <!-- End Navbar -->
-
       <div class="content">
         <div class="container-fluid">
-          <div class="container-fluid">
-            <div class="card card-plain">
-              <div class="card-header card-header-primary">
-                <h4 class="card-title">Material Design Icons</h4>
-                <p class="card-category">Handcrafted by our friends from
-                  <a target="_blank" href="https://design.google.com/icons/">Google</a>
-                </p>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="card-body">
-                    <div class="iframe-container d-none d-lg-block">
-                      <iframe src="https://design.google.com/icons/">
-                        <p>Your browser does not support iframes.</p>
-                      </iframe>
+          <div class="card card-plain">
+            <div class="col-lg-12 col-md-12">
+              <div class="card card-plain">
+                <div class="card-header card-header-tabs card-header-primary">
+                  <form class="form">
+                    <span id="city_china_val" class="bmd-form-group"><div class="input-group no-border">
+                        <select class="province other form-control" data-first-title="选择省" id = "province">
+                          <option value="">请选择</option>
+                          <!-- <option value="湖南省" selected>湖南省</option> -->
+                        </select>
+                        <select class="city form-control" data-first-title="选择市"  id = "city">
+                          <option value="">请选择</option>
+                          <!-- <option value="长沙市" selected>长沙市</option> -->
+                        </select>
+                        <select class="area form-control" data-first-title="选择地区" id = "district">
+                          <option value="">请选择</option>
+                          <!-- <option value="芙蓉区" selected>芙蓉区</option> -->
+                        </select>
+                        <select class="street form-control" data-first-title="选择街道" id = "street">
+                          <option value="">请选择</option>
+                          <!-- <option value="文艺路街道" selected>文艺路街道</option> -->
+                        </select>
+                        <select class="community form-control" data-first-title="选择社区" id = "community">
+                          <option value="">请选择</option>
+                          <!-- <option value="识字岭社区" selected>识字岭社区</option> -->
+                        </select>
                     </div>
-                    <div class="col-md-12 d-none d-sm-block d-md-block d-lg-none d-block d-sm-none text-center ml-auto mr-auto">
-                      <h5>The icons are visible on Desktop mode inside an iframe. Since the iframe is not working on Mobile and Tablets please visit the icons on their original page on Google. Check the
-                        <a href="https://design.google.com/icons/" target="_blank">Material Icons</a>
-                      </h5>
-                    </div>
-                  </div>
+                  </span>
+                  </form>
+                </div>
+                <div class="row">
+                  <ul class="nav">
+                    <span class="input-group " id = "neighboutLists">
+                    </span>
+                  </ul>
+                </div>
+                <div class="card-body" >
+                  <ul class="row first">
+                      <li>
+                          <img alt="Rocking the night away"  src="http://demo.michaelsoriano.com/images/photodune-174908-rocking-the-night-away-xs.jpg">
+                          <p>Consectetur adipiscing elit</p>
+                      </li>
+                      <li>
+                          <img alt="Yellow sign"  src="http://demo.michaelsoriano.com/images/photodune-287182-blah-blah-blah-yellow-road-sign-xs.jpg">
+                          <p>Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam</p>
+                      </li>
+                      <li>
+                          <img alt="Colors"  src="http://demo.michaelsoriano.com/images/photodune-460760-colors-xs.jpg">
+                           <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
+                      </li>
+                      <li>
+                          <img alt="Retro party"  src="http://demo.michaelsoriano.com/images/photodune-461673-retro-party-xs.jpg">
+                          <p>Lorem, do eiusmod tempor incid Ut enim ad minim veniam</p>
+                      </li>
+                      <li>
+                          <img alt="Technology soup"  src="http://demo.michaelsoriano.com/images/photodune-514834-touchscreen-technology-xs.jpg">
+                          <p>Do eiusmod tempor</p>
+                      </li>
+                      <li>
+                          <img alt="Legal docs"  src="http://demo.michaelsoriano.com/images/photodune-916206-legal-xs.jpg" data-bsp-large-src="http://demo.michaelsoriano.com/images/photodune-916206-legal-large.jpg">
+                          <p>Eiusmod tempor enim ad minim veniam</p>
+                      </li>
+                      <li>
+                          <img alt="Nature shot"  src="http://demo.michaelsoriano.com/images/photodune-1062948-nature-xs.jpg">
+                          <p>Adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
+                      </li>
+
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <footer id = "footer"></footer>
     </div>
   </div>
   <!--   Core JS Files   -->
   <script src="../assets/js/core/jquery.min.js"></script>
+  <script src="../assets/js/core/pageGenerated.js?contentOutline='照片数据管理'"></script>
+
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap-material-design.min.js"></script>
   <script src="../assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
@@ -235,8 +167,37 @@
   <script src="../assets/js/plugins/bootstrap-notify.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
-  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-  <script src="../assets/demo/demo.js"></script>
+  <!-- album -->
+  <script src="../assets/js/jquery.bsPhotoGallery.js"></script>
+  <script type="text/javascript" src="../assets/js/interface.js"></script>
+  <script type="text/javascript" src="../assets/js/plugins/city.js"></script>
+  <script type="text/javascript">
+    communitySelect.onchange = function() {
+      var communityId = communitySelect.options[communitySelect.options.selectedIndex].value;
+      var gardens = getGardenListOfCommunity(communityId);
+      var neighboutLists = document.getElementById("neighboutLists");
+      for(var p in gardens){
+        var li = document.createElement("li");
+        li.className = "nav-item";
+        var a = document.createElement("a");
+        a.className = "nav-link";
+        a.id = "gardenId" + gardens[p].id;
+        a.innerHTML = gardens[p].name;
+        a.href = "#";
+        li.appendChild(a);
+        neighboutLists.appendChild(li);
+      }
+    };
+  </script>
+  <script>
+    $(document).ready(function(){
+      $('ul.first').bsPhotoGallery({
+        "classes" : "col-xl-3 col-lg-2 col-md-4 col-sm-4",
+        "hasModal" : true,
+        "shortText" : false
+      });
+    });
+  </script>
   <script>
     $(document).ready(function() {
       $().ready(function() {
