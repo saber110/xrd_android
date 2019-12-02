@@ -274,7 +274,6 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             e.printStackTrace();
         }
     }
-
     private void showCityDialog() {
         GetLocationNetUtil.GetCityNetUtil getCityNetUtil = new GetLocationNetUtil.GetCityNetUtil(locationAllDao.getProvinceId());
         AsyncTask asyncTask = new AsyncRequest().execute(getCityNetUtil);
@@ -317,7 +316,6 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             e.printStackTrace();
         }
     }
-
     private void showStreet() {
         GetLocationNetUtil.GetStreetNetUtil getStreetNetUtil = new GetLocationNetUtil.GetStreetNetUtil(locationAllDao.getDistrictId());
         AsyncTask asyncTask = new AsyncRequest().execute(getStreetNetUtil);
@@ -339,7 +337,6 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             e.printStackTrace();
         }
     }
-
     private void showCommunity() {
         GetLocationNetUtil.GetCommunityNetUtil getCommunityNetUtil= new GetLocationNetUtil.GetCommunityNetUtil(locationAllDao.getStreetId());
         AsyncTask asyncTask = new AsyncRequest().execute(getCommunityNetUtil);
@@ -434,7 +431,6 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
         //启动定位
         mapLocationClient.startLocation();
     }
-
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
@@ -687,7 +683,14 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
                 }
                 Toast.makeText(MainActivity.this, "你选择了" + str, Toast.LENGTH_SHORT).show();
                 if (str.equals("是")) {
-                    startActivity(new Intent(MainActivity.this, DrawActivity.class));
+                    Intent intent1 =new Intent(MainActivity.this,DrawActivity.class);
+                    //用Bundle携带数据
+                    Bundle bundle=new Bundle();
+                    //传递name参数为tinyphp
+                    bundle.putString("jpeg", jpegName);
+                    intent1.putExtras(bundle);
+                    System.out.println("数据发送过去了");
+                    startActivity(intent1);
                 } else picture();
             }
         });

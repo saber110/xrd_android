@@ -41,43 +41,42 @@ public class BottomUtil {
                 .addItem(new BottomNavigationItem(R.drawable.ic_tv_white_24dp, "数据采集"))
                 .initialise();
         bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
-           @Override
-           public void onTabSelected(int po) {
-               /**
-                * 假如点击的该页面的按钮
-                */
-              if (po == position){
-                  return;
-              }
-              switch (po){
-                  case 0:
-                      context.startActivity(new Intent(context, MainActivity.class));
+                                                       @Override
+                                                       public void onTabSelected(int po) {
+                                                           /**
+                                                            * 假如点击的该页面的按钮
+                                                            */
+                                                           if (po == position){
+                                                               return;
+                                                           }
+                                                           switch (po){
+                                                               case 0:
+                                                                   context.startActivity(new Intent(context, MainActivity.class));
 
-                      break;
-                  case 1:
-                      context.startActivity(new Intent(context, takePhoto01.class));
-                      break;
-                  case 2:
+                                                                   break;
+                                                               case 1:
+                                                                   context.startActivity(new Intent(context, takePhoto01.class));
+                                                                   break;
+                                                               case 2:
 
-                      context.startActivity(new Intent(context, ResultActivity.class));
-                      break;
-                  case 3:
+                                                                   context.startActivity(new Intent(context, ResultActivity.class));
+                                                                   break;
+                                                               case 3:
 
-                      context.startActivity(new Intent(context, CollectActivity.class));
-                      break;
-                  default:break;
-              }
-           }
+                                                                   context.startActivity(new Intent(context, CollectActivity.class));
+                                                                   break;
+                                                               default:break;
+                                                           }
+                                                       }
 
-           @Override
-           public void onTabUnselected(int position) {
-           }
+                                                       @Override
+                                                       public void onTabUnselected(int position) {
+                                                       }
 
-           @Override
-           public void onTabReselected(int position) {
-           }
-        }
+                                                       @Override
+                                                       public void onTabReselected(int position) {
+                                                       }
+                                                   }
         );
     }
-
 }
