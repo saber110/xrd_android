@@ -1,8 +1,15 @@
 package com.example.interfaceNet;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.example.collectdata_01.MainActivity;
+import com.example.collectdata_01.R;
+import com.example.login.login;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,16 +26,39 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class v1 {
+
+    Context context;
     private static String TAG = "Interface";
     private static String token;
-    static final private String preFix = "http://rap2api.taobao.org/app/mock/234350/api/v1/";
+    private static String preFix;
+
     static final private String user = preFix + "user/";
     static final private String loginApi = user + "login";
     public static final MediaType JSONDATA
             = MediaType.get("application/json; charset=utf-8");
-
-
     static OkHttpClient client = new OkHttpClient();
+
+    public v1(Context context) {
+        this.context = context;
+        Resources res = context.getResources();
+        this.setPreFix(res.getString(R.string.preFix));
+    }
+
+    public void setPreFix(String preFix){
+        v1.preFix = preFix;
+    }
+
+    public String getPreFix() {
+        return  v1.preFix;
+    }
+
+    public void setToken(String token){
+        v1.token = token;
+    }
+
+    public String getToken() {
+        return  v1.token;
+    }
 
     public void post(final String url, final String json) throws IOException {
         new Thread(new Runnable() {
@@ -47,34 +77,10 @@ public class v1 {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    loginCallback(response.body().string());
+//                    loginCallback(response.body().string());
                 }
             });
             }
         }).start();
     }
-
-    public void login(String iemi, String password) throws IOException {
-        Map map = new HashMap<String, String>(5);
-        map.put("iemi", iemi);
-        map.put("password", password);
-        post(loginApi, JSON.toJSONString(map));
-    }
-
-    private void loginCallback(String res){
-        Map map = JSON.parseObject(res, HashMap.class);
-//        Map data = map.get("data");
-        if(map.get("code").toString().equals("0")){
-            String data = map.get("data").toString();
-            String[] keyValue = data.substring(1, data.length() - 1).split(":");
-            v1.token = keyValue[1];
-            loginSucess();
-        }
-        else {
-
-        }
-    }
-    // TODO 此处需要处理回调，进行页面切换
-    public void loginSucess(){ }
-
 }

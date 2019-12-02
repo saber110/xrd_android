@@ -19,39 +19,24 @@ public class GardenListAdapter extends RecyclerView.Adapter<GardenListAdapter.Vi
     private Context context;
     private LayoutInflater inflater;
     private SearchGardenResultDao.DataBean result;
-    private TextView neighbourWorking;
-    private Dialog dialog;
-    private Integer gardenId;
+    private MyItemClickListener mListener;
 
-    public GardenListAdapter(Context context, SearchGardenResultDao.DataBean result, TextView neighbourWorking, Dialog dialog, Integer gardenId) {
+    public GardenListAdapter(Context context, SearchGardenResultDao.DataBean result) {
         this.context = context;
         this.result = result;
-        this.dialog = dialog;
-        this.neighbourWorking = neighbourWorking;
-        this.gardenId = gardenId;
         inflater = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(inflater.inflate(R.layout.graden_list_layout,parent,false));
+        return new ViewHolder(inflater.inflate(R.layout.graden_list_layout, parent, false), mListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        final int name = result.getBuildingKinds().get(position).getKindName();
-        holder.textView.setText(name+"");
-        /**
-         * 点击小区后进行跳转
-         */
-        holder.searchResultView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                neighbourWorking.setText(name+"");
-                dialog.cancel();
-            }
-        });
+        Integer name = result.getBuildingKinds().get(position).getKindName();
+        holder.textView.setText(name.toString());
     }
 
     @Override
@@ -59,13 +44,45 @@ public class GardenListAdapter extends RecyclerView.Adapter<GardenListAdapter.Vi
         return result.getBuildingKinds().size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView textView;
-        private View searchResultView;
-        public ViewHolder(@NonNull View itemView) {
+        private MyItemClickListener listener;
+
+        public ViewHolder(@NonNull View itemView, MyItemClickListener listener) {
             super(itemView);
             textView = itemView.findViewById(R.id.search_result);
-            searchResultView = itemView.findViewById(R.id.search_result_view);
+            this.listener = listener;
+            itemView.setOnClickListener(this);
         }
+
+        /**
+         * 实现OnClickListener接口重写的方法
+         *
+         * @param v
+         */
+        @Override
+        public void onClick(View v) {
+            if (listener != null) {
+                listener.onItemClick(v, getAdapterPosition());
+            }
+
+        }
+    }
+
+
+    /**
+     * 创建一个回调接口
+     */
+    public interface MyItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    /**
+     * 在activity里面adapter就是调用的这个方法,将点击事件监听传递过来,并赋值给全局的监听
+     *
+     * @param myItemClickListener
+     */
+    public void setItemClickListener(MyItemClickListener myItemClickListener) {
+        this.mListener = myItemClickListener;
     }
 }

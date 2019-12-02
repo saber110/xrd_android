@@ -1,5 +1,6 @@
 package com.example.map.net;
 
+import com.example.login.login;
 import com.example.map.dao.MapData;
 import com.example.net.ProcessInterface;
 import com.github.kevinsawicki.http.HttpRequest;
@@ -17,7 +18,7 @@ public class SendMapMsg implements ProcessInterface {
         mapData.setKindId(kindId);
         mapData.setName(name);
         mapData.setGardenId(gardenId);
-        mapData.setToken("12345678");
+        mapData.setToken(login.token);
         mapData.setMapId(mapId);
 
     }

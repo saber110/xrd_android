@@ -53,4 +53,27 @@ public class CreatDialog {
         win.setAttributes(lp);
         return  dialog;
     }
+
+    /**
+     * 城市选择器
+     * @param context
+     * @param view
+     * @return
+     */
+    public static Dialog createLocationSelectDialog(Context context, View view) {
+        final Dialog dialog = new AlertDialog.Builder(context)
+                .setView(view)
+                .setCancelable(true)
+                .create();
+
+        Window win = dialog.getWindow();
+        win.setGravity(Gravity.BOTTOM);
+        win.getDecorView().setPadding(10, 0, 10, 10);
+        WindowManager.LayoutParams lp = win.getAttributes();
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setBackgroundDrawable(null);
+        win.setAttributes(lp);
+        return  dialog;
+    }
 }

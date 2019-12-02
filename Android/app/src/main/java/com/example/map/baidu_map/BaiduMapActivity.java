@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +24,6 @@ import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.InfoWindow;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
@@ -36,16 +33,14 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.example.collectdata_01.R;
-import com.example.dao.MapMarkerDataDao;
 import com.example.dialog.CreatDialog;
+import com.example.map.dao.MapMarkerDataDao;
 import com.example.map.google.GoogleMapActivity;
 import com.example.map.net.GetMarkerData;
 import com.example.map.net.SendMapMsg;
 import com.example.map.tecent_map.TecentActivity;
 import com.example.net.AsyncRequest;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMapLongClickListener, View.OnClickListener, BaiduMap.OnMarkerClickListener {
@@ -101,8 +96,18 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 for (MapMarkerDataDao.DataBean.MapDataBean mapDataBean :
                         mapMarkerDataDao.getData().getMap_data()) {
                     MarkerOptions options = new MarkerOptions().position(new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude())).
-                            icon(BitmapDescriptorFactory.fromBitmap(zoomImg(drawBitMap(mapDataBean.getName()))));
+                            icon(BitmapDescriptorFactory.fromBitmap((drawBitMap(mapDataBean.getName()))));
                     baiduMap.addOverlay(options);
+                }
+                if (mapMarkerDataDao.getData().getMap_data().size() != 0) {
+                    MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(0);
+                    LatLng ll = new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude());
+
+                    MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(ll);
+                    baiduMap.animateMapStatus(msu);
+                    MapStatus.Builder builder = new MapStatus.Builder();
+                    builder.target(ll).zoom(18.0f);
+                    baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
                 }
             }
         } catch (Exception e) {
@@ -282,7 +287,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                         if (result != null) {
                             Toast.makeText(BaiduMapActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
                             MarkerOptions options = new MarkerOptions().position(latLng).
-                                    icon(BitmapDescriptorFactory.fromBitmap(zoomImg(drawBitMap(name.getText().toString()))));
+                                    icon(BitmapDescriptorFactory.fromBitmap((drawBitMap(name.getText().toString()))));
                             baiduMap.addOverlay(options);
                         }
                     } catch (ExecutionException e) {
@@ -300,7 +305,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
 
     }
 
-    private boolean isShowLoc = true;
+    private boolean isShowLoc = false;
 
     @Override
     public void onClick(View view) {
@@ -332,7 +337,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
                     if (changeMarkData()) {
-                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(zoomImg(drawBitMap(title.getText().toString()))));
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap((drawBitMap(title.getText().toString()))));
                     }
                     changeDialog.cancel();
 
@@ -344,34 +349,21 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
 
     /**
      * 修改marker
+     *
      * @return
      */
-    private boolean changeMarkData(){
+    private boolean changeMarkData() {
 
-        return false;
+        return true;
     }
 
     /**
      * 删除marker
+     *
      * @return
      */
-    private boolean deleteMark(){
-        return false;
-    }
-
-    public static Bitmap zoomImg(Bitmap bm) {
-        //获得图片的宽高
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        //计算缩放比例
-        float scaleWidth = ((float) 100) / width;
-        float scaleHeight = ((float) 100) / height;
-        //取得想要缩放的matrix参数
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        //得到新的图片
-        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
+    private boolean deleteMark() {
+        return true;
     }
 
 
@@ -425,55 +417,5 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         }
 
     }
-
-    private Marker chooseMark;
-    private List<InfoWindow> infoWindows = new ArrayList<>();
-
-    //想根据Mark中的经纬度信息，获取当前的位置语义化结果，需要使用地理编码查询和地理反编码请求
-    //在地图中显示一个信息窗口
-    private void setPopupTipsInfo(Marker marker) {
-
-        chooseMark = marker;
-        //获取当前经纬度信息
-        LatLng latLng = marker.getPosition();
-        //动态创建一个View用于显示位置信息
-        Button button = new Button(getApplicationContext());
-        //设置view的内容（位置信息）
-        button.setText(marker.getTitle());
-        //在地图中显示一个信息窗口，可以设置一个View作为该窗口的内容，也可以设置一个 BitmapDescriptor 作为该窗口的内容
-        InfoWindow infoWindow = new InfoWindow(BitmapDescriptorFactory.fromView(button), latLng, -47, new InfoWindow.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick() {
-                changeDialog.show();
-                final TextView title = changeView.findViewById(R.id.change_msg);
-                changeView.findViewById(R.id.delete_data_btn).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        chooseMark.remove();
-                        changeDialog.cancel();
-                    }
-                });
-                changeView.findViewById(R.id.change_data_btn).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (title.getText().length() == 0) {
-                            Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
-                        } else {
-                            chooseMark.setTitle(title.getText().toString());
-
-                            changeDialog.cancel();
-                        }
-                    }
-                });
-
-            }
-        });
-        infoWindows.add(infoWindow);
-        //显示信息窗口
-        baiduMap.showInfoWindow(infoWindow, true);
-    }
-
-
-
 }
 
