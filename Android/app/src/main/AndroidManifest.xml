@@ -38,7 +38,6 @@
         <activity android:name="com.example.map.tecent_map.TecentActivity" />
         <activity android:name="com.example.map.aMap.AmapActivity" />
         <activity android:name="com.example.map.google.GoogleMapActivity" />
-        <activity android:name=".takePhoto01" />
         <activity android:name=".ResultActivity" />
         <activity android:name=".CollectActivity" />
         <activity android:name=".MainActivity" />

@@ -21,6 +21,7 @@ import com.example.collectdata.bean.MessageListBean;
 import com.example.collectdata.tools.JsonTools;
 import com.example.collectdata_01.MainActivity;
 import com.example.collectdata_01.R;
+import com.example.interfaceNet.v1;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
@@ -48,9 +49,9 @@ public class login extends AppCompatActivity {
     private FloatingActionButton fab;
     private static String TAG = "Interface";
     public static String token;
-//    TODO 使用res中的string字符串
+    //    TODO 使用res中的string字符串
     final private String user = "http://kms.yinaoxiong.cn:8888/api/v1/" + "user/";
-//    final private String user = "http://rap2api.taobao.org/app/mock/234350/api/v1/user/";
+    //    final private String user = "http://rap2api.taobao.org/app/mock/234350/api/v1/user/";
     final private String loginApi = user + "login";
     public static final MediaType JSONDATA
             = MediaType.get("application/json; charset=utf-8");
@@ -91,12 +92,14 @@ public class login extends AppCompatActivity {
         btGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btGo.setText("登录中...");
-                try {
-                    login(etUsername.getText().toString(), etPassword.getText().toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            btGo.setText("登录中...");
+            try {
+                v1 hh = new v1(login.this);
+                hh.loginApi(etUsername.getText().toString(), etPassword.getText().toString());
+//                    login(etUsername.getText().toString(), etPassword.getText().toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             }
         });
@@ -120,15 +123,14 @@ public class login extends AppCompatActivity {
         fab.setVisibility(View.VISIBLE);
     }
 
-    private void loginCallback(String res){
+    private void loginCallback(String res) {
         Map map = JSON.parseObject(res, HashMap.class);
 //        Map data = map.get("data");
-        if(map.get("code").toString().equals("0")){
+        if (map.get("code").toString().equals("0")) {
             String data = map.get("data").toString();
 
             loginSucess(data);
-        }
-        else {
+        } else {
             loginFailure(map.get("message").toString());
         }
     }
@@ -169,40 +171,40 @@ public class login extends AppCompatActivity {
             Log.d("授权tag", "checkPermissions: 手机版本低于23");
         }
     }
-    public void loginSucess(String data){
+
+    public void loginSucess(String data) {
         String[] keyValue = data.substring(1, data.length() - 1).split(":");
-        login.token = keyValue[1].substring(1,keyValue[1].length()-1);
+        login.token = keyValue[1].substring(1, keyValue[1].length() - 1);
         Log.i(TAG, "loginSucess: " + login.token);
         Intent i2 = new Intent(login.this, MainActivity.class);
         startActivity(i2);
         login.this.finish();
     }
 
-    public void loginFailure(String res){
+    public void loginFailure(String res) {
         Toast.makeText(login.this, res, Toast.LENGTH_SHORT).show();
-
     }
 
     public void post(final String url, final String json) throws IOException {
         new Thread(new Runnable() {
             @Override
             public void run() {
-            RequestBody body = RequestBody.create(json, JSONDATA);
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(body)
-                    .build();
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i(TAG, "onFailure: ");
-                }
+                RequestBody body = RequestBody.create(json, JSONDATA);
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(body)
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        Log.i(TAG, "onFailure: ");
+                    }
 
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    loginCallback(response.body().string());
-                }
-            });
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        loginCallback(response.body().string());
+                    }
+                });
             }
         }).start();
     }

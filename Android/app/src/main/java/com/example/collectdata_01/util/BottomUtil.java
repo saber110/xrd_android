@@ -10,7 +10,6 @@ import com.example.collectdata_01.CollectActivity;
 import com.example.collectdata_01.MainActivity;
 import com.example.collectdata_01.R;
 import com.example.collectdata_01.ResultActivity;
-import com.example.collectdata_01.takePhoto01;
 
 /**
  * 填充bottom的数据并且添加监听器

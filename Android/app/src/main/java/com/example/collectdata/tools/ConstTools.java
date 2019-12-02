@@ -25,7 +25,7 @@ public class ConstTools {
     /**
      * 一级菜单
      */
-    public static final int MESSAGE_BEANTYPE_TITLELINE = 3;
+    public static final int MESSAGE_BEANTYPE_TITLELINE = 0;
 
     /**
      * 页面生成失败
