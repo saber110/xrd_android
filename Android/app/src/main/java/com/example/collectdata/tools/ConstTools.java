@@ -10,8 +10,8 @@ public class ConstTools {
     public static final String MESSAGE_SUBMIT_SUCCESS = "数据提交成功";
 
     public static final int XIAOQUGAIKUANG = 1;
-    public static final int XIAOQUXINXI = 2;
-    public static final int LOUZHUANGDIAOCHA =3;
+    public static final int LOUZHUANGDIAOCHA =2;
+    public static final int XIAOQUXINXI = 3;
     public static final int LOUZHUANGXINXI = 4;
 
     /**

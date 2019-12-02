@@ -114,7 +114,8 @@ public class MessageListBean {
         Log.i("MessageListBean","请求搂幢调查表的内容");
         Map map = new HashMap<String, String>();
         map.put("token",login.token);
-        post(ROOT_URL+"building_base_info", (HashMap<String, Object>) map);
+        map.put("gardenId",1);
+        post(ROOT_URL+"garden_base_info", (HashMap<String, Object>) map);
 
 //        //获取当前日期
 //        Calendar calendar = Calendar.getInstance();
@@ -193,8 +194,8 @@ public class MessageListBean {
         Log.i("MessageListBean","请求搂幢调查表的内容");
         Map<String,Object> map = new HashMap<String, Object>();
         map.put("token",login.token);
-        map.put("gardenId",1);
-        post(ROOT_URL+"garden_base_info", (HashMap<String, Object>) map);
+        //map.put("buildingId",2);
+        post(ROOT_URL+"building_base_info", (HashMap<String, Object>) map);
 //       HttpTools httpTools = new HttpTools();
 //        String response = httpTools.request("garden_base_info",null);
 //
@@ -209,29 +210,27 @@ public class MessageListBean {
     }
 
     /**
-     * 初始化楼幢信息
+     * 初始化小区信息
      */
-    private void initLouzhuangXinxi() throws PageInitException{
-        Log.i("MessageListBean","请求搂幢信息的内容");
-        HttpTools httpTools = new HttpTools();
-        String response = httpTools.request("building_base_info",null);
-        Log.i("ListButtonListener","测试结果为:" + response);
-        try {
-            JsonTools.jsonParasForMessageList(response,this.list);
-            Log.i("ListButtonListener","list转换结果为:" + list);
-        } catch (JSONException e) {
-            Log.i("MessageListBean","请求结果数据格式异常");
-            e.printStackTrace();
-            throw PageInitException.getExceptionInstance();
-        }
+    private void initXiaoQiXinXi() throws IOException {
+        Log.i("MessageListBean","请求小区信息的内容");
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("token",login.token);
+        map.put("gardenId",1);
+        post(ROOT_URL+"garden_import_info", (HashMap<String, Object>) map);
     }
 
     /**
-     * 初始化小区信息
+     * 初始化楼幢信息
      */
-    private void initXiaoQiXinXi(){
-
+    private void initLouzhuangXinxi() throws PageInitException, IOException {
+        Log.i("MessageListBean","请求楼幢信息的内容");
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("token",login.token);
+        map.put("buildingId",2);
+        post(ROOT_URL+"building_import_info", (HashMap<String, Object>) map);
     }
+
 
     //TODO 判断是否为InnerItem
     public static void setCurrentSelect(int position,String content){
