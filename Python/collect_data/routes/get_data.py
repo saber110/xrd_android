@@ -16,13 +16,16 @@ from .. import config
 from ..models.base_model import db
 from ..models.building_import_info import BuildingImportInfo
 from ..models.building_info import BuildingInfo
+from ..models.building_picture import BuildingPicture
 from ..models.city import City
 from ..models.community import Community
 from ..models.district import District
 from ..models.garden import Garden
 from ..models.garden_base_info import GardenBaseInfo
 from ..models.garden_import_info import GardenImportInfo
+from ..models.garden_picture import GardenPicture
 from ..models.map_data import MapData
+from ..models.other_picture import OtherPicture
 from ..models.street import Street
 from ..models.user import User
 from ..utils import gcj02_to_bd09
@@ -1691,3 +1694,75 @@ def picture(*args, **kwargs):
         return generate_result(2, '图片不存在')
     dir_path, filename = os.path.split(abs_path)
     return send_from_directory(dir_path, filename)
+
+
+@get_data_bp.route('/garden_picture', methods=['POST'])
+@token_check
+@admin_required
+def garden_picture(*args, **kwargs):
+    """
+    获取小区图片的相对路径
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer', 'min': 1},
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        garden_pictures = GardenPicture.query.filter_by(gardenId=data['id']).all()
+    except SQLAlchemyError as e:
+        print(str(e))
+        return generate_result(2)
+    if len(garden_pictures) == 0:
+        return generate_result(2, '该小区暂未上传图片')
+    return generate_result(0, '获取小区图片成功', data={"gardenPictures": [i.to_dict for i in garden_pictures]})
+
+
+@get_data_bp.route('/other_picture', methods=['POST'])
+@token_check
+@admin_required
+def other_picture(*args, **kwargs):
+    """
+    获取小区其他图片
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer', 'min': 1},
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        other_pictures = OtherPicture.query.filter_by(gardenId=data['id']).all()
+    except SQLAlchemyError as e:
+        print(str(e))
+        return generate_result(2)
+    if len(other_pictures) == 0:
+        return generate_result(2, '该小区暂未上传图片')
+    return generate_result(0, '获取小区图片成功', data={'otherPictures': [i.to_dict for i in other_pictures]})
+
+
+@get_data_bp.route('/building_picture', methods=['POST'])
+@token_check
+@admin_required
+def building_picture(*args, **kwargs):
+    """
+    获取楼幢图片接口
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer', 'min': 1},
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        building_pictures = BuildingPicture.query.filter_by(buildingId=data['id']).all()
+    except SQLAlchemyError as e:
+        print(str(e))
+        return generate_result(2)
+    if len(building_pictures) == 0:
+        return generate_result(2, '该楼幢暂无数据')
+    return generate_result(0, '获取楼幢图片成功', data={'buildingPictures': [i.to_dict for i in building_pictures]})
