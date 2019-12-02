@@ -19,6 +19,7 @@ def init_app(app: Flask):
     db.init_app(app)
     redis_client.init_app(app)
     from .building import Building
+    from .building_import_info import BuildingImportInfo
     from .building_info import BuildingInfo
     from .building_picture import BuildingPicture
     from .building_picture_kind import BuildingPictureKind
@@ -27,6 +28,7 @@ def init_app(app: Flask):
     from .district import District
     from .first_floor_kind import FirstFloorKind
     from .garden import Garden
+    from .garden_import_info import GardenImportInfo
     from .garden_base_info import GardenBaseInfo
     from .garden_picture import GardenPicture
     from .garden_picture_kind import GardenPictureKind
@@ -35,4 +37,5 @@ def init_app(app: Flask):
     from .province import Province
     from .street import Street
     from .user import User
+
     Migrate(app, db)

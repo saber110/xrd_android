@@ -4,26 +4,73 @@
 # @contact : yinaoxiong@gmail.com
 # @Desc : 数据获取模块
 
+import os
 from io import BytesIO
 
-from flask import request, Blueprint
-from openpyxl import Workbook
+import openpyxl as excel
+from flask import request, Blueprint, send_from_directory
 from sqlalchemy.exc import SQLAlchemyError
 
 from . import generate_validator, generate_result, my_send_file
 from .. import config
+from ..models.base_model import db
+from ..models.building_import_info import BuildingImportInfo
 from ..models.building_info import BuildingInfo
+from ..models.building_picture import BuildingPicture
 from ..models.city import City
 from ..models.community import Community
 from ..models.district import District
 from ..models.garden import Garden
 from ..models.garden_base_info import GardenBaseInfo
+from ..models.garden_import_info import GardenImportInfo
+from ..models.garden_picture import GardenPicture
 from ..models.map_data import MapData
+from ..models.other_picture import OtherPicture
 from ..models.street import Street
+from ..models.user import User
 from ..utils import gcj02_to_bd09
 from ..wraps import token_check, admin_required
 
 get_data_bp = Blueprint('get_data', __name__, url_prefix=config.URL_Prefix + '/get_data')
+
+
+def set_form_value(form, value):
+    for key in value.keys():
+        if value[key] is None:
+            value[key] = ''
+    for item in form:
+        if item['type'] != 'list':
+            if item['key'] != '' and item['key'] in value:
+                item['value'] = value[item['key']]
+                if item['type'] == 'multiple':
+                    item['value'] = item['value'].split(',')
+    return form
+
+
+def generate_form(columns, forbid_column):
+    result = []
+    for col in columns:
+        if col.name not in forbid_column:
+            if col.type == db.Integer or col.type == db.Float:
+                result.append({
+                    'label': col.comment,
+                    'key': col.name,
+                    'required': False,
+                    'changed': True,
+                    'type': 'number',
+                    'value': ''
+                })
+            else:
+                result.append({
+                    'label': col.comment,
+                    'key': col.name,
+                    'required': False,
+                    'changed': True,
+                    'type': 'text',
+                    'value': ''
+                })
+
+    return result
 
 
 @get_data_bp.route('/map', methods=['POST'])
@@ -60,17 +107,16 @@ def garden_base_info(*args, **kwargs):
     v = generate_validator(schema)
     if not v(data):
         return generate_result(1)
-    try:
-        garden = Garden.query.get(data['gardenId'])
-        city = City.query.get(garden.cityId)
-        district = District.query.get(garden.districtId)
-        street = Street.query.get(garden.streetId)
-        community = Community.query.get(garden.communityId)
-        garden_info = GardenBaseInfo.query.get(data['gardenId'])
-    except SQLAlchemyError:
-        return generate_result(2, '获取数据失败')
+    garden = Garden.query.get(data['gardenId'])
     if garden is None:
         return generate_result(2, '小区不存在')
+
+    city = City.query.get(garden.cityId)
+    district = District.query.get(garden.districtId)
+    street = Street.query.get(garden.streetId)
+    community = Community.query.get(garden.communityId)
+    garden_info = GardenBaseInfo.query.get(data['gardenId'])
+
     result = [
         {
             'label': '市',
@@ -130,7 +176,7 @@ def garden_base_info(*args, **kwargs):
         },
         {
             'label': '小区别名2',
-            'key': 'communityAlias2',
+            'key': 'gardenAlias2',
             'required': False,
             'changed': True,
             'type': 'text',
@@ -607,6 +653,14 @@ def garden_base_info(*args, **kwargs):
             'value': ''
         },
         {
+            'label': '其他影响',
+            'key': 'otherInfluences',
+            'required': False,
+            'changed': True,
+            'type': 'text',
+            'value': ''
+        },
+        {
             'label': '繁华程度',
             'key': 'busyDegree',
             'required': False,
@@ -673,15 +727,7 @@ def garden_base_info(*args, **kwargs):
     ]
 
     if garden_info is not None:
-        garden_info = garden_info.to_dict
-        for key in garden_info.keys():
-            if garden_info[key] is None:
-                garden_info[key] = ''
-        for item in result:
-            if item['key'] != '' and item['key'] in garden_info:
-                item['value'] = garden_info[item['key']]
-                if item['type'] == 'multiple':
-                    item['value'] = item['value'].split(',')
+        result = set_form_value(result, garden_info.to_dict)
 
     return generate_result(0, '获取数据成功', {'gardenInfoList': result})
 
@@ -712,11 +758,11 @@ def building_base_info(*args, **kwargs):
         {
             'label': '楼幢类别',
             'key': 'buildingKind',
-            'required': False,
+            'required': True,
             'changed': True,
             'type': 'radio',
-            "option": ["住宅(电梯房)", "住宅(楼梯房)", "住宅(洋房)", "单身公寓(住宅)", "单身公寓(非住宅)", "办公写字楼", "别墅(独栋)", "别墅(联排)", "别墅(双拼)",
-                       "叠墅", "自建民房", "其它类型"],
+            "option": ["a 住宅(电梯房)", "b 住宅(楼梯房)", "c 住宅(洋房)", "d 单身公寓(住宅)", "e 单身公寓(非住宅)", "f 办公写字楼", "g 别墅(独栋)",
+                       "h 别墅(联排)", "i 别墅(双拼)", "j 叠墅", "k 自建民房", "L 其它类型"],
             'value': ''
         },
         {
@@ -1190,6 +1236,91 @@ def building_base_info(*args, **kwargs):
             'type': 'text',
             'value': ''
         },
+        {
+            "label": " 楼幢综合评价打分",
+            "type": "list",
+            "length": 8
+        },
+        {
+            'label': '小区外视野景观',
+            'key': 'outsideViewScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '中心花园位置',
+            'key': 'centralGardenScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '通风采光情况',
+            'key': 'ventilatedLightingScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '三临情况',
+            'key': 'threeAdventSituationScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '周围环境',
+            'key': 'surroundingsScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '建筑外观',
+            'key': 'buildingAppearanceScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '其他有利',
+            'key': 'otherAdvantagesScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '其他不利',
+            'key': 'otherDisadvantagesScore',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '楼幢标准层等级初判',
+            'key': 'buildingLevel',
+            'required': False,
+            'changed': True,
+            'type': 'number',
+            'value': ''
+        },
+        {
+            'label': '价格初判',
+            'key': 'unitNumber',
+            'required': False,
+            'changed': True,
+            'type': 'preliminaryPrice',
+            'value': ''
+        },
     ]
     data = request.get_json()
     schema = {
@@ -1203,18 +1334,206 @@ def building_base_info(*args, **kwargs):
     except SQLAlchemyError:
         return generate_result(2, '获取数据失败')
     if building_info is None:
-        return generate_result(2, '楼栋信息不存在')
+        return generate_result(2, '楼栋不存在')
     building_info = building_info.to_dict
-    for key in building_info.keys():
-        if building_info[key] is None:
-            building_info[key] = ''
-    for item in result:
-        if item['type'] != 'list' and item['key'] != '' and item['key'] in building_info:
-            item['value'] = building_info[item['key']]
-            if item['type'] == 'multiple':
-                item['value'] = item['value'].split(',')
+    result = set_form_value(result, building_info)
 
     return generate_result(0, '获取数据成功', {'buildingInfoList': result})
+
+
+@get_data_bp.route('/garden_import_info', methods=['POST'])
+@token_check
+def garden_import_info(*args, **kwargs):
+    """
+    获取小区导入数据接口
+    """
+    data = request.get_json()
+    schema = {
+        'gardenId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    garden = Garden.query.get(data['gardenId'])
+    if garden is None:
+        return generate_result(2, '小区不存在')
+    result = [
+        {
+            'label': '小区名称',
+            'key': '',
+            'required': False,
+            'changed': False,
+            'type': 'text',
+            'value': garden.name
+        },
+    ]
+
+    result.extend(GardenImportInfo().generate_form(['id', 'userId', 'collectTime']))
+
+    import_info = GardenImportInfo.query.get(data['gardenId'])
+
+    if import_info is not None:
+        result = set_form_value(result, import_info.to_dict)
+    return generate_result(0, '获取数据成功', {'gardenImportInfoList': result})
+
+
+@get_data_bp.route('/building_import_info', methods=['POST'])
+@token_check
+def building_import_info(*args, **kwargs):
+    data = request.get_json()
+    schema = {
+        'buildingId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    building = BuildingInfo.query.get(data['buildingId'])
+    if building is None:
+        return generate_result(2, '楼幢不存在')
+    result = [
+        {
+            'label': '楼幢名称',
+            'key': '',
+            'required': False,
+            'changed': False,
+            'type': 'text',
+            'value': building.buildingName
+        }
+    ]
+    result.extend(BuildingImportInfo().generate_form(['id', 'userId', 'collectTime']))
+
+    import_info = BuildingImportInfo.query.get(data['buildingId'])
+
+    if import_info is not None:
+        result = set_form_value(result, import_info.to_dict)
+
+    return generate_result(0, '获取楼幢数据成功', data={'buildingImportInfoList': result})
+
+
+@get_data_bp.route('/garden_base_table', methods=['POST'])
+@token_check
+@admin_required
+def garden_base_table(*args, **kwargs):
+    """
+    导出表1 《小区概况表》
+    """
+    data = request.get_json()
+    schema = {
+        'gardenId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        garden = Garden.query.get(data['gardenId'])
+        if garden is None:
+            return generate_result(2, '小区不存在')
+        city = City.query.get(garden.cityId)
+        district = District.query.get(garden.districtId)
+        street = Street.query.get(garden.streetId)
+        community = Community.query.get(garden.communityId)
+        garden_info = GardenBaseInfo.query.get(data['gardenId'])
+        user = User.query.get(garden_info.userId)
+    except SQLAlchemyError:
+        return generate_result(2, '导出数据失败')
+    if garden_info is None:
+        return generate_result(2, '小区基本信息不存在')
+    father_dictionary = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    file_path = os.path.join(father_dictionary, 'data_template', '小区概况表导出模板.xlsx')
+    wb = excel.load_workbook(file_path)
+    ws = wb.active
+    ws.title = '表1 《小区概况表》'
+    table_map = {'采集人员': 'userName', '采集日期': 'collectTime', '市': 'city', '区县': 'district', '街道': 'street',
+                 '社区名称': 'community', '社区别名': 'communityAlias', '小区名称': 'gardenName', '小区别名': 'gardenAlias',
+                 '小区别名2': 'gardenAlias2', '小区座落': 'gardenLocation', '小区东至': 'gardenEastTo', '小区南至': 'gardenWestTo',
+                 '小区西至': 'gardenNorthTo', '小区北至': 'gardenSouthTo', '区域位置': 'regionalLocation', '楼盘状态': 'houseStatus',
+                 '小区类型': 'gardenKind', '建筑类型': 'buildingKind', '房屋性质': 'roomType', '建筑结构': 'buildingStructure',
+                 '住宅幢数': 'houseNumber', '非住宅幢数': 'notHouseNumber', '幢数描述': 'description', '建成年份': 'buildYear',
+                 '设定年份': 'setYear', '土地性质': 'landStatus', '使_用_权': 'right', '土地等级': 'landGrade', '询价记录': 'askRecode',
+                 '是否封闭': 'closed', '物管分类': 'managementKind', '价格初判': 'beginPrice', '小区概况表其它信息备注': 'otherInfo',
+                 '相邻小区': 'neighborGarden', '交通干道': 'mainRoad', '道路等级': 'roadGrade', '公交站名': 'busStation',
+                 '站点距离': 'busStationDistance', '普通公交': 'baseBus', '快速公交': 'quickBus', '线路条数': 'busLines',
+                 '地铁站名': 'subwayStation', '地铁距离': 'subwayDistance', '地铁线路': 'subwayLines', '农贸市场': 'farmerMarket',
+                 '超市商场': 'market', '医疗设施': 'hospital', '金融机构': 'bank', '文体场馆': 'gym', '行政机关': 'organization',
+                 '幼_儿_园': 'kindergarten', '小学教育': 'primary', '中学教育': 'middle', '大学教育': 'college', '旅游景点': 'attractions',
+                 '公园广场': 'park', '路_牌_号': 'streetNumber', '所处商圈': 'businessArea', '所处板块': 'locationArea',
+                 '周边利用': 'aroundUse', '河流山脉': 'riversAndMountains', '噪音污染': 'noisePollution', '空气污染': 'airPollution',
+                 '不利设施': 'adverseFacilities', '其他污染': 'otherPollution', '其他影响': 'otherInfluences', '繁华程度': 'busyDegree',
+                 '休闲设施': 'relaxFacilities', '运动设施': 'sportFacilities', '安保设施': 'securityFacilities',
+                 '建筑风格': 'architecturalStyle', '小区绿化': 'gardenGreening', '小区评价': 'gardenEvaluation',
+                 '物管公司': 'propertyCompany'}
+    garden_info = garden_info.to_dict
+    garden_info['userName'] = user.realName
+    garden_info['gardenName'] = garden.name
+    garden_info['city'] = city.name
+    garden_info['district'] = district.name
+    garden_info['street'] = street.name
+    garden_info['community'] = community.name
+    # 处理None值的情况
+    for key in garden_info.keys():
+        if garden_info[key] is None:
+            garden_info[key] = ''
+
+    for row in ws.iter_rows(min_row=1, max_row=75, max_col=2):
+        key = table_map[row[0].value]
+        row[1].value = garden_info[key]
+    stream = BytesIO()
+    wb.save(stream)
+    stream.seek(0)
+    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '小区概况表.xlsx')
+
+
+@get_data_bp.route('/building_base_table', methods=['POST'])
+def building_base_table(*args, **kwargs):
+    """
+    导出表2 《楼幢调查表》
+    """
+    data = request.get_json()
+    schema = {
+        'gardenId': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        building_infos = BuildingInfo.query.filter_by(gardenId=data['gardenId']).all()
+    except SQLAlchemyError as e:
+        print(str(e))
+        return generate_result(2, '导出数据失败')
+    if len(building_infos) == 0:
+        return generate_result(2, '楼幢数据不存在')
+
+    # 获取模板文件路径
+    father_dictionary = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    file_path = os.path.join(father_dictionary, 'data_template', '楼幢调查表导出模板.xlsx')
+    table_key_list = ['buildingName', 'buildingAlias', 'buildingKind', 'isVilla', 'overheadLayer', 'aboveGroundGarage',
+                      'utilityRoom', 'residential', 'shop', 'firstFloorOtherDescription', 'oneUnitLayers',
+                      'twoUnitLayers', 'threeUnitLayers', 'fourUnitLayers', 'fiveUnitLayers', 'sixUnitLayers',
+                      'sevenUnitLayers', 'eightUnitLayers', 'nightUnitLayers', 'tenUnitLayers', 'floorOverGround',
+                      'floorUnderGround', 'propertyKind', 'buildingStructure', 'oneUnitHouseholds', 'twoUnitHouseholds',
+                      'threeUnitHouseholds', 'fourUnitHouseholds', 'fiveUnitHouseholds', 'sixUnitHouseholds',
+                      'sevenUnitHouseholds', 'eightUnitHouseholds', 'nightUnitHouseholds', 'tenUnitHouseholds',
+                      'numberOfUnit', 'oneLiftNumber', 'unitName', 'roomName', 'unitNumber', 'floorNumber',
+                      'floorDifferent', 'beginFloor', 'shopLayer', 'palette', 'locationDescription', 'mainTowards',
+                      'planeLayout', 'completedYear', 'decorationStandard', 'decorationYear', 'buildingProperty',
+                      'buildingStatus', 'roofTopInfo', 'roofInfo', 'roofTopTerrace', 'roofTopAttic', 'roofTopLayer',
+                      'otherInfo', 'outsideViewScore', 'centralGardenScore', 'ventilatedLightingScore',
+                      'threeAdventSituationScore', 'surroundingsScore', 'buildingAppearanceScore',
+                      'otherAdvantagesScore', 'otherDisadvantagesScore', 'buildingLevel', 'preliminaryPrice']
+    wb = excel.load_workbook(file_path)
+    ws = wb.active
+
+    for item in building_infos:
+        item = item.to_dict
+        for key in item.keys():
+            if item[key] is None:
+                item[key] = ''
+        ws.append([item[table_key] for table_key in table_key_list])
+
+    stream = BytesIO()
+    wb.save(stream)
+    stream.seek(0)
+    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '楼幢调查表.xlsx')
 
 
 @get_data_bp.route('/garden_table', methods=['POST'])
@@ -1233,59 +1552,58 @@ def garden_table(*args, **kwargs):
         return generate_result(1)
     try:
         garden = Garden.query.get(data['gardenId'])
+        if garden is None:
+            return generate_result(2, '小区不存在')
         garden_info = GardenBaseInfo.query.get(data['gardenId'])
+        if garden_info is None:
+            return generate_result(2, '小区基本信息不存在')
+        import_info = GardenImportInfo.query.get(data['gardenId'])
     except SQLAlchemyError:
         return generate_result(2, '导出数据失败')
-    wb = Workbook()
+
+    # 获取模板文件路径
+    father_dictionary = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    file_path = os.path.join(father_dictionary, 'data_template', '小区信息_数据导入表导出模板.xlsx')
+    wb = excel.load_workbook(file_path)
     ws = wb.active
     ws.title = '表3 《小区信息_数据导入表》'
-    table_head = ['小区名称', '小区别名', '路_牌_号', '界址街牌', '小区东至', '小区南至', '小区西至', '小区北至', '区域位置', '所处商圈', '所处板块', '楼盘状态',
-                  '小区类型',
-                  '建筑类型', '房屋性质', '建筑结构', '总_套_数', '建成年份', '设定年份', '施工单位', '容_积_率', '建筑密度', '开_发_商', '绿_化_率', '入_住_率',
-                  '土地性质',
-                  '使_用_权', '土地等级', '土地面积', '建筑规模', '住宅面积', '住宅幢数', '幢数描述', '物管公司', '销售代理', '售楼地址', '图_丘_号', '售楼电话',
-                  '销售时间',
-                  '地图来源', '定位坐标', '项目简介', '区外环境', '相邻小区', '交通干道', '道路等级', '公交站名', '站点距离', '普通公交', '快速公交', '线路条数',
-                  '地铁站名',
-                  '地铁距离', '地铁线路', '周边利用', '农贸市场', '超市商场', '医疗设施', '金融机构', '文体场馆', '行政机关', '幼_儿_园', '小学教育', '中学教育',
-                  '大学教育',
-                  '旅游景点', '河流山脉', '噪音污染', '空气污染', '不利设施', '其他污染', '其他影响', '繁华程度', '公园广场', '商圈距离', '基础设施', '内部道路',
-                  '区内环境',
-                  '小区会所', '休闲设施', '运动设施', '泊位数量', '泊位类型', '泊位配比', '商业配套', '是否封闭', '物管分类', '物业费用', '安保设施', '建筑风格',
-                  '小区绿化',
-                  '小区评价', '价格初判']
-    table_map = {'小区别名': 'gardenAlias', '路_牌_号': 'streetNumber', '界址街牌': '', '小区东至': 'gardenEastTo',
-                 '小区南至': 'gardenSouthTo', '小区西至': 'gardenWestTo', '小区北至': 'gardenNorthTo', '区域位置': 'regionalLocation',
-                 '所处商圈': 'businessArea', '所处板块': 'locationArea', '楼盘状态': 'houseStatus', '小区类型': 'gardenKind',
-                 '建筑类型': 'buildingKind', '房屋性质': 'roomType', '建筑结构': 'buildingStructure', '总_套_数': '',
-                 '建成年份': 'buildYear', '设定年份': 'setYear', '施工单位': '', '容_积_率': '', '建筑密度': '', '开_发_商': '', '绿_化_率': '',
-                 '入_住_率': '', '土地性质': 'landStatus', '使_用_权': 'right', '土地等级': 'landGrade', '土地面积': '', '建筑规模': '',
-                 '住宅面积': '', '住宅幢数': 'houseNumber', '幢数描述': 'description', '物管公司': 'propertyCompany', '销售代理': '',
-                 '售楼地址': '', '图_丘_号': '', '售楼电话': '', '销售时间': '', '地图来源': '', '定位坐标': '', '项目简介': '', '区外环境': '',
-                 '相邻小区': 'neighborGarden', '交通干道': 'mainRoad', '道路等级': 'roadGrade', '公交站名': 'busStation',
-                 '站点距离': 'busStationDistance', '普通公交': 'baseBus', '快速公交': 'quickBus', '线路条数': 'busLines',
-                 '地铁站名': 'subwayStation', '地铁距离': 'subwayDistance', '地铁线路': 'subwayLines', '周边利用': 'aroundUse',
-                 '农贸市场': 'farmerMarket', '超市商场': 'market', '医疗设施': 'hospital', '金融机构': 'bank', '文体场馆': 'gym',
-                 '行政机关': 'organization', '幼_儿_园': 'kindergarten', '小学教育': 'primary', '中学教育': 'middle',
-                 '大学教育': 'college', '旅游景点': 'attractions', '河流山脉': 'riversAndMountains', '噪音污染': 'noisePollution',
-                 '空气污染': 'noisePollution', '不利设施': 'adverseFacilities', '其他污染': 'otherPollution', '其他影响': '',
-                 '繁华程度': 'busyDegree', '公园广场': 'park', '商圈距离': '', '基础设施': '', '内部道路': '', '区内环境': '', '小区会所': '',
-                 '休闲设施': 'relaxFacilities', '运动设施': 'sportFacilities', '泊位数量': '', '泊位类型': '', '泊位配比': '', '商业配套': '',
-                 '是否封闭': 'closed', '物管分类': 'managementKind', '物业费用': '', '安保设施': 'securityFacilities',
-                 '建筑风格': 'architecturalStyle', '小区绿化': 'gardenGreening', '小区评价': 'gardenEvaluation', '价格初判': ''}
-    ws.append(table_head)
+    table_key_list = ['gardenName', 'gardenAlias', 'streetNumber', 'boundaryStreetSign', 'gardenEastTo',
+                      'gardenSouthTo', 'gardenWestTo', 'gardenNorthTo', 'regionalLocation', 'businessArea',
+                      'locationArea', 'houseStatus', 'gardenKind', 'buildingKind', 'toomType', 'buildingStructure',
+                      'buildingNumbers', 'buildYear', 'setYear', 'constructionUnit', 'volumeRate', 'buildingDensity',
+                      'developer', 'greeningRate', 'occupancyRate', 'landStatus', 'right', 'landGrade', 'landArea',
+                      'constructionScale', 'residentialArea', 'houseNumber', 'description', 'propertyCompany',
+                      'salesAgent', 'salesAddress', 'tuQiu', 'salesPhone', 'salesTime', 'mapSource',
+                      'positioningCoordinates', 'projectDescription', 'outEnvironment', 'neighborGarden', 'mainRoad',
+                      'roadGrade', 'busStation', 'busStationDistance', 'baseBus', 'quickBus', 'busLines',
+                      'subwayStation', 'subwayDistance', 'subwayLines', 'aroundUse', 'farmerMarket', 'market',
+                      'hospital', 'bank', 'gym', 'organization', 'kindergarten', 'primary', 'middle', 'college',
+                      'attractions', 'riversAndMountains', 'noisePollution', 'noisePollution', 'adverseFacilities',
+                      'otherPollution', 'otherEffects', 'busyDegree', 'park', 'businessDistrictDistance',
+                      'infrastructure', 'insideRoad', 'zoneEnvironment', 'gardenClubhouse', 'relaxFacilities',
+                      'sportFacilities', 'numberOfBerths', 'berthType', 'berthRatio', 'businessPackage', 'closed',
+                      'managementKind', 'propertyCosts', 'securityFacilities', 'architecturalStyle', 'gardenGreening',
+                      'gardenEvaluation', 'beginPrice']
+
     garden_info = garden_info.to_dict
-    for key in garden_info.keys():
-        if garden_info[key] is None:
-            garden_info[key] = ''
-    table_data = [garden.name]
-    table_head.pop(0)
-    for key in table_head:
-        data_base_key = table_map[key]
-        if data_base_key == '':
+    # 添加小区名字
+    garden_info['gardenName'] = garden.name
+    if import_info is not None:
+        import_info = import_info.to_dict
+        # 合并dict
+        all_garden_info = {**garden_info, **import_info}
+    else:
+        all_garden_info = garden_info
+    # 对数据为none的情况进行处理
+    for key in all_garden_info.keys():
+        if all_garden_info[key] is None:
+            all_garden_info[key] = ''
+    table_data = []
+    for table_key in table_key_list:
+        if table_key not in all_garden_info:
             table_data.append('')
         else:
-            table_data.append(garden_info[data_base_key])
+            table_data.append(all_garden_info[table_key])
     ws.append(table_data)
     stream = BytesIO()
     wb.save(stream)
@@ -1302,111 +1620,149 @@ def building_table(*args, **kwargs):
     """
     data = request.get_json()
     schema = {
-        'buildingId': {'type': 'integer', 'min': 1}
+        'gardenId': {'type': 'integer', 'min': 1}
     }
     v = generate_validator(schema)
     if not v(data):
         return generate_result(1)
     try:
-        building_info = BuildingInfo.query.get(data['buildingId'])
+        building_info = BuildingInfo.query.filter_by(gardenId=data['gardenId']).all()
+        if len(building_info) == 0:
+            return generate_result(2, '该小区暂无楼幢信息')
     except SQLAlchemyError:
         return generate_result(2, '导出数据失败')
-    wb = Workbook()
+    # 获取模板文件路径
+    father_dictionary = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    file_path = os.path.join(father_dictionary, 'data_template', '楼幢信息_数据导入表导出模板.xlsx')
+    wb = excel.load_workbook(file_path)
     ws = wb.active
     ws.title = '表4《楼幢信息_数据导入表》'
-    table_head = ['楼幢名称', '楼幢别名', '楼幢东至', '楼幢西至', '楼幢南至', '楼幢北至', '物业分类', '单元名称', '室号名称', '单_元_数', '单_元_号', '楼_层_号',
-                  '楼层差异', '住宅起始', '总_套_数', '主_朝_向', '部位说明', '建筑结构', '建成年份', '地上总层', '地下总层', '住房层高', '装修标准', '装修描述',
-                  '装修时间', '户型分类', '房产性质', '图_丘_号', '辅房用途', '架_空_层', '地上车库', '地下车库', '建筑面积', '是否别墅', '一梯几户', '得_房_率',
-                  '楼幢状态', '建筑风格', '设备设施', '外墙饰面', '消防设施', '电梯设施', '空调设施', '有无热水', '大堂入口', '顶楼情况', '顶楼露台', '顶楼阁楼',
-                  '顶楼跃层', '屋面情况', '电梯大堂', '公共部位', '平面布局', '通风采光', '营_业_房', '使用状况', '幢外景观', '中心花园', '不利设施', '噪声污染',
-                  '楼幢间距', '三临情况', '其他不利', '其他有利', '楼幢评价', '价格初判', '地图来源', '定位坐标']
-    table_map = {'楼幢名称': 'buildingName', '楼幢别名': 'buildingAlias', '楼幢东至': '', '楼幢西至': '', '楼幢南至': '', '楼幢北至': '',
-                 '物业分类': 'propertyKind', '单元名称': 'unitName', '室号名称': 'roomName', '单_元_数': 'numberOfUnit',
-                 '单_元_号': 'unitNumber', '楼_层_号': 'floorNumber', '楼层差异': 'floorDifferent', '住宅起始': 'beginFloor',
-                 '总_套_数': '', '主_朝_向': 'mainTowards', '部位说明': 'locationDescription', '建筑结构': 'buildingStructure',
-                 '建成年份': 'completedYear', '地上总层': 'floorOverGround', '地下总层': 'floorUnderGround', '住房层高': '',
-                 '装修标准': 'decorationStandard', '装修描述': '', '装修时间': 'decorationYear', '户型分类': '',
-                 '房产性质': 'buildingProperty', '图_丘_号': '', '辅房用途': '', '架_空_层': '架_空_层', '地上车库': '地上车库', '地下车库': '',
-                 '建筑面积': '',
-                 '是否别墅': 'isVilla', '一梯几户': 'oneLiftNumber', '得_房_率': '', '楼幢状态': 'buildingStatus', '建筑风格': '',
-                 '设备设施': '', '外墙饰面': '', '消防设施': '', '电梯设施': '', '空调设施': '', '有无热水': '', '大堂入口': '',
-                 '顶楼情况': 'roofTopInfo', '顶楼露台': 'roofTopTerrace', '顶楼阁楼': 'roofTopAttic', '顶楼跃层': 'roofTopLayer',
-                 '屋面情况': 'roofInfo', '电梯大堂': '', '公共部位': '', '平面布局': '', '通风采光': '', '营_业_房': '', '使用状况': '',
-                 '幢外景观': '', '中心花园': '', '不利设施': '', '噪声污染': '', '楼幢间距': '', '三临情况': '', '其他不利': '', '其他有利': '',
-                 '楼幢评价': '', '价格初判': '', '地图来源': '', '定位坐标': ''}
-    ws.append(table_head)
-    building_info = building_info.to_dict
-    building_info['架_空_层'] = '_'
-    building_info['地上车库'] = '_'
-    #   添加1F情况说明key
-    if building_info['firstFloorDescription'] == '架_空_层':
-        building_info['架_空_层'] = '√'
-    elif building_info['firstFloorDescription'] == '地上车库':
-        building_info['地上车库'] = '√'
-    for key in building_info.keys():
-        if building_info[key] is None:
-            building_info[key] = ''
-    table_data = []
-    for key in table_head:
-        data_base_key = table_map[key]
-        if data_base_key == '':
-            table_data.append('')
+    table_key_list = ["buildingName", "buildingAlias", "buildingEastTo", "buildingWestTo", "buildingSouthTo",
+                      "buildingNorthTo", "propertyKind", "unitName", "roomName", "numberOfUnit", "unitNumber",
+                      "floorNumber", "floorDifferent", "beginFloor", "allBuildingNumbers", "mainTowards",
+                      "locationDescription", "buildingStructure", "completedYear", "floorOverGround",
+                      "floorUnderGround", "housingHeight", "decorationStandard", "decorationDescription",
+                      "decorationYear", "houseType", "buildingProperty", "tuQiu", "auxiliaryRoomUse", "overheadLayer",
+                      "aboveGroundGarage", "underGroundGarage", "constructionArea", "isVilla", "oneLiftNumber",
+                      "haveRoomRate", "buildingStatus", "architecturalStyle", "equipmentAndFacilities",
+                      "exteriorWallFinishes", "fireFacilities", "elevatorFacilities", "airConditioningFacilities",
+                      "hotWater", "lobbyEntrance", "roofTopInfo", "roofTopTerrace", "roofTopAttic", "roofTopLayer",
+                      "roofInfo", "elevatorLobby", "publicParts", "planeLayout", "ventilatedLighting", "businessRoom",
+                      "usage", "outsideView", "centralGarden", "unfavorableFacilities", "soundPolution",
+                      "buildingSpacing", "threeAdventSituation", "otherDisadvantages", "otherAdvantages",
+                      "buildingEvaluation", "preliminaryPrice", "mapSource", "positioningCoordinates"]
+    for info in building_info:
+        info = info.to_dict
+        try:
+            import_info = BuildingImportInfo.query.get(info['id'])
+        except SQLAlchemyError as e:
+            print(str(e))
+            continue
+        if import_info is not None:
+            all_info = {**info, **import_info.to_dict}
         else:
-            table_data.append(building_info[data_base_key])
-    ws.append(table_data)
+            all_info = info
+        for key in all_info.keys():
+            if all_info[key] is None:
+                all_info[key] = ''
+        row_data = []
+        for table_key in table_key_list:
+            if table_key not in all_info:
+                row_data.append('')
+            else:
+                row_data.append(all_info[table_key])
+        ws.append(row_data)
     stream = BytesIO()
     wb.save(stream)
     stream.seek(0)
     return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '楼幢信息_数据导入表.xlsx')
 
 
-@get_data_bp.route('/test', methods=['GET'])
-def test(*args, **kwargs):
-    test_list = [
-        {
-            "label": "文本输入测试",
-            "key": "test1",
-            "required": False,
-            "changed": True,
-            "type": "text",
-            "value": ""
-        },
-        {
-            "label": "二级列表测试",
-            "type": "list",
-            "length": 2
-        }, {
-            "label": "单选测试",
-            "key": "test3",
-            "required": True,
-            "changed": True,
-            "type": "radio",
-            "option": ["test1", "test2"],
-            "value": ""
-        }, {
-            "label": "多选测试",
-            "key": "test4",
-            "required": True,
-            "changed": True,
-            "type": "multiple",
-            "option": ["test1", "test2", "test3"],
-            "value": []
-        },
-        {
-            "label": "文本测试",
-            "key": "test5",
-            "required": False,
-            "changed": True,
-            "type": "text",
-            "value": "test5"
-        },
-        {
-            'label': '地铁站距离',
-            'key': 'subwayDistance',
-            'required': False,
-            'changed': True,
-            'type': 'number',
-            'value': ''
-        },
-    ]
-    return generate_result(0, '测试数据', data={'formList': test_list})
+@get_data_bp.route('/picture', methods=['GET'])
+@token_check
+@admin_required
+def picture(*args, **kwargs):
+    """
+    根据图片路径获取图片
+    :return:
+    """
+    relative_path = request.args.get('path', '')
+    if relative_path == '':
+        return generate_result(1)
+    abs_path = os.path.join(config.UPLOADED_IMAGES_DEST, relative_path)
+    if not os.path.exists(abs_path):
+        return generate_result(2, '图片不存在')
+    dir_path, filename = os.path.split(abs_path)
+    return send_from_directory(dir_path, filename)
+
+
+@get_data_bp.route('/garden_picture', methods=['POST'])
+@token_check
+@admin_required
+def garden_picture(*args, **kwargs):
+    """
+    获取小区图片的相对路径
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer', 'min': 1},
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        garden_pictures = GardenPicture.query.filter_by(gardenId=data['id']).all()
+    except SQLAlchemyError as e:
+        print(str(e))
+        return generate_result(2)
+    if len(garden_pictures) == 0:
+        return generate_result(2, '该小区暂未上传图片')
+    return generate_result(0, '获取小区图片成功', data={"gardenPictures": [i.to_dict for i in garden_pictures]})
+
+
+@get_data_bp.route('/other_picture', methods=['POST'])
+@token_check
+@admin_required
+def other_picture(*args, **kwargs):
+    """
+    获取小区其他图片
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer', 'min': 1},
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        other_pictures = OtherPicture.query.filter_by(gardenId=data['id']).all()
+    except SQLAlchemyError as e:
+        print(str(e))
+        return generate_result(2)
+    if len(other_pictures) == 0:
+        return generate_result(2, '该小区暂未上传图片')
+    return generate_result(0, '获取小区图片成功', data={'otherPictures': [i.to_dict for i in other_pictures]})
+
+
+@get_data_bp.route('/building_picture', methods=['POST'])
+@token_check
+@admin_required
+def building_picture(*args, **kwargs):
+    """
+    获取楼幢图片接口
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer', 'min': 1},
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1)
+    try:
+        building_pictures = BuildingPicture.query.filter_by(buildingId=data['id']).all()
+    except SQLAlchemyError as e:
+        print(str(e))
+        return generate_result(2)
+    if len(building_pictures) == 0:
+        return generate_result(2, '该楼幢暂无数据')
+    return generate_result(0, '获取楼幢图片成功', data={'buildingPictures': [i.to_dict for i in building_pictures]})

@@ -9,7 +9,7 @@ from flask import request, Blueprint
 from openpyxl.utils.exceptions import InvalidFileException
 from sqlalchemy.exc import SQLAlchemyError
 
-from . import generate_result, is_excel_end
+from . import generate_result
 from .. import config
 from ..models.base_model import db
 from ..models.city import City
@@ -18,6 +18,7 @@ from ..models.district import District
 from ..models.garden import Garden
 from ..models.province import Province
 from ..models.street import Street
+from ..utils import is_excel_end
 from ..wraps import token_check, super_admin_required
 
 administration_bp = Blueprint('administration', __name__, url_prefix=config.URL_Prefix + '/administration')
