@@ -122,7 +122,7 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             public void onClick(View v) {
                 if (gardenName != null && !gardenName.isEmpty()) {
                     Intent intent = new Intent(MainActivity.this, BaiduMapActivity.class);
-                    intent.putExtra("gardenId",gardenId);
+                    intent.putExtra("gardenId", gardenId);
                     startActivity(intent);
                 } else {
                     Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
@@ -154,7 +154,7 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
                                 adapter.setItemClickListener(new GardenListAdapter.MyItemClickListener() {
                                     @Override
                                     public void onItemClick(View view, int position) {
-                                        SearchGardenResultDao.DataBean.BuildingKindsBean bean =gardenResultDao.getData().getBuildingKinds().get(position);
+                                        SearchGardenResultDao.DataBean.BuildingKindsBean bean = gardenResultDao.getData().getBuildingKinds().get(position);
                                         gardenId = bean.getId();
                                         gardenName = String.valueOf(bean.getKindName());
                                         neighbourWorking.setText(gardenName);
@@ -248,7 +248,7 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
         }
         Intent intent11 = getIntent();
         String flagMessage = intent11.getStringExtra("flag");
-        if(flagMessage != null){
+        if (flagMessage != null) {
             showSingleChoiceDialog();
         }
     }
@@ -279,6 +279,7 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             e.printStackTrace();
         }
     }
+
     private void showCityDialog() {
         GetLocationNetUtil.GetCityNetUtil getCityNetUtil = new GetLocationNetUtil.GetCityNetUtil(locationAllDao.getProvinceId());
         AsyncTask asyncTask = new AsyncRequest().execute(getCityNetUtil);
@@ -300,7 +301,8 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             e.printStackTrace();
         }
     }
-    private void showDistrict(){
+
+    private void showDistrict() {
         GetLocationNetUtil.GetDistrictNetUtil getDistrictNetUtil = new GetLocationNetUtil.GetDistrictNetUtil(locationAllDao.getCityId());
         AsyncTask asyncTask = new AsyncRequest().execute(getDistrictNetUtil);
         try {
@@ -321,6 +323,7 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             e.printStackTrace();
         }
     }
+
     private void showStreet() {
         GetLocationNetUtil.GetStreetNetUtil getStreetNetUtil = new GetLocationNetUtil.GetStreetNetUtil(locationAllDao.getDistrictId());
         AsyncTask asyncTask = new AsyncRequest().execute(getStreetNetUtil);
@@ -342,8 +345,9 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             e.printStackTrace();
         }
     }
+
     private void showCommunity() {
-        GetLocationNetUtil.GetCommunityNetUtil getCommunityNetUtil= new GetLocationNetUtil.GetCommunityNetUtil(locationAllDao.getStreetId());
+        GetLocationNetUtil.GetCommunityNetUtil getCommunityNetUtil = new GetLocationNetUtil.GetCommunityNetUtil(locationAllDao.getStreetId());
         AsyncTask asyncTask = new AsyncRequest().execute(getCommunityNetUtil);
         try {
             final CommunityDao communityDao = (CommunityDao) asyncTask.get();
@@ -351,7 +355,7 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             adapter.setItemClickListener(new GetCommunityViewAdapter.MyItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
-                    Log.d(">>>>", "onItemClick: "+position);
+                    Log.d(">>>>", "onItemClick: " + position);
                     MainActivity.locationAllDao.setCommunityId(communityDao.getData().getCommunities().get(position).getId());
                     showGarden();
                 }
@@ -368,8 +372,8 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
      * 添加小区数据
      */
     private void showGarden() {
-        AddGarden addGarden = new AddGarden(gardenName,locationAllDao.getProvinceId(),locationAllDao.getCityId(),locationAllDao.getDistrictId()
-        ,locationAllDao.getStreetId(),locationAllDao.getCommunityId());
+        AddGarden addGarden = new AddGarden(gardenName, locationAllDao.getProvinceId(), locationAllDao.getCityId(), locationAllDao.getDistrictId()
+                , locationAllDao.getStreetId(), locationAllDao.getCommunityId());
         AsyncTask asyncTask = new AsyncRequest().execute(addGarden);
         try {
             AddGradenResult addGradenResult = (AddGradenResult) asyncTask.get();
@@ -474,7 +478,7 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
     @Override
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);
-        showImg(result.getImages());
+        showImg(result.getImage());
         Users musers = new Users(gdid, locationString, Integer.toString((int) System.currentTimeMillis()), login.token, jpegName);
         System.out.println("用户创建成功");
         mainDB.save(musers);
@@ -688,9 +692,9 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
                 }
                 Toast.makeText(MainActivity.this, "你选择了" + str, Toast.LENGTH_SHORT).show();
                 if (str.equals("是")) {
-                    Intent intent1 =new Intent(MainActivity.this,DrawActivity.class);
+                    Intent intent1 = new Intent(MainActivity.this, DrawActivity.class);
                     //用Bundle携带数据
-                    Bundle bundle=new Bundle();
+                    Bundle bundle = new Bundle();
                     //传递name参数为tinyphp
                     bundle.putString("jpeg", jpegName);
                     intent1.putExtras(bundle);
@@ -702,11 +706,9 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
         builder.create().show();
     }
 
-    private void showImg(ArrayList<TImage> images) {
+    private void showImg(TImage image) {
+        saveToSystemAlbum(image.getOriginalPath());
         singleDialog();
-//        Intent intent = new Intent(takePhoto01.this, MainActivity.class);
-////        intent.putExtra("images", images);
-//        startActivity(intent);
         Toast.makeText(MainActivity.this, "已存储", Toast.LENGTH_SHORT).show();
     }
 }
