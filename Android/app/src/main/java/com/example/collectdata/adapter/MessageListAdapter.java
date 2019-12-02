@@ -94,7 +94,7 @@ public class MessageListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.i("INDEX","获取条目成功   " + 24);
-
+//        map.put(position, convertView)
         CommonItemBean commonItemBean = messageListBean.getItemBean(position);
         int type = commonItemBean.type;
 
@@ -157,6 +157,7 @@ public class MessageListAdapter extends BaseAdapter {
             //初始化Button
             View buttonView = layoutInflater.inflate(R.layout.message_selector_button,null);
             Button button = buttonView.findViewById(R.id.message_selector_item_button);
+            button.setId(View.generateViewId());
             //设置button需要显示的内容
             String buttonContent = selectorMessage.get(i);
             button.setText(buttonContent);

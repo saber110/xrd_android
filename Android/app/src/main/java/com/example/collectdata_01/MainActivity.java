@@ -196,7 +196,6 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             @Override
             //监听时间，页面跳转
             public void onClick(View v) {
-//                startActivity(new Intent(MainActivity.this, takePhoto01.class));
                 showSingleChoiceDialog();
 //                picture();
             }

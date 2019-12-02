@@ -15,12 +15,25 @@
     <string name="label_neighbour">工作小区：</string>
     <string name="label_neighbour_working">请选择工作小区</string>
 
-    <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/</string>
-
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <!--    API-->
+    <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/%1$s/%2$s</string>
+    <!--<string name="preFix">http://kms.yinaoxiong.cn:8888/api/v1/%1$s/%2$s</string>-->
+    <string name="userTab">user</string>
+    <string name="loginApi">login</string>
+    <string name="cbLogin">cb_Login</string>
+    <string name="refreshTokenApi">refresh_token</string>
+    <string name="updateUserApi">update</string>
+    <string name="updatePasswordApi">reset_password</string>
+    
+    <string name="getDataTab">get_data</string>
+    <string name="getMapDataAPI">map</string>
+    <string name="getGardenBaseInfoAPI">garden_base_info</string>
+    <string name="cbUpdateGardenBaseInfo">cb_update_garden_base_info</string>
+    <string name="getBuildBaseInfoAPI">building_base_info</string>
+    <string name="importGardenBaseInfoApi">garden_import_info</string>
+    <string name="importBuildingBaseInfoApi">building_import_info</string>
+    
+    
     <!--    Data页面的string    -->
     <string name="data_xiaoqugaikuang">小区概况表</string>
     <string name="data_louzhuangdiaocha">楼幢调查</string>
@@ -43,6 +56,9 @@
     <string name="cat_button_label_cheese">Cheese</string>
     <string name="cat_button_label_tomatoes">Tomatoes</string>
     <string name="cat_button_label_mushrooms">Mushrooms</string>
+
+
+    <string name="api_error">接口出了点问题....，请联系管理员</string>
 
 
     <string name="cat_textfield_label" translatable="false">Label</string>
