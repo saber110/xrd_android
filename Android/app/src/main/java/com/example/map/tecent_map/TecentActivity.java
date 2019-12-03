@@ -63,7 +63,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     private TextView qita;
     private TextView lat;
     private TextView lng;
-    private int choose;
+    private int choose = 1;
     private View changeView;
     private Dialog changeDialog;
     private EditText name;
@@ -120,7 +120,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         Bitmap bitmap;
         int width = 100;
         int height = 100;
-        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
+        bitmap = Bitmap.createBitmap(width*str.length(), height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);//抗锯齿
         paint.setDither(true); // 获取跟清晰的图像采样
         paint.setFilterBitmap(true);// 过滤
@@ -221,7 +221,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 louceng.setBackgroundColor(0x99EEE6E6);
                 lu.setBackgroundColor(0x99EEE6E6);
                 qita.setBackgroundColor(0x99EEE6E6);
-                choose = 0;
+                choose = 1;
             }
         });
 
@@ -232,7 +232,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 huayuan.setBackgroundColor(0x99EEE6E6);
                 lu.setBackgroundColor(0x99EEE6E6);
                 qita.setBackgroundColor(0x99EEE6E6);
-                choose = 1;
+                choose = 2;
             }
         });
         lu.setOnClickListener(new View.OnClickListener() {
@@ -242,7 +242,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 louceng.setBackgroundColor(0x99EEE6E6);
                 huayuan.setBackgroundColor(0x99EEE6E6);
                 qita.setBackgroundColor(0x99EEE6E6);
-                choose = 2;
+                choose = 3;
             }
         });
         qita.setOnClickListener(new View.OnClickListener() {
@@ -252,7 +252,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 louceng.setBackgroundColor(0x99EEE6E6);
                 lu.setBackgroundColor(0x99EEE6E6);
                 huayuan.setBackgroundColor(0x99EEE6E6);
-                choose = 3;
+                choose = 4;
             }
         });
     }

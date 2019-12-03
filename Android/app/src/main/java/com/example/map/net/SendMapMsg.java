@@ -63,7 +63,7 @@ public class SendMapMsg implements ProcessInterface {
                     .header("Content-Type", "application/json")
                     .send(JSON.toJSONString(map));
             String result = request.body();
-            Log.d("<<<<<<", "call: "+result);
+            Log.d(">>>>", "添加: "+result);
             return JSONObject.parseObject(result, StanderDao.class);
         } catch (Exception e) {
             return null;

@@ -62,7 +62,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     private TextView qita;
     private TextView lat;
     private TextView lng;
-    private int choose;
+    private int choose = 1;
     private EditText name;
 
 
@@ -112,7 +112,6 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 if (mapMarkerDataDao.getData().getMap_data().size() != 0) {
                     MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(0);
                     LatLng ll = new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude());
-
                     MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(ll);
                     baiduMap.animateMapStatus(msu);
                     MapStatus.Builder builder = new MapStatus.Builder();
@@ -182,7 +181,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 louceng.setBackgroundColor(0x99EEE6E6);
                 lu.setBackgroundColor(0x99EEE6E6);
                 qita.setBackgroundColor(0x99EEE6E6);
-                choose = 0;
+                choose = 1;
             }
         });
 
@@ -193,7 +192,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 huayuan.setBackgroundColor(0x99EEE6E6);
                 lu.setBackgroundColor(0x99EEE6E6);
                 qita.setBackgroundColor(0x99EEE6E6);
-                choose = 1;
+                choose = 2;
             }
         });
         lu.setOnClickListener(new View.OnClickListener() {
@@ -203,7 +202,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 louceng.setBackgroundColor(0x99EEE6E6);
                 huayuan.setBackgroundColor(0x99EEE6E6);
                 qita.setBackgroundColor(0x99EEE6E6);
-                choose = 2;
+                choose = 3;
             }
         });
         qita.setOnClickListener(new View.OnClickListener() {
@@ -213,7 +212,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 louceng.setBackgroundColor(0x99EEE6E6);
                 lu.setBackgroundColor(0x99EEE6E6);
                 huayuan.setBackgroundColor(0x99EEE6E6);
-                choose = 3;
+                choose = 4;
             }
         });
     }
@@ -402,7 +401,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         Bitmap bitmap;
         int width = 100;
         int height = 100;
-        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
+        bitmap = Bitmap.createBitmap(width*str.length(), height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);//抗锯齿
         paint.setDither(true); // 获取跟清晰的图像采样
         paint.setFilterBitmap(true);// 过滤
