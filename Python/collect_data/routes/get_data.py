@@ -1426,22 +1426,19 @@ def garden_base_table(*args, **kwargs):
     """
     导出表1 《小区概况表》
     """
-    data = request.get_json()
-    schema = {
-        'gardenId': {'type': 'integer', 'min': 1}
-    }
-    v = generate_validator(schema)
-    if not v(data):
+    try:
+        garden_id = request.form['gardenId']
+    except KeyError:
         return generate_result(1)
     try:
-        garden = Garden.query.get(data['gardenId'])
+        garden = Garden.query.get(garden_id)
         if garden is None:
             return generate_result(2, '小区不存在')
         city = City.query.get(garden.cityId)
         district = District.query.get(garden.districtId)
         street = Street.query.get(garden.streetId)
         community = Community.query.get(garden.communityId)
-        garden_info = GardenBaseInfo.query.get(data['gardenId'])
+        garden_info = GardenBaseInfo.query.get(garden_id)
         user = User.query.get(garden_info.userId)
     except SQLAlchemyError:
         return generate_result(2, '导出数据失败')
@@ -1497,15 +1494,12 @@ def building_base_table(*args, **kwargs):
     """
     导出表2 《楼幢调查表》
     """
-    data = request.get_json()
-    schema = {
-        'gardenId': {'type': 'integer', 'min': 1}
-    }
-    v = generate_validator(schema)
-    if not v(data):
+    try:
+        garden_id = request.form['gardenId']
+    except KeyError:
         return generate_result(1)
     try:
-        building_infos = BuildingInfo.query.filter_by(gardenId=data['gardenId']).all()
+        building_infos = BuildingInfo.query.filter_by(gardenId=garden_id).all()
     except SQLAlchemyError as e:
         print(str(e))
         return generate_result(2, '导出数据失败')
@@ -1552,21 +1546,18 @@ def garden_table(*args, **kwargs):
     """
     导出小区信息_数据导入表
     """
-    data = request.get_json()
-    schema = {
-        'gardenId': {'type': 'integer', 'min': 1}
-    }
-    v = generate_validator(schema)
-    if not v(data):
+    try:
+        garden_id = request.form['gardenId']
+    except KeyError:
         return generate_result(1)
     try:
-        garden = Garden.query.get(data['gardenId'])
+        garden = Garden.query.get(garden_id)
         if garden is None:
             return generate_result(2, '小区不存在')
-        garden_info = GardenBaseInfo.query.get(data['gardenId'])
+        garden_info = GardenBaseInfo.query.get(garden_id)
         if garden_info is None:
             return generate_result(2, '小区基本信息不存在')
-        import_info = GardenImportInfo.query.get(data['gardenId'])
+        import_info = GardenImportInfo.query.get(garden_id)
     except SQLAlchemyError:
         return generate_result(2, '导出数据失败')
 
@@ -1627,15 +1618,12 @@ def building_table(*args, **kwargs):
     """
     导出楼幢信息_数据导入表
     """
-    data = request.get_json()
-    schema = {
-        'gardenId': {'type': 'integer', 'min': 1}
-    }
-    v = generate_validator(schema)
-    if not v(data):
+    try:
+        garden_id = request.form['gardenId']
+    except KeyError:
         return generate_result(1)
     try:
-        building_info = BuildingInfo.query.filter_by(gardenId=data['gardenId']).all()
+        building_info = BuildingInfo.query.filter_by(gardenId=garden_id).all()
         if len(building_info) == 0:
             return generate_result(2, '该小区暂无楼幢信息')
     except SQLAlchemyError:
