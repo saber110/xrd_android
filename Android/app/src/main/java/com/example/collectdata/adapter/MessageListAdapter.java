@@ -18,6 +18,7 @@ import com.example.collectdata.bean.SelectorItemBean;
 import com.example.collectdata.bean.ViewItemBean;
 import com.example.collectdata.exception.PageInitException;
 import com.example.collectdata.listener.ListButtonListener;
+import com.example.collectdata.tools.CacheTools;
 import com.example.collectdata.tools.ConstTools;
 import com.example.collectdata_01.R;
 import com.google.android.material.button.MaterialButtonToggleGroup;
@@ -95,20 +96,23 @@ public class MessageListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.i("INDEX","获取条目成功   " + 24);
 //        map.put(position, convertView)
+        if (CacheTools.listViewMessage.get(position) != null) {
+            return CacheTools.listViewMessage.get(position);
+        }
         CommonItemBean commonItemBean = messageListBean.getItemBean(position);
         int type = commonItemBean.type;
 
-            switch (type) {
-                case ConstTools.MESSAGE_BEANTYPE_COMMON:
-                    convertView = getCommonView(convertView,position,commonItemBean);
-                 break;
-                case ConstTools.MESSAGE_BEANTYPE_SELECTOR:
-                    convertView = getSelectorView(convertView,commonItemBean,position,false);
-                 break;
-                 case ConstTools.MESSAGE_BEANTYPE_TITLELINE:
-                    convertView = getTitleLineView(convertView,commonItemBean,position);
-            }
-
+        switch (type) {
+            case ConstTools.MESSAGE_BEANTYPE_COMMON:
+                convertView = getCommonView(convertView,position,commonItemBean);
+             break;
+            case ConstTools.MESSAGE_BEANTYPE_SELECTOR:
+                convertView = getSelectorView(convertView,commonItemBean,position,false);
+             break;
+             case ConstTools.MESSAGE_BEANTYPE_TITLELINE:
+                convertView = getTitleLineView(convertView,commonItemBean,position);
+        }
+        CacheTools.listViewMessage.put(position,convertView);
         return convertView;
     }
 

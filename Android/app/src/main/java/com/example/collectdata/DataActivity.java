@@ -31,10 +31,10 @@ public class DataActivity extends AppCompatActivity {
         louzhuanxinxi = this.findViewById(R.id.data_louzhuangxinxi);
 
         //添加监听器
-        xiaoqugaikuang.setOnClickListener(new DataListener(this, ConstTools.XIAOQUGAIKUANG));
-        xiaoquxinxi.setOnClickListener(new DataListener(this, ConstTools.XIAOQUXINXI));
-        louzhuanxinxi.setOnClickListener(new DataListener(this, ConstTools.LOUZHUANGXINXI));
-        louzhuangdiaocha.setOnClickListener(new DataListener(this, ConstTools.LOUZHUANGDIAOCHA));
+        xiaoqugaikuang.setOnClickListener(new DataListener(this, ConstTools.XIAOQUGAIKUANG, DataActivity.this));
+        xiaoquxinxi.setOnClickListener(new DataListener(this, ConstTools.XIAOQUXINXI, DataActivity.this));
+        louzhuanxinxi.setOnClickListener(new DataListener(this, ConstTools.LOUZHUANGXINXI, DataActivity.this));
+        louzhuangdiaocha.setOnClickListener(new DataListener(this, ConstTools.LOUZHUANGDIAOCHA, DataActivity.this));
 
     }
 }

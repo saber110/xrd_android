@@ -10,11 +10,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
+import com.example.collectdata.MessageActivity;
+import com.example.collectdata.bean.MessageListBean;
+import com.example.collectdata.tools.JsonTools;
 import com.example.collectdata_01.MainActivity;
 import com.example.collectdata_01.R;
 import com.example.login.login;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,7 +46,13 @@ public class v1{
     private static String loginApi;
     private static String updatePasswordApi;
     private static String getGardenBaseInfoAPI;
+    private static String getBuildingBaseInfoAPI;
+    private static String getGardenImportInfoApi;
+    private static String getBuildingImportInfoApi;
     private static String cbUpdateGardenBaseInfo;
+    private static String cbUpdateBuildingBaseInfo;
+    private static String cbUpdateGardenImportInfo;
+    private static String cbUpdateBuildingImportInfo;
     private static String cbLogin;
     private static Resources res;
 
@@ -58,9 +68,16 @@ public class v1{
         v1.pattern = res.getString(R.string.preFix);
         v1.apiError = res.getString(R.string.api_error);
         v1.getGardenBaseInfoAPI = String.format(pattern, res.getString(R.string.getDataTab), res.getString(R.string.getGardenBaseInfoAPI));
+        v1.getBuildingBaseInfoAPI = String.format(pattern, res.getString(R.string.getDataTab), res.getString(R.string.getBuildBaseInfoAPI));
         // Integer.valueOf(str)
-        v1.cbUpdateGardenBaseInfo = (res.getString(R.string.cbUpdateGardenBaseInfo));
+        v1.getGardenImportInfoApi = String.format(pattern, res.getString(R.string.getDataTab), res.getString(R.string.getGardenImportInfoApi));
+        v1.getBuildingImportInfoApi = String.format(pattern, res.getString(R.string.getDataTab), res.getString(R.string.getBuildingImportInfoApi));
+
         v1.cbLogin = (res.getString(R.string.cbLogin));
+        v1.cbUpdateGardenBaseInfo = (res.getString(R.string.cbUpdateGardenBaseInfo));
+        v1.cbUpdateBuildingBaseInfo = res.getString(R.string.cbUpdateBuildingBaseInfo);
+        v1.cbUpdateGardenImportInfo = res.getString(R.string.cbUpdateGardenImportInfo);
+        v1.cbUpdateBuildingImportInfo = res.getString(R.string.cbUpdateBuildingImportInfo);
     }
 
     public void setToken(String token){
@@ -101,12 +118,18 @@ public class v1{
 
     public void callBack(String res, final String entry) {
         Map map = JSON.parseObject(res, HashMap.class);
-        Log.i(TAG, "callBack: " + res);
+        Log.i(TAG, "callBack: " + entry + " " +res);
         if(Objects.requireNonNull(map.get("code")).toString().equals(SUCCESS)){
             if(entry.equals(cbLogin)){
                 callbackLogin(res);
             }else if(entry.equals(cbUpdateGardenBaseInfo)){
                 callbackGardenBaseInfo(res);
+            }else if(entry.equals(cbUpdateBuildingBaseInfo)){
+                callbackBuildingBaseInfo(res);
+            }else if(entry.equals(cbUpdateBuildingImportInfo)){
+                callbackBuildingImportInfo(res);
+            }else if(entry.equals(cbUpdateGardenImportInfo)){
+                callbackGardenImportInfo(res);
             }
         }
 
@@ -120,8 +143,110 @@ public class v1{
         post(getGardenBaseInfoAPI, JSON.toJSONString(map), cbUpdateGardenBaseInfo);
     }
 
+    public void getBuildingBaseInfoAPI(int buildingId) {
+        Map map = new HashMap<String, String>(5);
+        map.put("token", login.token);
+        map.put("buildingId", buildingId);
+
+        post(getBuildingBaseInfoAPI, JSON.toJSONString(map), cbUpdateBuildingBaseInfo);
+
+    }
+
+    public void getGardenImportInfoAPI(int gardenId) {
+        Log.i(TAG, "getGardenImportInfoAPI: " + gardenId);
+        Map map = new HashMap<String, String>(5);
+        map.put("token", login.token);
+        map.put("gardenId", gardenId);
+
+        post(getGardenImportInfoApi, JSON.toJSONString(map), cbUpdateGardenImportInfo);
+
+    }
+
+    public void getBuildingImportInfoAPI(int buildingId) {
+        Map map = new HashMap<String, String>(5);
+        map.put("token", login.token);
+        map.put("buildingId", buildingId);
+
+        post(getBuildingImportInfoApi, JSON.toJSONString(map), cbUpdateBuildingImportInfo);
+
+    }
+
+
+    public void importGardenInfo(int gardenId) {
+        Map map = new HashMap<String, String>(5);
+        map.put("token", login.token);
+        map.put("gardenId", gardenId);
+
+        post(getGardenBaseInfoAPI, JSON.toJSONString(map), cbUpdateGardenBaseInfo);
+    }
+
+    public void importBuildinginfo(int gardenId) {
+        Map map = new HashMap<String, String>(5);
+        map.put("token", login.token);
+        map.put("gardenId", gardenId);
+
+        post(getGardenBaseInfoAPI, JSON.toJSONString(map), cbUpdateGardenBaseInfo);
+    }
+
+
     public void callbackGardenBaseInfo(final String res){
         Log.i(TAG, "callbackGardenBaseInfo: " + res);
+        MessageListBean.list.clear();
+        try {
+            JsonTools.jsonParasForMessageList(res,MessageListBean.list);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Looper.prepare();
+        Intent i2 = new Intent(this.getContext(), MessageActivity.class);
+        this.getContext().startActivity(i2);
+        Looper.loop();
+    }
+
+    public void callbackBuildingBaseInfo(final String res){
+        Log.i(TAG, "callbackBuildingBaseInfo: " + res);
+        MessageListBean.list.clear();
+        try {
+            JsonTools.jsonParasForMessageList(res,MessageListBean.list);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Looper.prepare();
+        Intent i2 = new Intent(this.getContext(), MessageActivity.class);
+        this.getContext().startActivity(i2);
+        Looper.loop();
+    }
+
+    public void callbackGardenImportInfo(final String res){
+        Log.i(TAG, "callbackGardenBaseInfo: " + res);
+        MessageListBean.list.clear();
+        try {
+            JsonTools.jsonParasForMessageList(res,MessageListBean.list);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Looper.prepare();
+        Intent i2 = new Intent(this.getContext(), MessageActivity.class);
+        this.getContext().startActivity(i2);
+        Looper.loop();
+    }
+
+    public void callbackBuildingImportInfo(final String res){
+        Log.i(TAG, "callbackBuildingBaseInfo: " + res);
+        MessageListBean.list.clear();
+        try {
+            JsonTools.jsonParasForMessageList(res,MessageListBean.list);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Looper.prepare();
+        Intent i2 = new Intent(this.getContext(), MessageActivity.class);
+        this.getContext().startActivity(i2);
+        Looper.loop();
     }
 
     public void loginApi(String iemi, String password) throws IOException {

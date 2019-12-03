@@ -17,7 +17,7 @@
 
     <!--    API-->
     <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/%1$s/%2$s</string>
-    <!--<string name="preFix">http://kms.yinaoxiong.cn:8888/api/v1/%1$s/%2$s</string>-->
+<!--    <string name="preFix">http://kms.yinaoxiong.cn:8888/api/v1/%1$s/%2$s</string>-->
     <string name="userTab">user</string>
     <string name="loginApi">login</string>
     <string name="cbLogin">cb_Login</string>
@@ -28,10 +28,15 @@
     <string name="getDataTab">get_data</string>
     <string name="getMapDataAPI">map</string>
     <string name="getGardenBaseInfoAPI">garden_base_info</string>
+    <string name="cbUpdateBuildingBaseInfo">cb_update_building_base_info</string>
     <string name="cbUpdateGardenBaseInfo">cb_update_garden_base_info</string>
+    <string name="cbUpdateBuildingImportInfo">cb_update_building_import_info</string>
+    <string name="cbUpdateGardenImportInfo">cb_update_garden_import_info</string>
     <string name="getBuildBaseInfoAPI">building_base_info</string>
     <string name="importGardenBaseInfoApi">garden_import_info</string>
     <string name="importBuildingBaseInfoApi">building_import_info</string>
+    <string name="getGardenImportInfoApi">garden_import_info</string>
+    <string name="getBuildingImportInfoApi">building_import_info</string>
     
     
     <!--    Data页面的string    -->
