@@ -60,6 +60,7 @@ public class v1{
     public static String getDistrictApi;
     public static String getStreetApi;
     public static String getCommunityApi;
+    public static String searchGardenApi;
     public static String createGardenApi;
     private static Resources res;
 
@@ -91,6 +92,7 @@ public class v1{
         v1.getDistrictApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.getDistrictApi));
         v1.getStreetApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.getStreetApi));
         v1.getCommunityApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.getCommunityApi));
+        v1.searchGardenApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.searchGardenApi));
 
     }
 

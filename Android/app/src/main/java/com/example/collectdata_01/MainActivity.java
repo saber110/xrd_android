@@ -136,61 +136,68 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
         neighbourChose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            gardenDialog.show();
-            /**
-             * 当用户点击了搜索
-             */
-            selectGardenView.findViewById(R.id.search_garden_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                SearchGarden searchGarden = new SearchGarden();
-                AsyncTask asyncTask = new AsyncRequest().execute(searchGarden);
-                try {
-                    final SearchGardenResultDao gardenResultDao = (SearchGardenResultDao) asyncTask.get();
-                    if (gardenResultDao == null || gardenResultDao.getData() == null
-                            || gardenResultDao.getData().getBuildingKinds().size() == 0
-                    ) {
-                        Toast.makeText(MainActivity.this, "无查询结果", Toast.LENGTH_SHORT).show();
-                    } else {
+                gardenDialog.show();
+                /**
+                 * 当用户点击了搜索
+                 */
+                selectGardenView.findViewById(R.id.search_garden_button).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                        GardenListAdapter adapter = new GardenListAdapter(MainActivity.this, gardenResultDao.getData());
-                        adapter.setItemClickListener(new GardenListAdapter.MyItemClickListener() {
-                            @Override
-                            public void onItemClick(View view, int position) {
-                                SearchGardenResultDao.DataBean.BuildingKindsBean bean = gardenResultDao.getData().getBuildingKinds().get(position);
-                                gardenId = bean.getId();
-                                gardenName = String.valueOf(bean.getKindName());
-                                neighbourWorking.setText(gardenName);
-                                gardenDialog.dismiss();
+                        String key = searchKey.getText().toString();
+                        if (key.trim().length() == 0) {
+                            Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        SearchGarden searchGarden = new SearchGarden(key);
+                        AsyncTask asyncTask = new AsyncRequest().execute(searchGarden);
+                        try {
+                            final SearchGardenResultDao gardenResultDao = (SearchGardenResultDao) asyncTask.get();
+                            if (gardenResultDao == null || gardenResultDao.getData() == null
+                                    || gardenResultDao.getData().getBuildingKinds().size() == 0
+                            ) {
+                                Toast.makeText(MainActivity.this, "无查询结果", Toast.LENGTH_SHORT).show();
+                            } else {
+
+                                GardenListAdapter adapter = new GardenListAdapter(MainActivity.this, gardenResultDao.getData());
+                                adapter.setItemClickListener(new GardenListAdapter.MyItemClickListener() {
+                                    @Override
+                                    public void onItemClick(View view, int position) {
+                                        SearchGardenResultDao.DataBean.BuildingKindsBean bean = gardenResultDao.getData().getBuildingKinds().get(position);
+                                        gardenId = bean.getId();
+                                        gardenName = String.valueOf(bean.getKindName());
+                                        neighbourWorking.setText(gardenName);
+                                        gardenDialog.dismiss();
+                                    }
+                                });
+                                gardenDataRecyclerView.setAdapter(adapter);
                             }
-                        });
-                        gardenDataRecyclerView.setAdapter(adapter);
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                }
-            });
+                });
 
-            /**
-             * 点击新建
-             */
-            addGardenBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                String key = searchKey.getText().toString();
-                gardenName = key;
-                if (key.trim().length() == 0) {
-                    Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT).show();
-                } else {
-                    neighbourWorking.setText(gardenName);
-                    gardenDialog.dismiss();
-                    showProvinceDialog();
-                }
-                }
-            });
+                /**
+                 * 点击新建
+                 */
+                addGardenBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String key = searchKey.getText().toString();
+                        gardenName = key;
+                        if (key.trim().length() == 0) {
+                            Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT).show();
+                        } else {
+                            neighbourWorking.setText(gardenName);
+                            gardenDialog.dismiss();
+                            showProvinceDialog();
+                        }
+                    }
+                });
             }
         });
 
@@ -528,6 +535,7 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
 
     /**
      * 将拍照的图片加入系统相册中
+     *
      * @param path
      */
     private void saveToSystemAlbum(String path) {

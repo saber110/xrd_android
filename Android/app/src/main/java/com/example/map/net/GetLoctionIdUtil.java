@@ -25,14 +25,11 @@ public class GetLoctionIdUtil {
      * @return
      */
     public static ProvinceDao getProvinceId(){
-        Log.i("777", "getProvinceId: ");
         Map map = new HashMap(1);
         map.put("token", login.token);
         try {
             HttpRequest request = new HttpRequest(v1.getProvinceApi, "POST").form(map);
             String result = request.body();
-            Log.i("777", "getProvinceId: " + result);
-
             ProvinceDao provinceDao = JSONObject.parseObject(result, ProvinceDao.class);
             return provinceDao;
         } catch (Exception e) {
