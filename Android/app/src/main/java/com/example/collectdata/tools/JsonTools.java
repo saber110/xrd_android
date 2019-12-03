@@ -39,6 +39,7 @@ public class JsonTools {
             Log.i("JsonTools","第" + i + "次转换 " + lineJson.toString());
             String type = lineJson.getString("type");
             String title = lineJson.getString("label");
+            boolean require = lineJson.getBoolean("required");
             if (type.equals("text")) {
                 //文字输入框
                 commonItemBean = jsonParasForCommonItem(title,lineJson);
@@ -54,7 +55,13 @@ public class JsonTools {
             } else if(type.equals("number")){
                 //数字输入框
                 commonItemBean = jsonParasForCommonItem(title,lineJson);
+            }else if (type.equals("map")){
+                commonItemBean = jsonParasForCommonItem(title,lineJson);
             }
+            if(!type.equals("list"))
+                commonItemBean.setKey(lineJson.getString("key"));
+            commonItemBean.setRequire(require);
+            commonItemBean.setRequireType(type);
 
             if(!type.equals("map")){
                 Log.i("JsonTools","添加一个ItemBean" + commonItemBean);
