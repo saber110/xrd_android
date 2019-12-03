@@ -35,13 +35,13 @@ public class GardenListAdapter extends RecyclerView.Adapter<GardenListAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        Integer name = result.getBuildingKinds().get(position).getKindName();
-        holder.textView.setText(name.toString());
+        String name = result.getGardens().get(position).getGardenName();
+        holder.textView.setText(name);
     }
 
     @Override
     public int getItemCount() {
-        return result.getBuildingKinds().size();
+        return result.getGardens().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

@@ -35,8 +35,10 @@ import com.baidu.mapapi.model.LatLng;
 import com.example.collectdata_01.R;
 import com.example.dialog.CreatDialog;
 import com.example.map.dao.MapMarkerDataDao;
+import com.example.map.dao.StanderDao;
 import com.example.map.google.GoogleMapActivity;
 import com.example.map.net.GetMarkerData;
+import com.example.map.net.MarkerNetUtil;
 import com.example.map.net.SendMapMsg;
 import com.example.map.tecent_map.TecentActivity;
 import com.example.net.AsyncRequest;
@@ -60,6 +62,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     private TextView lat;
     private TextView lng;
     private int choose;
+    private EditText name;
 
 
     @Override
@@ -75,7 +78,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         changeView = getLayoutInflater().inflate(R.layout.change_mark_data, null);
         dialog = CreatDialog.createSendMapDataDialog(this, view);
         changeDialog = CreatDialog.createSendMapDataDialog(this, changeView);
-
+        name = view.findViewById(R.id.input_msg);
         intent = getIntent();
         gardenId = intent.getStringExtra("gardenId");
         initChooseMap();
@@ -85,7 +88,9 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         initMark();
     }
 
-
+    /**
+     * 初始化marker
+     */
     private void initMark() {
         // 代表百度地图
         GetMarkerData getMarkerData = new GetMarkerData(gardenId, 1);
@@ -93,10 +98,13 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         try {
             MapMarkerDataDao mapMarkerDataDao = (MapMarkerDataDao) asyncTask.get();
             if (mapMarkerDataDao.getCode() == 0) {
-                for (MapMarkerDataDao.DataBean.MapDataBean mapDataBean :
-                        mapMarkerDataDao.getData().getMap_data()) {
+                for (int i = 0; i < mapMarkerDataDao.getData().getMap_data().size(); i++) {
+                    MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(i);
                     MarkerOptions options = new MarkerOptions().position(new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude())).
                             icon(BitmapDescriptorFactory.fromBitmap((drawBitMap(mapDataBean.getName()))));
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("id", mapMarkerDataDao.getData().getMap_data().get(i).getId());
+                    options.extraInfo(bundle);
                     baiduMap.addOverlay(options);
                 }
                 if (mapMarkerDataDao.getData().getMap_data().size() != 0) {
@@ -276,28 +284,12 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         view.findViewById(R.id.send_map_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText name = view.findViewById(R.id.input_msg);
                 if (name.getText().toString().length() == 0) {
                     Toast.makeText(BaiduMapActivity.this, "请输入数据", Toast.LENGTH_SHORT).show();
                 } else {
-                    SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1, choose);
-                    AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
-                    try {
-                        String result = (String) asyncTask.get();
-                        if (result != null) {
-                            Toast.makeText(BaiduMapActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
-                            MarkerOptions options = new MarkerOptions().position(latLng).
-                                    icon(BitmapDescriptorFactory.fromBitmap((drawBitMap(name.getText().toString()))));
-                            baiduMap.addOverlay(options);
-                        }
-                    } catch (ExecutionException e) {
-                        Toast.makeText(BaiduMapActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        Toast.makeText(BaiduMapActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    } finally {
-                        dialog.hide();
+                    if (addMark(latLng)) {
+                        Toast.makeText(BaiduMapActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
                 }
             }
@@ -323,11 +315,10 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         changeView.findViewById(R.id.delete_data_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (deleteMark()) {
+                if (deleteMark(marker.getExtraInfo().getInt("id"))) {
                     marker.remove();
+                    changeDialog.dismiss();
                 }
-                changeDialog.cancel();
-
             }
         });
         changeView.findViewById(R.id.change_data_btn).setOnClickListener(new View.OnClickListener() {
@@ -336,11 +327,10 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 if (title.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (changeMarkData()) {
+                    if (changeMarkData(marker.getPosition(), marker.getExtraInfo().getInt("id"))) {
                         marker.setIcon(BitmapDescriptorFactory.fromBitmap((drawBitMap(title.getText().toString()))));
+                        changeDialog.dismiss();
                     }
-                    changeDialog.cancel();
-
                 }
             }
         });
@@ -348,13 +338,36 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     }
 
     /**
-     * 修改marker
-     *
+     * 修改，先删除，然后添加
+     * @param id
      * @return
      */
-    private boolean changeMarkData() {
-
+    private boolean changeMarkData(LatLng latLng, int id) {
+        if (!deleteMark(id) || !addMark(latLng)) {
+            return false;
+        }
         return true;
+    }
+
+    private boolean addMark(LatLng latLng) {
+        SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1, choose);
+        AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
+        try {
+            StanderDao result = (StanderDao) asyncTask.get();
+            if (result != null && "0".equals(result.getCode())) {
+                MarkerOptions options = new MarkerOptions().position(latLng).
+                        icon(BitmapDescriptorFactory.fromBitmap((drawBitMap(name.getText().toString()))));
+                baiduMap.addOverlay(options);
+                return true;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
     }
 
     /**
@@ -362,8 +375,22 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
      *
      * @return
      */
-    private boolean deleteMark() {
-        return true;
+    private boolean deleteMark(Integer id) {
+        MarkerNetUtil.DeletMarkerUtil deletMarkerUtil = new MarkerNetUtil.DeletMarkerUtil(id);
+        AsyncTask asyncTask = new AsyncRequest().execute(deletMarkerUtil);
+        try {
+            StanderDao result = (StanderDao) asyncTask.get();
+            if (result != null && "0".equals(result.getCode())) {
+                return true;
+            }
+        } catch (ExecutionException e) {
+            Toast.makeText(BaiduMapActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            Toast.makeText(BaiduMapActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return false;
     }
 
 

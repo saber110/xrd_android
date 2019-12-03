@@ -1,9 +1,11 @@
 package com.example.map.net;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.interfaceNet.v1;
 import com.example.login.login;
 import com.example.map.dao.MapData;
+import com.example.map.dao.StanderDao;
 import com.example.net.ProcessInterface;
 import com.github.kevinsawicki.http.HttpRequest;
 
@@ -40,7 +42,7 @@ public class SendMapMsg implements ProcessInterface {
             HttpRequest request = new HttpRequest(v1.addMapDataAPI, "POST")
                     .header("Content-Type", "application/json")
                     .send(JSON.toJSONString(map));
-            return request.body();
+            return JSONObject.parseObject(request.body(), StanderDao.class);
         } catch (Exception e) {
             return null;
         }
