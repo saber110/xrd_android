@@ -77,6 +77,7 @@
 
 
     <string name="api_error">接口出了点问题....，请联系管理员</string>
+    <string name="loading">努力加载中，请稍候...</string>
 
 
     <string name="cat_textfield_label" translatable="false">Label</string>
