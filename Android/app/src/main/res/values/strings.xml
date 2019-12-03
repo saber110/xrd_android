@@ -41,7 +41,9 @@
 
     <string name="dataTab">data</string>
     <string name="createGardenApi">garden</string>
-    
+    <string name="addMapDataAPI">map</string>
+
+
     <string name="administrationTab">administration</string>
     <string name="getProvinceApi">province</string>
     <string name="getCityApi">city</string>

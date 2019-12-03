@@ -2,6 +2,7 @@ package com.example.map.net;
 
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.login.login;
 import com.example.map.dao.CityDao;
@@ -28,7 +29,9 @@ public class GetLoctionIdUtil {
         Map map = new HashMap(1);
         map.put("token", login.token);
         try {
-            HttpRequest request = new HttpRequest(v1.getProvinceApi, "POST").form(map);
+            HttpRequest request = new HttpRequest(v1.getProvinceApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
             String result = request.body();
             ProvinceDao provinceDao = JSONObject.parseObject(result, ProvinceDao.class);
             return provinceDao;
