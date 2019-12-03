@@ -11,3 +11,4 @@ flask_cors
 openpyxl
 defusedxml
 flask_migrate
+psutil

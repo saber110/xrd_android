@@ -1775,3 +1775,14 @@ def building_picture(*args, **kwargs):
     if len(building_pictures) == 0:
         return generate_result(2, '该楼幢暂无数据')
     return generate_result(0, '获取楼幢图片成功', data={'buildingPictures': [i.to_dict for i in building_pictures]})
+
+
+@get_data_bp.route('/disk', methods=['POST'])
+@token_check
+@admin_required
+def disk(*args, **kwargs):
+    import psutil
+    disk_usage = psutil.disk_usage(os.getcwd())
+    return generate_result(0, '获取磁盘数据成功',
+                           data={'total': disk_usage.total, 'used': disk_usage.used, 'free': disk_usage.free,
+                                 'percent': disk_usage.percent})
