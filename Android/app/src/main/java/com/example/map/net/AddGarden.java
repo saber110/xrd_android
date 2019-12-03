@@ -1,6 +1,7 @@
 package com.example.map.net;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.interfaceNet.v1;
 import com.example.login.login;
 import com.example.map.dao.AddGradenDao;
 import com.example.map.dao.AddGradenResult;
@@ -36,7 +37,7 @@ public class AddGarden implements ProcessInterface {
         map.put("gardenName", addGardenDao.getGardenName());
 
         try {
-            HttpRequest request = new HttpRequest("http://rap2api.taobao.org/app/mock/234350/api/v1/data/garden", "POST").form(map);
+            HttpRequest request = new HttpRequest(v1.createGardenApi, "POST").form(map);
             AddGradenResult addGradenResult = JSONObject.parseObject(request.body(), AddGradenResult.class);
             return addGradenResult;
         } catch (Exception e) {

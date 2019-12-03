@@ -130,64 +130,67 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
             }
         });
 
+        /**
+         * 工作小区选择按钮
+         */
         neighbourChose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gardenDialog.show();
-                /**
-                 * 当用户点击了搜索
-                 */
-                selectGardenView.findViewById(R.id.search_garden_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        SearchGarden searchGarden = new SearchGarden();
-                        AsyncTask asyncTask = new AsyncRequest().execute(searchGarden);
-                        try {
-                            final SearchGardenResultDao gardenResultDao = (SearchGardenResultDao) asyncTask.get();
-                            if (gardenResultDao == null || gardenResultDao.getData() == null
-                                    || gardenResultDao.getData().getBuildingKinds().size() == 0
-                            ) {
-                                Toast.makeText(MainActivity.this, "无查询结果", Toast.LENGTH_SHORT).show();
-                            } else {
+            gardenDialog.show();
+            /**
+             * 当用户点击了搜索
+             */
+            selectGardenView.findViewById(R.id.search_garden_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                SearchGarden searchGarden = new SearchGarden();
+                AsyncTask asyncTask = new AsyncRequest().execute(searchGarden);
+                try {
+                    final SearchGardenResultDao gardenResultDao = (SearchGardenResultDao) asyncTask.get();
+                    if (gardenResultDao == null || gardenResultDao.getData() == null
+                            || gardenResultDao.getData().getBuildingKinds().size() == 0
+                    ) {
+                        Toast.makeText(MainActivity.this, "无查询结果", Toast.LENGTH_SHORT).show();
+                    } else {
 
-                                GardenListAdapter adapter = new GardenListAdapter(MainActivity.this, gardenResultDao.getData());
-                                adapter.setItemClickListener(new GardenListAdapter.MyItemClickListener() {
-                                    @Override
-                                    public void onItemClick(View view, int position) {
-                                        SearchGardenResultDao.DataBean.BuildingKindsBean bean = gardenResultDao.getData().getBuildingKinds().get(position);
-                                        gardenId = bean.getId();
-                                        gardenName = String.valueOf(bean.getKindName());
-                                        neighbourWorking.setText(gardenName);
-                                        gardenDialog.dismiss();
-                                    }
-                                });
-                                gardenDataRecyclerView.setAdapter(adapter);
+                        GardenListAdapter adapter = new GardenListAdapter(MainActivity.this, gardenResultDao.getData());
+                        adapter.setItemClickListener(new GardenListAdapter.MyItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position) {
+                                SearchGardenResultDao.DataBean.BuildingKindsBean bean = gardenResultDao.getData().getBuildingKinds().get(position);
+                                gardenId = bean.getId();
+                                gardenName = String.valueOf(bean.getKindName());
+                                neighbourWorking.setText(gardenName);
+                                gardenDialog.dismiss();
                             }
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        });
+                        gardenDataRecyclerView.setAdapter(adapter);
                     }
-                });
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                }
+            });
 
-                /**
-                 * 点击新建
-                 */
-                addGardenBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String key = searchKey.getText().toString();
-                        gardenName = key;
-                        if (key.trim().length() == 0) {
-                            Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT).show();
-                        } else {
-                            neighbourWorking.setText(gardenName);
-                            gardenDialog.dismiss();
-                            showProvinceDialog();
-                        }
-                    }
-                });
+            /**
+             * 点击新建
+             */
+            addGardenBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                String key = searchKey.getText().toString();
+                gardenName = key;
+                if (key.trim().length() == 0) {
+                    Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT).show();
+                } else {
+                    neighbourWorking.setText(gardenName);
+                    gardenDialog.dismiss();
+                    showProvinceDialog();
+                }
+                }
+            });
             }
         });
 
@@ -237,7 +240,6 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
          * 设置样式添加监听
          */
         bottomUtil.setBottomBarStytle();
-        getLocPosition();
 
         //页面被创建时就生成数据库
         if (mainDB == null) {
@@ -385,7 +387,6 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
         }
     }
 
-
     ArrayList<Users> gardenlist = new ArrayList<>();
     ArrayList<Users> buildinglist = new ArrayList<>();
     ArrayList<Users> qitalist = new ArrayList<>();
@@ -418,42 +419,16 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
     private AMapLocationClient mapLocationClient;
     public AMapLocationClientOption mLocationOption = null;
 
-    /**
-     * 获得此时的定位
-     * 通过高德地图获得
-     */
-    private void getLocPosition() {
-        mapLocationClient = new AMapLocationClient(getApplicationContext());
-        mapLocationClient.setLocationListener(this);
-        //初始化AMapLocationClientOption对象
-        mLocationOption = new AMapLocationClientOption();
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        //获取一次定位结果：
-        //该方法默认为false。
-        mLocationOption.setOnceLocation(true);
-        //获取最近3s内精度最高的一次定位结果：
-        //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
-        mLocationOption.setOnceLocationLatest(true);
-        //给定位客户端对象设置定位参数
-        mapLocationClient.setLocationOption(mLocationOption);
-        //启动定位
-        mapLocationClient.startLocation();
-    }
-
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         Log.d("地址", "onLocationChanged: " + aMapLocation);
     }
-
 
     //定义了一些参数
     private int yourChoice;
     private String item;
     private Intent intent;
     private String pictureKind;
-
-    private boolean pmflag = true;
-    private boolean lmflag = true;
 
     private String gdid = "1";
     public String locationString;
@@ -495,7 +470,6 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
         } else
             n = "0" + Integer.toString(i);
     }
-
 
     long count; //定义里面类型个数
 
@@ -552,6 +526,10 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
 
     }
 
+    /**
+     * 将拍照的图片加入系统相册中
+     * @param path
+     */
     private void saveToSystemAlbum(String path) {
         //其次把文件插入到系统图库
         File file = new File(path);
@@ -582,7 +560,9 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
         }
     }
 
-
+    /**
+     * 图片种类选择对话框
+     */
     private void showSingleChoiceDialog() {
         final String[] items = {"平面图", "小区入口", "外景图", "内景图", "建筑立面", "楼牌号", "其他"};
         yourChoice = -1;
@@ -659,7 +639,7 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
     }
 
     /**
-     * 单选对话框
+     * 图片涂鸦单选对话框
      */
     private void singleDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -709,6 +689,28 @@ public class MainActivity extends TakePhotoActivity implements AMapLocationListe
         saveToSystemAlbum(image.getOriginalPath());
         singleDialog();
         Toast.makeText(MainActivity.this, "已存储", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 获得此时的定位
+     * 通过高德地图获得
+     */
+    private void getLocPosition() {
+        mapLocationClient = new AMapLocationClient(getApplicationContext());
+        mapLocationClient.setLocationListener(this);
+        //初始化AMapLocationClientOption对象
+        mLocationOption = new AMapLocationClientOption();
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //获取一次定位结果：
+        //该方法默认为false。
+        mLocationOption.setOnceLocation(true);
+        //获取最近3s内精度最高的一次定位结果：
+        //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
+        mLocationOption.setOnceLocationLatest(true);
+        //给定位客户端对象设置定位参数
+        mapLocationClient.setLocationOption(mLocationOption);
+        //启动定位
+        mapLocationClient.startLocation();
     }
 }
 
