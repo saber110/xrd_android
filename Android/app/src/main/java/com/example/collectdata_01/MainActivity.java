@@ -154,7 +154,8 @@ public class MainActivity extends TakePhotoActivity{
                         AsyncTask asyncTask = new AsyncRequest().execute(searchGarden);
                         try {
                             final SearchGardenResultDao gardenResultDao = (SearchGardenResultDao) asyncTask.get();
-                            if (gardenResultDao == null || gardenResultDao.getData() == null
+                            Log.d("查询结果", "onClick: "+gardenResultDao);
+                            if (gardenResultDao == null || gardenResultDao.getCode()!= 0
                                     || gardenResultDao.getData().getGardens().size() == 0
                             ) {
                                 Toast.makeText(MainActivity.this, "无查询结果", Toast.LENGTH_SHORT).show();

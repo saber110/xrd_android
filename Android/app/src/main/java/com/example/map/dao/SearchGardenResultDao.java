@@ -14,6 +14,15 @@ public class SearchGardenResultDao {
     private DataBean data;
     private String message;
 
+    @Override
+    public String toString() {
+        return "SearchGardenResultDao{" +
+                "code=" + code +
+                ", data=" + data +
+                ", message='" + message + '\'' +
+                '}';
+    }
+
     public int getCode() {
         return code;
     }
@@ -39,6 +48,13 @@ public class SearchGardenResultDao {
     }
 
     public static class DataBean {
+        @Override
+        public String toString() {
+            return "DataBean{" +
+                    "gardens=" + gardens +
+                    '}';
+        }
+
         private List<GardensBean> gardens;
 
         public List<GardensBean> getGardens() {
@@ -50,6 +66,18 @@ public class SearchGardenResultDao {
         }
 
         public static class GardensBean {
+            @Override
+            public String toString() {
+                return "GardensBean{" +
+                        "cityName='" + cityName + '\'' +
+                        ", communityName='" + communityName + '\'' +
+                        ", districtName='" + districtName + '\'' +
+                        ", gardenName='" + gardenName + '\'' +
+                        ", provinceName='" + provinceName + '\'' +
+                        ", streetName='" + streetName + '\'' +
+                        '}';
+            }
+
             /**
              * cityName : 长沙市
              * communityName : 识字里社区
