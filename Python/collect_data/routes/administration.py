@@ -234,8 +234,8 @@ def search_garden(*args, **kwargs):
     data = request.get_json()
     if 'gardenName' not in data:
         return generate_result(1)
-    gardens = Garden.query.filter_by(name=data['gardenName'])
-    if gardens is None:
+    gardens = Garden.query.filter_by(name=data['gardenName']).all()
+    if len(gardens) == 0:
         return generate_result(2, '小区不存在')
     result = []
     for garden in gardens:
