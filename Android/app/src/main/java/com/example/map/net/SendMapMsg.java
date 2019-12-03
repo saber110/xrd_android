@@ -1,5 +1,7 @@
 package com.example.map.net;
 
+import com.alibaba.fastjson.JSON;
+import com.example.interfaceNet.v1;
 import com.example.login.login;
 import com.example.map.dao.MapData;
 import com.example.net.ProcessInterface;
@@ -35,7 +37,9 @@ public class SendMapMsg implements ProcessInterface {
         map.put("mapId", mapData.getMapId());
 
         try {
-            HttpRequest request = new HttpRequest("http://rap2api.taobao.org/app/mock/234350/api/v1/data/map", "POST").form(map);
+            HttpRequest request = new HttpRequest(v1.addMapDataAPI, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
             return request.body();
         } catch (Exception e) {
             return null;

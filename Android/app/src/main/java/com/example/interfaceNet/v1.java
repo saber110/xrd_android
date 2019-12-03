@@ -62,6 +62,8 @@ public class v1{
     public static String getCommunityApi;
     public static String searchGardenApi;
     public static String createGardenApi;
+    public static String getMapDataAPI;
+    public static String addMapDataAPI;
     private static Resources res;
 
 
@@ -93,7 +95,8 @@ public class v1{
         v1.getStreetApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.getStreetApi));
         v1.getCommunityApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.getCommunityApi));
         v1.searchGardenApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.searchGardenApi));
-
+        v1.getMapDataAPI = String.format(pattern,res.getString(R.string.getDataTab), res.getString(R.string.getMapDataAPI));
+        v1.addMapDataAPI = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.addMapDataAPI));
     }
 
     public void setToken(String token){

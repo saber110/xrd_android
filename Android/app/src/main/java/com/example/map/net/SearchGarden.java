@@ -24,6 +24,7 @@ public class SearchGarden implements ProcessInterface {
         searchGardenDao.setToken(login.token);
         searchGardenDao.setGardenName(name);
     }
+
     @Override
     public Object call() {
 
