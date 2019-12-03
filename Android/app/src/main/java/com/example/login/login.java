@@ -71,12 +71,12 @@ public class login extends AppCompatActivity {
     private void initView() {
         etUsername = findViewById(R.id.et_username);
 //        etUsername.setText(getIemi.getIMEI(this));
-        etUsername.setText("1");
+        etUsername.setText("2");
 
         etUsername.setFocusable(false);
         etUsername.setFocusableInTouchMode(false);
         etPassword = findViewById(R.id.et_password);
-        etPassword.setText("1");
+        etPassword.setText("2");
         btGo = findViewById(R.id.bt_go);
         fab = findViewById(R.id.fab);
     }

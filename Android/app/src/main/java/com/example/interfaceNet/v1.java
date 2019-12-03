@@ -306,6 +306,7 @@ public class v1{
 
     public void funToastMakeText(String msg) {
         Looper.prepare();
+        Log.i(TAG, "funToastMakeText: " + msg);
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
         Looper.loop();
     }

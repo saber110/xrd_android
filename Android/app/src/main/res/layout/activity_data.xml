@@ -17,7 +17,7 @@
         android:orientation="vertical"
         android:layout_weight="1"
         android:layout_marginTop="9dp"
-        android:background="#ffffff"
+        android:background="#55FFFFFF"
         >
         <!--    上半有内容的部分    -->
 
@@ -27,22 +27,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="10dp"
             android:id="@+id/data_xiaoqugaikuang"
             >
-            <!-- 左边图标 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="7"
-                android:background="@drawable/icon_cricle"
-                android:layout_marginLeft="7dp"
-                android:layout_marginRight="7dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                />
 
-            <!--      右侧的内容      -->
+            <!--      左侧可添加图标，示例在第四个， 右侧的内容      -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -92,7 +81,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#8d8b8b"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginBottom="10dp"
                         />
 
                 </LinearLayout>
@@ -108,21 +97,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:id="@+id/data_louzhuangdiaocha"
             >
-            <!-- 左边图标 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="7"
-                android:background="@drawable/icon_cricle"
-                android:layout_marginLeft="7dp"
-                android:layout_marginRight="7dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                />
-
             <!--      右侧的内容      -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -173,7 +150,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#8d8b8b"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginBottom="10dp"
                         />
 
                 </LinearLayout>
@@ -188,20 +165,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:id="@+id/data_xiaoquxinxi"
             >
-            <!-- 左边图标 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="7"
-                android:background="@drawable/icon_cricle"
-                android:layout_marginLeft="7dp"
-                android:layout_marginRight="7dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                />
 
             <!--      右侧的内容      -->
             <LinearLayout
@@ -253,7 +220,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#8d8b8b"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginBottom="10dp"
                         />
 
                 </LinearLayout>
@@ -268,20 +235,20 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:id="@+id/data_louzhuangxinxi"
             >
-            <!-- 左边图标 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="7"
-                android:background="@drawable/icon_cricle"
-                android:layout_marginLeft="7dp"
-                android:layout_marginRight="7dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                />
+<!--            &lt;!&ndash; 左边图标 &ndash;&gt;-->
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="7"-->
+<!--                android:background="@drawable/icon_cricle"-->
+<!--                android:layout_marginLeft="7dp"-->
+<!--                android:layout_marginRight="7dp"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:layout_marginBottom="20dp"-->
+<!--                />-->
 
             <!--      右侧的内容      -->
             <LinearLayout
@@ -333,7 +300,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#8d8b8b"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginBottom="10dp"
                         />
 
                 </LinearLayout>

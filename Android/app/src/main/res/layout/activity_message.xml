@@ -6,19 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.collectdata.MessageActivity">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="5"
-        android:textColor="#ffffff"
-        android:text="@string/message_title"
-        android:gravity="center"
-        android:textSize="25dp"
-
-        android:id="@+id/message_title"
-        android:background="#ED6237"
-        />
+    <include layout="@layout/ui_title_bar"/>
 
     <!--信息收集页面-->
     <ListView
@@ -39,7 +27,7 @@
         android:id="@+id/message_submit"
         android:text="@string/message_submit"
         android:background="@drawable/login_button"
-        android:layout_margin="3dp"
+        android:layout_margin="10dp"
         />
 
 </LinearLayout>

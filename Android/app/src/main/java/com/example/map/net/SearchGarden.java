@@ -2,6 +2,7 @@ package com.example.map.net;
 
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.interfaceNet.v1;
 import com.example.login.login;
@@ -27,15 +28,20 @@ public class SearchGarden implements ProcessInterface {
     public Object call() {
 
         Map map = new HashMap(1);
-        Log.i(TAG, "SearchGardentoken: " + v1.searchGardenApi + " | "+ searchGardenDao.getGardenName());
-        map.put("token", searchGardenDao.getToken());
+        map.put("token", login.token);
         map.put("gardenName", searchGardenDao.getGardenName());
+        String param = JSON.toJSONString(map);
         try {
-            HttpRequest request = new HttpRequest(v1.searchGardenApi, "POST").form(map);
+            HttpRequest request = new HttpRequest(v1.searchGardenApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(param);
             Log.i(TAG, "SearchGardencall: " + request.body());
+
+            // 接口已通，需要调整SearchGardenResultDao
             SearchGardenResultDao searchGardenResultDao = JSONObject.parseObject(request.body(), SearchGardenResultDao.class);
             return searchGardenResultDao;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
