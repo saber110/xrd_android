@@ -31,15 +31,16 @@ import okhttp3.Response;
  */
 public class MessageListBean {
 
-    List<CommonItemBean> list = new ArrayList<>();
+    public static List<CommonItemBean> list = new ArrayList<>();
+    private static final String ROOT_URL = "http://rap2api.taobao.org/app/mock/234350/api/v1/get_data/";
 //    private static final String ROOT_URL = "http://kms.yinaoxiong.cn:8888/api/v1/get_data/";
-    private static final String ROOT_URL = "http://kms.yinaoxiong.cn:8888/api/v1/get_data/";
     //四个实例
     private static MessageListBean xqgk = null;
     private static MessageListBean lzdc = null;
     private static MessageListBean lzxx = null;
     private static MessageListBean xqxx = null;
     static OkHttpClient client = new OkHttpClient();
+
     public static MessageListBean getInstance(int type) throws PageInitException, IOException {
         switch (type){
             case ConstTools.XIAOQUGAIKUANG:
@@ -111,11 +112,11 @@ public class MessageListBean {
      */
     private void initXiaoQuGaiKuang() throws PageInitException, IOException {
         //TODO 获取采集人员
-        Log.i("MessageListBean","请求搂幢调查表的内容");
-        Map map = new HashMap<String, String>();
-        map.put("token",login.token);
-        map.put("gardenId",1);
-        post(ROOT_URL+"garden_base_info", (HashMap<String, Object>) map);
+//        Log.i("MessageListBean","请求搂幢调查表的内容");
+//        Map map = new HashMap<String, String>();
+//        map.put("token",login.token);
+//        map.put("gardenId",1);
+//        post(ROOT_URL+"garden_base_info", (HashMap<String, Object>) map);
 
 //        //获取当前日期
 //        Calendar calendar = Calendar.getInstance();
@@ -150,39 +151,8 @@ public class MessageListBean {
 //
 //        //初始化列表
 //        list.add(new CommonItemBean("采集人员",caijirenyuan));
-//        list.add(new CommonItemBean("采集日期",dataStr));
-//        list.add(new CommonItemBean("市",""));
-//        list.add(new CommonItemBean("区县",""));
-//        list.add(new CommonItemBean("街道",""));
-//        list.add(new CommonItemBean("社区名称",""));
-//        list.add(new CommonItemBean("社区别名",""));
-//        list.add(new CommonItemBean("小区名称",""));
-//        list.add(new CommonItemBean("小区别名",""));
-//        list.add(new CommonItemBean("小区别名2",""));
-//        list.add(new CommonItemBean("小区坐落",""));
-//        list.add(new CommonItemBean("小区东至",""));
-//        list.add(new CommonItemBean("小区西至",""));
-//        list.add(new CommonItemBean("小区南至",""));
-//        list.add(new CommonItemBean("小区北至",""));
 //        list.add(new SelectorItemBean("区域位置",quyuweizhi,true));
-//        list.add(new SelectorItemBean("楼盘状态",loupanzhuangtai,true));
-//        list.add(new SelectorItemBean("小区类型",xiaoquleixing,true));
-//        list.add(new SelectorItemBean("建筑类型",jianzhuleixing,true));
-//        list.add(new SelectorItemBean("房屋性质",fangwuxingzhi,true));
-//        list.add(new SelectorItemBean("建筑结构",jianzhujiegou,true));
-//        list.add(new CommonItemBean("住宅幢数",""));
-//        list.add(new CommonItemBean("非住宅幢数",""));
-//        list.add(new CommonItemBean("幢数描述",""));
-//        list.add(new YearItemBean("建成年份"));
 //        list.add(new YearItemBean("设定年份"));
-//        list.add(new SelectorItemBean("土地性质",tudixingzhi,true));
-//        list.add(new SelectorItemBean("使用权",shiyongquan,true));
-//        list.add(new SelectorItemBean("土地等级",tudidengji,true));
-//        list.add(new CommonItemBean("询价记录",""));
-//        list.add(new SelectorItemBean("是否封闭",shifoufengbi,true));
-//        list.add(new SelectorItemBean("物管分类",wuguanfenlei,true));
-//        list.add(new CommonItemBean("价格初判",""));
-//        list.add(new CommonItemBean("其他信息备注",""));
 //        //从地图获取的信息
 
     }
@@ -191,11 +161,11 @@ public class MessageListBean {
      * 初始化楼幢调查
      */
     private void initLouZhuangDiaoCha() throws PageInitException, IOException {
-        Log.i("MessageListBean","请求搂幢调查表的内容");
-        Map<String,Object> map = new HashMap<String, Object>();
-        map.put("token",login.token);
-        //map.put("buildingId",2);
-        post(ROOT_URL+"building_base_info", (HashMap<String, Object>) map);
+//        Log.i("MessageListBean","请求搂幢调查表的内容");
+//        Map<String,Object> map = new HashMap<String, Object>();
+//        map.put("token",login.token);
+//        //map.put("buildingId",2);
+//        post(ROOT_URL+"building_base_info", (HashMap<String, Object>) map);
 //       HttpTools httpTools = new HttpTools();
 //        String response = httpTools.request("garden_base_info",null);
 //
@@ -213,22 +183,22 @@ public class MessageListBean {
      * 初始化小区信息
      */
     private void initXiaoQiXinXi() throws IOException {
-        Log.i("MessageListBean","请求小区信息的内容");
-        Map<String,Object> map = new HashMap<String, Object>();
-        map.put("token",login.token);
-        map.put("gardenId",1);
-        post(ROOT_URL+"garden_import_info", (HashMap<String, Object>) map);
+//        Log.i("MessageListBean","请求小区信息的内容");
+//        Map<String,Object> map = new HashMap<String, Object>();
+//        map.put("token",login.token);
+//        map.put("gardenId",1);
+//        post(ROOT_URL+"garden_import_info", (HashMap<String, Object>) map);
     }
 
     /**
      * 初始化楼幢信息
      */
     private void initLouzhuangXinxi() throws PageInitException, IOException {
-        Log.i("MessageListBean","请求楼幢信息的内容");
-        Map<String,Object> map = new HashMap<String, Object>();
-        map.put("token",login.token);
-        map.put("buildingId",2);
-        post(ROOT_URL+"building_import_info", (HashMap<String, Object>) map);
+//        Log.i("MessageListBean","请求楼幢信息的内容");
+//        Map<String,Object> map = new HashMap<String, Object>();
+//        map.put("token",login.token);
+//        map.put("buildingId",2);
+//        post(ROOT_URL+"building_import_info", (HashMap<String, Object>) map);
     }
 
 
