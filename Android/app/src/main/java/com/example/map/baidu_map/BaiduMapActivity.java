@@ -241,7 +241,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         locButton = findViewById(R.id.dw_bt);
         locButton.setOnClickListener(this);
         baiduMap = mMapView.getMap();
-        baiduMap.setOnMarkerClickListener(BaiduMapActivity.this);
+        baiduMap.setOnMarkerClickListener(this);
         /**
          * 设置为卫星地图
          */
@@ -345,7 +345,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
      * @param id
      * @return
      */
-    private boolean changeMarkData(LatLng latLng, int id) {
+    private boolean changeMarkData(LatLng latLng, Integer id) {
         if (deleteMark(id) && addMark(latLng)) {
             return true;
         }
