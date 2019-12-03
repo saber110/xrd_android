@@ -54,6 +54,13 @@ public class v1{
     private static String cbUpdateGardenImportInfo;
     private static String cbUpdateBuildingImportInfo;
     private static String cbLogin;
+
+    public static String getProvinceApi;
+    public static String getCityApi;
+    public static String getDistrictApi;
+    public static String getStreetApi;
+    public static String getCommunityApi;
+    public static String createGardenApi;
     private static Resources res;
 
 
@@ -78,6 +85,13 @@ public class v1{
         v1.cbUpdateBuildingBaseInfo = res.getString(R.string.cbUpdateBuildingBaseInfo);
         v1.cbUpdateGardenImportInfo = res.getString(R.string.cbUpdateGardenImportInfo);
         v1.cbUpdateBuildingImportInfo = res.getString(R.string.cbUpdateBuildingImportInfo);
+        v1.createGardenApi = String.format(pattern, res.getString(R.string.dataTab), res.getString(R.string.createGardenApi));
+        v1.getProvinceApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.getProvinceApi));
+        v1.getCityApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.getCityApi));
+        v1.getDistrictApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.getDistrictApi));
+        v1.getStreetApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.getStreetApi));
+        v1.getCommunityApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.getCommunityApi));
+
     }
 
     public void setToken(String token){
