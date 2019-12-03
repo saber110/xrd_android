@@ -166,7 +166,7 @@ public class MainActivity extends TakePhotoActivity{
                                     public void onItemClick(View view, int position) {
                                         SearchGardenResultDao.DataBean.GardensBean bean = gardenResultDao.getData().getGardens().get(position);
                                         // Todo 这个地方需要返回一个gardenid
-                                        gardenId = 0;
+                                        gardenId = 1;
 //                                        gardenId = bean.get();
                                         gardenName = bean.getGardenName();
                                         neighbourWorking.setText(gardenName);

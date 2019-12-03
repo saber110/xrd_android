@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -55,7 +56,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     private LocationListener listener;
     private Dialog dialog;
     private View view;
-    private String gardenId;
+    private Integer gardenId;
     private TextView huayuan;
     private TextView louceng;
     private TextView lu;
@@ -79,7 +80,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         dialog = CreatDialog.createSendMapDataDialog(this, view);
         changeDialog = CreatDialog.createChangeMarkDialog(this, changeView);
 
-        gardenId = getIntent().getStringExtra("gardenId");
+        gardenId = getIntent().getIntExtra("gardenId",0);
         init();
         initLoc();
         initMark();
@@ -345,7 +346,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
                     if (changeMarkData(marker.getPosition(), (Integer) marker.getTag())) {
-                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawBitMap(title.getText().toString())));
+                        marker.remove();
                         changeDialog.dismiss();
                     }
                 }
@@ -362,10 +363,10 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
      * @return
      */
     private boolean changeMarkData(LatLng latLng, int id) {
-        if (!deleteMark(id) || !addMark(latLng)) {
-            return false;
+        if (deleteMark(id) || addMark(latLng)) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -379,6 +380,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
         try {
             StanderDao result = (StanderDao) asyncTask.get();
+            Log.d(TAG, "deleteMark: "+"0".equals(result.getCode()));
             if (result != null && "0".equals(result.getCode())) {
                 MarkerOptions options = new MarkerOptions(latLng).icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(name.getText().toString())));
                 tencentMap.addMarker(options);

@@ -1,5 +1,7 @@
 package com.example.map.net;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.interfaceNet.v1;
@@ -35,7 +37,9 @@ public class MarkerNetUtil  {
                 HttpRequest request = new HttpRequest("http://rap2api.taobao.org/app/mock/234350/api/v1/del_data/map", "POST")
                         .header("Content-Type", "application/json")
                         .send(JSON.toJSONString(map));
-                return JSONObject.parseObject(request.body(), StanderDao.class);
+                String result = request.body();
+                Log.d(">>>>", "call: "+result);
+                return JSONObject.parseObject(result, StanderDao.class);
             } catch (Exception e) {
                 return null;
             }

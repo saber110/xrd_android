@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -52,7 +53,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     private LocationClient mLocationClient;
     private Button locButton;
     private Intent intent;
-    private String gardenId;
+    private Integer gardenId;
     private View view, changeView;
     private Dialog dialog, changeDialog;
     private TextView huayuan;
@@ -80,7 +81,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         changeDialog = CreatDialog.createSendMapDataDialog(this, changeView);
         name = view.findViewById(R.id.input_msg);
         intent = getIntent();
-        gardenId = intent.getStringExtra("gardenId");
+        gardenId = intent.getIntExtra("gardenId",1);
         initChooseMap();
         initChoose();
         initMap();
@@ -94,6 +95,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     private void initMark() {
         // 代表百度地图
         GetMarkerData getMarkerData = new GetMarkerData(gardenId, 1);
+
         AsyncTask asyncTask = new AsyncRequest().execute(getMarkerData);
         try {
             MapMarkerDataDao mapMarkerDataDao = (MapMarkerDataDao) asyncTask.get();
@@ -245,6 +247,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
          */
         baiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
         baiduMap.setMyLocationEnabled(true);
+        baiduMap.getUiSettings().setRotateGesturesEnabled(false);
 
     }
 
@@ -328,7 +331,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
                     if (changeMarkData(marker.getPosition(), marker.getExtraInfo().getInt("id"))) {
-                        marker.setIcon(BitmapDescriptorFactory.fromBitmap((drawBitMap(title.getText().toString()))));
+                        marker.remove();
                         changeDialog.dismiss();
                     }
                 }
@@ -343,10 +346,10 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
      * @return
      */
     private boolean changeMarkData(LatLng latLng, int id) {
-        if (!deleteMark(id) || !addMark(latLng)) {
-            return false;
+        if (deleteMark(id) && addMark(latLng)) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     private boolean addMark(LatLng latLng) {
