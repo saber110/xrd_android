@@ -318,6 +318,15 @@ def garden_base_info(*args, **kwargs):
             'value': ''
         },
         {
+            'label': '土地性质',
+            'key': 'landStatus',
+            'required': True,
+            'changed': True,
+            'type': 'radio',
+            'option': ["国有土地", "集体土地"],
+            'value': ''
+        },
+        {
             'label': '使用权',
             'key': 'right',
             'required': True,
@@ -328,7 +337,7 @@ def garden_base_info(*args, **kwargs):
         },
         {
             'label': '土地等级',
-            'key': 'right',
+            'key': 'landGrade',
             'required': True,
             'changed': True,
             'type': 'radio',
