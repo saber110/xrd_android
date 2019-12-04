@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -231,23 +232,42 @@ public class DrawActivity extends AppCompatActivity {
     }
 
     Bitmap bitmap2;
+    int screenWidth,screenHeight;
     private void displayImage(String imagePath) {
         if (imagePath != null) {
-            bitmap2 = BitmapFactory.decodeFile(imagePath);
-            System.out.println("调用了display方法");
-            bitmap = null;
-            if(bitmap == null) {
-                WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
-                int height = wm.getDefaultDisplay().getHeight();
-                int weight = wm.getDefaultDisplay().getWidth();
-                bitmap = Bitmap.createBitmap(weight, height, Bitmap.Config.RGB_565);
-                canvas = new Canvas(bitmap);
-                System.out.println("=null");
+
+            screenWidth = getWindowManager().getDefaultDisplay().getWidth();
+            screenHeight = getWindowManager().getDefaultDisplay().getHeight();
+
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inJustDecodeBounds = true;// 不去真的解析图片，只是获取图片的头部信息，包含宽高等；
+            bitmap = BitmapFactory.decodeFile(imagePath, opts);
+            // 得到图片的宽度、高度；
+            int imgWidth = opts.outWidth;
+            int imgHeight = opts.outHeight;
+            // 分别计算图片宽度、高度与目标宽度、高度的比例；取大于等于该比例的最小整数；
+            int widthRatio = (int) Math.ceil(imgWidth / (float) screenWidth);
+            int heightRatio = (int) Math.ceil(imgHeight / (float) screenHeight);
+            opts.inSampleSize = 1;
+            if (widthRatio > 1 || heightRatio > 1) {
+                if (widthRatio > heightRatio) {
+                    opts.inSampleSize = widthRatio;
+                } else {
+                    opts.inSampleSize = heightRatio;
+                }
             }
-            Rect src=new Rect(0,0,bitmap2.getWidth(),bitmap2.getHeight());//src是对bitmap裁剪
-            Rect dst=new Rect(0, 0, bitmap2.getWidth(), bitmap2.getHeight());//dsc是将图片绘制到View的哪个位置
-            canvas.drawBitmap(bitmap2,src,dst,paint);
-            imageview.setImageBitmap(bitmap);
+            // 设置好缩放比例后，加载图片进内容；
+            opts.inJustDecodeBounds = false;
+            bitmap = BitmapFactory.decodeFile(imagePath, opts);
+
+            bitmap2 = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+            canvas = new Canvas(bitmap2);
+            paint.setDither(true);
+            paint.setFilterBitmap(true);
+            Rect src = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            Rect dst = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            canvas.drawBitmap(bitmap, src, dst, paint);
+            imageview.setImageBitmap(bitmap2);
         } else {
             Toast.makeText(this, "获取相册图片失败", Toast.LENGTH_SHORT).show();
             System.out.println("获取相册图片失败");
@@ -329,26 +349,23 @@ public class DrawActivity extends AppCompatActivity {
                 paint.setStrokeWidth(5f);
                 //实心
                 paint.setStyle(Paint.Style.FILL);
-                System.out.println(v.getWidth());
-
                 int action = e.getAction();
                 if(action == MotionEvent.ACTION_DOWN){
                     x1 = e.getX();
                     y1 = e.getY();
-                    System.out.println(x1);
                 }
                 if(action == MotionEvent.ACTION_MOVE){
                     x2 = e.getX();
                     System.out.println(x2);
                     y2 = e.getY();
                     if(str.equals("开始")){
-                        canvas.drawLine(x1,y1,x2,y2,paint);
+                        canvas.drawLine(x1-30,y1-300,x2-30,y2-300,paint);
                         flag = false;
                         x1 = x2;
                         y1 = y2;
                     }
                 }
-                imageview.setImageBitmap(bitmap);
+                imageview.invalidate();
                 return true;
             }
         });
