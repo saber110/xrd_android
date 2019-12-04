@@ -34,6 +34,7 @@ public class GetLoctionIdUtil {
                     .send(JSON.toJSONString(map));
             String result = request.body();
             ProvinceDao provinceDao = JSONObject.parseObject(result, ProvinceDao.class);
+            Log.d(">>>>>", "省的数据: "+provinceDao);
             return provinceDao;
         } catch (Exception e) {
             return null;
@@ -55,6 +56,7 @@ public class GetLoctionIdUtil {
                     .header("Content-Type", "application/json")
                     .send(JSON.toJSONString(map));
             String res = request.body();
+            Log.d(">>>>>", "市的数据: "+res);
             CityDao getCityIdDao = JSONObject.parseObject(res, CityDao.class);
             return getCityIdDao;
         } catch (Exception e) {
@@ -75,7 +77,9 @@ public class GetLoctionIdUtil {
             HttpRequest request = new HttpRequest(v1.getDistrictApi, "POST")
                     .header("Content-Type", "application/json")
                     .send(JSON.toJSONString(map));
-            DistrictDao districtDao = JSONObject.parseObject(request.body(), DistrictDao.class);
+            String res = request.body();
+            Log.d(">>>>>", "行政区的数据: "+res);
+            DistrictDao districtDao = JSONObject.parseObject(res, DistrictDao.class);
             return districtDao;
         } catch (Exception e) {
             return null;
@@ -95,7 +99,9 @@ public class GetLoctionIdUtil {
             HttpRequest request = new HttpRequest(v1.getStreetApi, "POST")
                     .header("Content-Type", "application/json")
                     .send(JSON.toJSONString(map));
-            StreetDao streetDao = JSONObject.parseObject(request.body(), StreetDao.class);
+            String res = request.body();
+            Log.d(">>>>>", "街道的数据: "+res);
+            StreetDao streetDao = JSONObject.parseObject(res, StreetDao.class);
             return streetDao;
         } catch (Exception e) {
             return null;
@@ -115,7 +121,9 @@ public class GetLoctionIdUtil {
             HttpRequest request = new HttpRequest(v1.getCommunityApi, "POST")
                     .header("Content-Type", "application/json")
                     .send(JSON.toJSONString(map));
-            CommunityDao communityDao = JSONObject.parseObject(request.body(), CommunityDao.class);
+            String res = request.body();
+            Log.d(">>>>>", "街道的数据: "+res);
+            CommunityDao communityDao = JSONObject.parseObject(res, CommunityDao.class);
             return communityDao;
         } catch (Exception e) {
             return null;
