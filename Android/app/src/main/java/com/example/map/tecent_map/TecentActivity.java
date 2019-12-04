@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.baidu.mapapi.map.BaiduMap;
 import com.example.collectdata_01.R;
 import com.example.dialog.CreatDialog;
 import com.example.map.baidu_map.BaiduMapActivity;
@@ -172,6 +173,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         tencentMap.setOnMarkerClickListener(TecentActivity.this);
     }
 
+    private boolean isNormalMap = true;
     /**
      * 初始化腾讯地图配置
      */
@@ -182,13 +184,29 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         uiSettings = tencentMap.getUiSettings();
         uiSettings.setMyLocationButtonEnabled(true);
         uiSettings.setRotateGesturesEnabled(false);
-        // 设置卫星地图
-        tencentMap.setSatelliteEnabled(true);
+        uiSettings.setCompassEnabled(false);
+        tencentMap.setMapType(TencentMap.MAP_TYPE_NORMAL);
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
         myLocationStyle.strokeColor(android.R.color.transparent);
         myLocationStyle.fillColor(android.R.color.transparent);
         tencentMap.setMyLocationStyle(myLocationStyle);
+
+        findViewById(R.id.change_tencent_map_style).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isNormalMap = !isNormalMap;
+                if (isNormalMap){
+                    /**
+                     * 设置为普通3d地图
+                     */
+                    tencentMap.setMapType(TencentMap.MAP_TYPE_NORMAL);
+                }else{
+                    // 设置为卫星地图
+                    tencentMap.setMapType(TencentMap.MAP_TYPE_SATELLITE);
+                }
+            }
+        });
     }
 
     private void initChoose() {

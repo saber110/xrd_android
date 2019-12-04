@@ -231,18 +231,33 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         mLocationClient.start();
     }
 
+    private boolean isNormalMap = true;
     private void initMap() {
         locButton = findViewById(R.id.dw_bt);
         locButton.setOnClickListener(this);
         baiduMap = mMapView.getMap();
         baiduMap.setOnMarkerClickListener(this);
         /**
-         * 设置为卫星地图
+         * 设置为普通3d地图
          */
-        baiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
+        baiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         baiduMap.setMyLocationEnabled(true);
         baiduMap.getUiSettings().setRotateGesturesEnabled(false);
-
+        findViewById(R.id.change_baidu_map_style).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isNormalMap = !isNormalMap;
+                if (isNormalMap){
+                    /**
+                     * 设置为普通3d地图
+                     */
+                    baiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
+                }else{
+                    // 设置为卫星地图
+                    baiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
+                }
+            }
+        });
     }
 
     @Override
