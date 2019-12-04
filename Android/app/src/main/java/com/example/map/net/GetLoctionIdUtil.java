@@ -51,8 +51,11 @@ public class GetLoctionIdUtil {
         map.put("token", login.token);
         map.put("provinceId", provinceId);
         try {
-            HttpRequest request = new HttpRequest(v1.getCityApi, "POST").form(map);
-            CityDao getCityIdDao = JSONObject.parseObject(request.body(), CityDao.class);
+            HttpRequest request = new HttpRequest(v1.getCityApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
+            String res = request.body();
+            CityDao getCityIdDao = JSONObject.parseObject(res, CityDao.class);
             return getCityIdDao;
         } catch (Exception e) {
             return null;
@@ -69,7 +72,9 @@ public class GetLoctionIdUtil {
         map.put("token", login.token);
         map.put("cityId", cityId);
         try {
-            HttpRequest request = new HttpRequest(v1.getDistrictApi, "POST").form(map);
+            HttpRequest request = new HttpRequest(v1.getDistrictApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
             DistrictDao districtDao = JSONObject.parseObject(request.body(), DistrictDao.class);
             return districtDao;
         } catch (Exception e) {
@@ -87,7 +92,9 @@ public class GetLoctionIdUtil {
         map.put("token", login.token);
         map.put("districtId", districtId);
         try {
-            HttpRequest request = new HttpRequest(v1.getStreetApi, "POST").form(map);
+            HttpRequest request = new HttpRequest(v1.getStreetApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
             StreetDao streetDao = JSONObject.parseObject(request.body(), StreetDao.class);
             return streetDao;
         } catch (Exception e) {
@@ -105,7 +112,9 @@ public class GetLoctionIdUtil {
         map.put("token", login.token);
         map.put("streetId", streetId);
         try {
-            HttpRequest request = new HttpRequest(v1.getCommunityApi, "POST").form(map);
+            HttpRequest request = new HttpRequest(v1.getCommunityApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
             CommunityDao communityDao = JSONObject.parseObject(request.body(), CommunityDao.class);
             return communityDao;
         } catch (Exception e) {

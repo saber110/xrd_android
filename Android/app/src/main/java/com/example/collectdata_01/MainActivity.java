@@ -295,6 +295,7 @@ public class MainActivity extends TakePhotoActivity{
         AsyncTask asyncTask = new AsyncRequest().execute(getCityNetUtil);
         try {
             final CityDao cityDao = (CityDao) asyncTask.get();
+//            cityDao.getData();
             GetCityViewAdapter adapter = new GetCityViewAdapter(MainActivity.this,
                     cityDao.getData());
             adapter.setItemClickListener(new GetCityViewAdapter.MyItemClickListener() {
