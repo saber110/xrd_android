@@ -18,10 +18,12 @@ def init_app(app: Flask):
     from .user import user_bp
     from .data import data_bp
     from .get_data import get_data_bp
+    from .del_data import del_data_bp
     app.register_blueprint(administration_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(data_bp)
     app.register_blueprint(get_data_bp)
+    app.register_blueprint(del_data_bp)
     configure_uploads(app, image_upload)
     patch_request_class(app)
 
@@ -69,17 +71,3 @@ def my_send_file(filename_or_fp, mimetype=None, attachment_filename=None):
         attachment_filename = quote(attachment_filename)
         rv.headers['Content-Disposition'] = f"attachment;filename*=utf-8''{attachment_filename}"
     return rv
-
-
-def is_excel_end(the_list_like) -> bool:
-    """
-    用于判断excel表格是否终止
-    :param the_list_like:
-    :return:
-    """
-    if None in the_list_like:
-        return True
-    for item in the_list_like:
-        if str(item).strip() == '':
-            return True
-    return False

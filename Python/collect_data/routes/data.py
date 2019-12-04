@@ -14,12 +14,14 @@ from . import generate_result, generate_validator, image_upload
 from .. import config
 from ..models.base_model import db
 from ..models.building import Building
+from ..models.building_import_info import BuildingImportInfo
 from ..models.building_info import BuildingInfo
 from ..models.building_picture import BuildingPicture
 from ..models.building_picture_kind import BuildingPictureKind
 from ..models.first_floor_kind import FirstFloorKind
 from ..models.garden import Garden
 from ..models.garden_base_info import GardenBaseInfo
+from ..models.garden_import_info import GardenImportInfo
 from ..models.garden_picture import GardenPicture
 from ..models.garden_picture_kind import GardenPictureKind
 from ..models.map_data import MapData
@@ -97,8 +99,14 @@ def map_data(user_id: int, *args, **kwargs):
     if data['mapId'] == 1:  # 如果是百度地图则进行转换
         data['longitude'], data['latitude'] = bd09_to_gcj02(data['longitude'], data['latitude'])
     data['userId'] = user_id
-    map_data = MapData(**data)
     try:
+        if 'id' in data:
+            map_data = MapData.query.get(data['id'])
+            if map_data is None:
+                return generate_result(2, '地图数据不存在')
+            map_data.update(**data)
+        else:
+            map_data = MapData(**data)
         db.session.add(map_data)
         db.session.commit()
     except SQLAlchemyError:
@@ -119,6 +127,7 @@ def garden_picture_kind(*args, **kwargs):
 
 
 @data_bp.route('/garden_picture', methods=['POST'])
+@token_check
 def garden_picture(user_id: int, *args, **kwargs):
     """
     上传小区图片
@@ -140,19 +149,20 @@ def garden_picture(user_id: int, *args, **kwargs):
         db.session.rollback()
         return generate_result(2)
     number = f"{len(pictures) + 1:03d}"
-    file_path = f'origin/{garden.id}/2_{garden.name}_{picture_kind}_{number}.'
-    file_path = image_upload.save(image, name=file_path)
-    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, file_path)
-    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST,
-                                   f'compressed/{garden.id}/2_{garden.name}_{picture_kind}_{number}.jpg')
+    origin_file_path = f'origin/{garden.id}/2_{garden.name}_{picture_kind}_{number}.'
+    origin_file_path = image_upload.save(image, name=origin_file_path)
+    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
+    compressed_file_path = f'compressed/{garden.id}/2_{garden.name}_{picture_kind}_{number}.jpg'
+    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = GardenPicture(gardenId=garden_id, pictureKind=picture_kind, collectTime=collect_time,
-                            filePath=file_path,
+                            originFilePath=origin_file_path, compressedFilePath=compressed_file_path,
                             syncTime=datetime.now(), userId=user_id)
     try:
         db.session.add(picture)
         db.session.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
+        print(str(e))
         db.session.rollback()
         os.remove(origin_path)
         os.remove(compressed_path)
@@ -197,19 +207,20 @@ def building_picture(user_id: int, *args, **kwargs):
         db.session.rollback()
         return generate_result(2)
     number = f"{len(pictures) + 1:03d}"
-    file_path = f'origin/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
-    file_path = image_upload.save(image, name=file_path)
-    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, file_path)
-    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST,
-                                   f'compressed/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.jpg')
+    origin_file_path = f'origin/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
+    origin_file_path = image_upload.save(image, name=origin_file_path)
+    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
+    compressed_file_path = f'compressed/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.jpg'
+    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = BuildingPicture(buildingId=building_id, pictureKind=picture_kind, collectTime=collect_time,
-                              filePath=file_path,
+                              originFilePath=origin_file_path, compressedFilePath=compressed_file_path,
                               syncTime=datetime.now(), userId=user_id)
     try:
         db.session.add(picture)
         db.session.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
+        print(str(e))
         db.session.rollback()
         os.remove(origin_path)
         os.remove(compressed_path)
@@ -239,18 +250,20 @@ def other_picture(user_id: int, *args, **kwargs):
     except SQLAlchemyError:
         return generate_result(2)
     number = f"{len(pictures) + 1:03d}"
-    file_path = f'origin/{garden.id}/4_{garden.name}_{number}.'
-    file_path = image_upload.save(image, name=file_path)
-    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, file_path)
-    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST,
-                                   f'compressed/{garden.id}/4_{garden.name}_{number}.jpg')
+    origin_file_path = f'origin/{garden.id}/4_{garden.name}_{number}.'
+    origin_file_path = image_upload.save(image, name=origin_file_path)
+    origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
+    compressed_file_path = f'compressed/{garden.id}/4_{garden.name}_{number}.jpg'
+    compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = OtherPicture(gardenId=garden_id, collectTime=collect_time,
-                           filePath=file_path, syncTime=datetime.now(), userId=user_id)
+                           originFilePath=origin_file_path, compressedFilePath=compressed_file_path,
+                           syncTime=datetime.now(), userId=user_id)
     try:
         db.session.add(picture)
         db.session.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
+        print(str(e))
         db.session.rollback()
         os.remove(origin_path)
         os.remove(compressed_path)
@@ -300,7 +313,11 @@ def garden_base_info(user_id: int, *args, **kwargs):
     data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
 
     try:
-        base_info = GardenBaseInfo(**data)
+        base_info = GardenBaseInfo.query.get(data['id'])
+        if base_info is None:
+            base_info = GardenBaseInfo(**data)  # 新建
+        else:
+            base_info.update(**data)  # 更新信息
         db.session.add(base_info)
         db.session.commit()
     except SQLAlchemyError:
@@ -320,7 +337,7 @@ def first_floor_kind(*args, **kwargs):
 
 @data_bp.route('/building_base_info', methods=['POST'])
 @token_check
-def building_info(user_id: int, *args, **kwargs):
+def building_base_info(user_id: int, *args, **kwargs):
     """
     楼栋调查表
     :param user_id: 用户id
@@ -330,7 +347,8 @@ def building_info(user_id: int, *args, **kwargs):
     schema = {
         "gardenId": {'type': 'integer', 'min': 1},
         "collectTime": {'type': 'integer', 'min': 1},
-        "buildingName": {'type': 'string'}
+        "buildingName": {'type': 'string'},
+        "buildingKind": {'type': 'string'}
     }
     v = generate_validator(schema)
     if not v(data):
@@ -339,10 +357,83 @@ def building_info(user_id: int, *args, **kwargs):
     data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
 
     try:
-        info = BuildingInfo(**data)
+        if 'id' in data:
+            info = BuildingInfo.query.get(data['id'])
+            if info is None:
+                return generate_result(2, '楼幢数据不存在')
+            info.update(**data)
+        else:
+            info = BuildingInfo(**data)
         db.session.add(info)
         db.session.commit()
     except SQLAlchemyError:
         db.session.rollback()
         return generate_result(2)
     return generate_result(0, '提交楼栋信息成功')
+
+
+@data_bp.route('/garden_import_info', methods=['POST'])
+@token_check
+def garden_import_info(user_id: int, *args, **kwargs):
+    """
+    添加或修改小区导入信息表
+    :param user_id:  用id
+    :return:
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer'},
+        'collectTime': {'type': 'integer'}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    data['userId'] = user_id
+    data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
+
+    try:
+        import_info = GardenImportInfo.query.get(data['id'])
+        if import_info is None:
+            import_info = GardenImportInfo(**data)  # 新建信息
+        else:
+            import_info.update(**data)  # 更新信息
+
+        db.session.add(import_info)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return generate_result(2)
+    return generate_result(0, '上传小区导入数据成功')
+
+
+@data_bp.route('/building_import_info', methods=['POST'])
+@token_check
+def building_import_info(user_id: int, *args, **kwargs):
+    """
+    添加或修改楼幢导入信息表
+    :param user_id:  用id
+    :return:
+    """
+    data = request.get_json()
+    schema = {
+        'id': {'type': 'integer'},
+        'collectTime': {'type': 'integer'}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    data['userId'] = user_id
+    data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
+
+    try:
+        import_info = BuildingImportInfo.query.get(data['id'])
+        if import_info is None:
+            import_info = BuildingImportInfo(**data)  # 新建信息
+        else:
+            import_info.update(**data)  # 更新信息
+        db.session.add(import_info)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return generate_result(2)
+    return generate_result(0, '上传楼幢导入数据成功')

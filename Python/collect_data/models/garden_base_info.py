@@ -73,6 +73,7 @@ class GardenBaseInfo(BaseModel):
     airPollution = db.Column(db.Text, comment='空气污染')
     adverseFacilities = db.Column(db.Text, comment='不利设施')
     otherPollution = db.Column(db.Text, comment='其他污染')
+    otherInfluences = db.Column(db.Text, comment='其他影响')
     busyDegree = db.Column(db.Text, comment='繁华程度')
     relaxFacilities = db.Column(db.Text, comment='休闲设施')
     sportFacilities = db.Column(db.Text, comment='运动设施')

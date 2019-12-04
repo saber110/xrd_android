@@ -34,7 +34,7 @@ public class MarkerNetUtil  {
             map.put("token", login.token);
             map.put("id", id);
             try {
-                HttpRequest request = new HttpRequest("http://rap2api.taobao.org/app/mock/234350/api/v1/del_data/map", "POST")
+                HttpRequest request = new HttpRequest(v1.deleteMapDataApi, "POST")
                         .header("Content-Type", "application/json")
                         .send(JSON.toJSONString(map));
                 String result = request.body();

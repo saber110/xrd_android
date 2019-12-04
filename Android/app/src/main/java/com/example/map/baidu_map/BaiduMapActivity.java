@@ -98,28 +98,38 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         AsyncTask asyncTask = new AsyncRequest().execute(getMarkerData);
         try {
             MapMarkerDataDao mapMarkerDataDao = (MapMarkerDataDao) asyncTask.get();
+            Log.i("mapMarkerDataDao", "initMark: code " +  mapMarkerDataDao.getCode() );
+
             if (mapMarkerDataDao.getCode() == 0) {
+                Log.i("mapMarkerDataDao", "initMark: size " +  mapMarkerDataDao.getData().getMap_data().size() );
+
                 for (int i = 0; i < mapMarkerDataDao.getData().getMap_data().size(); i++) {
                     MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(i);
+                    Log.i("mapMarkerDataDao", "initMark: name " +  mapDataBean.getName() );
+
                     MarkerOptions options = new MarkerOptions().position(new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude())).
                             icon(BitmapDescriptorFactory.fromBitmap((drawBitMap(mapDataBean.getName()))));
                     Bundle bundle = new Bundle();
                     bundle.putInt("id", mapMarkerDataDao.getData().getMap_data().get(i).getId());
                     options.extraInfo(bundle);
                     baiduMap.addOverlay(options);
+                    Log.i("mapMarkerDataDao", "initMark: " + mapDataBean );
+
                 }
                 if (mapMarkerDataDao.getData().getMap_data().size() != 0) {
                     MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(0);
                     LatLng ll = new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude());
-                    MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(ll);
-                    baiduMap.animateMapStatus(msu);
-                    MapStatus.Builder builder = new MapStatus.Builder();
-                    builder.target(ll).zoom(18.0f);
-                    baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                    MapStatus mMapStatus = new MapStatus.Builder()//定义地图状态
+                            .target(ll)
+                            .zoom(18)
+                            .build(); //定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
+                    MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mMapStatus);
+                    baiduMap.setMapStatus(mMapStatusUpdate);//改变地图状态
                 }
             }
         } catch (Exception e) {
 
+            e.printStackTrace();
         }
     }
 

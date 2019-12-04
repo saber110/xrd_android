@@ -38,7 +38,8 @@ public class MessageListAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private Context context;
     private MessageListBean messageListBean;
-    private HashMap<String,ViewItemBean> viewItemBeanMap = new HashMap<>();
+    //此处修改为静态，防止出现第二次进入闪退
+    private static HashMap<String,ViewItemBean> viewItemBeanMap = new HashMap<>();
 
     public static final int TYPE_COUNT = 3;
 

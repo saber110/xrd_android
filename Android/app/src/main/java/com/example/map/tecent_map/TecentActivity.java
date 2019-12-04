@@ -343,6 +343,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 if (name.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
+                    Log.d(">>>>>>>>", "onClick: "+marker.getTag());
                     if (changeMarkData(marker.getPosition(), (Integer) marker.getTag())) {
                         marker.remove();
                         changeDialog.dismiss();
@@ -359,10 +360,10 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
      * @return
      */
     private boolean changeMarkData(LatLng latLng, int id) {
-        if (deleteMark(id) || addMark(latLng)) {
-            return true;
+        if (!deleteMark(id) || !addMark(latLng)) {
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -372,14 +373,15 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
      * @return
      */
     private boolean addMark(LatLng latLng) {
-        SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1, choose);
+        SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 2, choose);
         AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
         try {
             StanderDao result = (StanderDao) asyncTask.get();
-            Log.d(TAG, "deleteMark: "+"0".equals(result.getCode()));
             if (result != null && "0".equals(result.getCode())) {
+                Log.d(">>>>>", "添加maker"+name.getText().toString());
                 MarkerOptions options = new MarkerOptions(latLng).icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(name.getText().toString())));
                 tencentMap.addMarker(options);
+                return true;
             }
         } catch (ExecutionException e) {
             Toast.makeText(TecentActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
@@ -401,6 +403,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         try {
             StanderDao result = (StanderDao) asyncTask.get();
             if (result != null && "0".equals(result.getCode())) {
+                Log.d(">>>", "deleteMark:成功 ");
                 return true;
             }
         } catch (ExecutionException e) {
