@@ -70,6 +70,7 @@ public class SubmitListener implements View.OnClickListener {
             Log.i("Submit",title+" "+commonItemBean.getKey());
 
             ViewItemBean viewItemBean = viewItemBeanMap.get(title);
+            //判断必填项是否完成
             if (required && viewItemBean == null) {
                 Toast.makeText(activity, "请输入必填信息"  , Toast.LENGTH_SHORT).show();
                 return;//如果未获取到，则不更新
@@ -78,11 +79,6 @@ public class SubmitListener implements View.OnClickListener {
                 //获取输入框的内容，edittext
 
                 String content = viewItemBean.getEditText().getText().toString().trim();
-                //更新内容,判断必填项是否完成
-                if (content.equals("")) {
-                    Toast.makeText(activity, "输入必填项", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 //number类型
                 if (requiredType.equals("number") && !content.equals("")){
                     map.put(commonItemBean.getKey(), Integer.parseInt(content));

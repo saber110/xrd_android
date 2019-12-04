@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/card_style"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp">
+
+        <ImageView
+            android:id="@+id/round_add_comment_black"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/round_add_comment_black_18dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/round_add_comment_black"
+            android:text="请输入楼栋数目"
+            android:textColor="#000000"
+            android:textSize="20dp" />
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/building_num_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <Button
+            android:id="@+id/building_num_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00EEE6E6"
+            android:layout_weight="1"
+            android:text="提交" />
+
+        <Button
+            android:id="@+id/building_num_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#00EEE6E6"
+            android:layout_weight="1"
+            android:text="取消" />
+
+    </LinearLayout>
+</LinearLayout>

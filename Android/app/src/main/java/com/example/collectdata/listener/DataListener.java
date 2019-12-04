@@ -2,12 +2,15 @@ package com.example.collectdata.listener;
 
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.collectdata.tools.CacheTools;
 import com.example.collectdata.tools.ConstTools;
+import com.example.collectdata_01.R;
+import com.example.dialog.CreatDialog;
 import com.example.interfaceNet.v1;
 
 /**
@@ -18,6 +21,8 @@ public class DataListener implements View.OnClickListener {
     private Activity activity;
     private final int type;
     private Context context;
+    private Dialog buildingNumDialog;
+    private View BuildNumView;
 
     public DataListener(Activity activity,int listenerType, Context context) {
         this.type = listenerType;
@@ -36,7 +41,9 @@ public class DataListener implements View.OnClickListener {
         // 请求后台数据并切换界面
         v1 interfaceForGetData = new v1(this.context);
         switch (type) {
-            case ConstTools.LOUZHUANGDIAOCHA: interfaceForGetData.getBuildingBaseInfoAPI(buildingId);break;
+            case ConstTools.LOUZHUANGDIAOCHA:
+//                interfaceForGetData.getBuildingBaseInfoAPI(buildingId);
+                break;
             case ConstTools.XIAOQUXINXI: interfaceForGetData.getGardenImportInfoAPI(gardenId);break;
             case ConstTools.LOUZHUANGXINXI: interfaceForGetData.getBuildingImportInfoAPI(buildingId);break;
             case ConstTools.XIAOQUGAIKUANG: interfaceForGetData.getGardenBaseInfoAPI(gardenId);
