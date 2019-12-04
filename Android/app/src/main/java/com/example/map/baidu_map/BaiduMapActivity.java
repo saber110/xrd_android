@@ -79,7 +79,6 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         changeView = getLayoutInflater().inflate(R.layout.change_mark_data, null);
         dialog = CreatDialog.createSendMapDataDialog(this, view);
         changeDialog = CreatDialog.createSendMapDataDialog(this, changeView);
-        name = view.findViewById(R.id.input_msg);
         intent = getIntent();
         gardenId = intent.getIntExtra("gardenId",1);
         initChooseMap();
@@ -280,6 +279,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
      */
     @Override
     public void onMapLongClick(final LatLng latLng) {
+        name = view.findViewById(R.id.input_msg);
         dialog.show();
         lat.setText((latLng.latitude + "").substring(0, 7));
         lng.setText((latLng.longitude + "").substring(0, 7));
@@ -313,7 +313,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     @Override
     public boolean onMarkerClick(final Marker marker) {
         changeDialog.show();
-        final TextView title = changeView.findViewById(R.id.change_msg);
+        name = changeView.findViewById(R.id.change_msg);
         changeView.findViewById(R.id.delete_data_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -326,7 +326,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         changeView.findViewById(R.id.change_data_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (title.getText().length() == 0) {
+                if (name.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
                     if (changeMarkData(marker.getPosition(), marker.getExtraInfo().getInt("id"))) {
@@ -352,6 +352,8 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     }
 
     private boolean addMark(LatLng latLng) {
+
+        Log.d(">>>", "新添加的数据"+name.getText().toString());
         SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1, choose);
         AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
         try {

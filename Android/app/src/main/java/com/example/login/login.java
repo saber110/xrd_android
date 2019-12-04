@@ -95,8 +95,8 @@ public class login extends AppCompatActivity {
             btGo.setText("登录中...");
             try {
                 v1 hh = new v1(login.this);
-                hh.loginApi(etUsername.getText().toString(), etPassword.getText().toString());
-//                    login(etUsername.getText().toString(), etPassword.getText().toString());
+//                hh.loginApi(etUsername.getText().toString(), etPassword.getText().toString());
+                    login(etUsername.getText().toString(), etPassword.getText().toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }

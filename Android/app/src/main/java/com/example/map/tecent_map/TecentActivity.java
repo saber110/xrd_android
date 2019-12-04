@@ -76,7 +76,6 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         mapview = findViewById(R.id.tecent_mapview);
         view = getLayoutInflater().inflate(R.layout.send_map_data, null);
         changeView = getLayoutInflater().inflate(R.layout.change_mark_data, null);
-        name = view.findViewById(R.id.input_msg);
         dialog = CreatDialog.createSendMapDataDialog(this, view);
         changeDialog = CreatDialog.createChangeMarkDialog(this, changeView);
 
@@ -120,7 +119,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         Bitmap bitmap;
         int width = 100;
         int height = 100;
-        bitmap = Bitmap.createBitmap(width*str.length(), height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
+        bitmap = Bitmap.createBitmap(width*str.length()==0?100:width*str.length(), height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);//抗锯齿
         paint.setDither(true); // 获取跟清晰的图像采样
         paint.setFilterBitmap(true);// 过滤
@@ -305,7 +304,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
      */
     @Override
     public void onMapLongClick(final LatLng latLng) {
-
+        name = view.findViewById(R.id.input_msg);
         dialog.show();
         lat.setText(latLng.latitude + "");
         lng.setText(latLng.longitude + "");
@@ -328,7 +327,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     @Override
     public boolean onMarkerClick(final Marker marker) {
         changeDialog.show();
-        final TextView title = changeView.findViewById(R.id.change_msg);
+        name = changeView.findViewById(R.id.change_msg);
         changeView.findViewById(R.id.delete_data_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -338,11 +337,10 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 }
             }
         });
-
         changeView.findViewById(R.id.change_data_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (title.getText().length() == 0) {
+                if (name.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
                     if (changeMarkData(marker.getPosition(), (Integer) marker.getTag())) {
@@ -354,8 +352,6 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         });
         return true;
     }
-
-
     /**
      * 修改，先删除，然后添加
      *

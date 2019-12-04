@@ -1,5 +1,7 @@
 package com.example.map.net;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.interfaceNet.v1;
@@ -31,7 +33,9 @@ public class GetMarkerData implements ProcessInterface {
             HttpRequest request = new HttpRequest(v1.getMapDataAPI, "POST")
                     .header("Content-Type", "application/json")
                     .send(JSON.toJSONString(map));
-            return JSONObject.parseObject(request.body(), MapMarkerDataDao.class);
+            String res = request.body();
+            Log.d(">>>>>>", "mark的查询数据: "+res);
+            return JSONObject.parseObject(res, MapMarkerDataDao.class);
         } catch (Exception e) {
             return null;
         }
