@@ -12,6 +12,8 @@ class GardenImportInfo(BaseModel):
     小区信息导入表
     """
     id = db.Column(db.Integer, db.ForeignKey('garden.id'), primary_key=True, comment='小区id')
+    userId = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, comment='提交信息的用户id')
+    collectTime = db.Column(db.DateTime, nullable=False, comment='信息采集时间')
     boundaryStreetSign = db.Column(db.Text, comment='界址街牌')
     buildingNumbers = db.Column(db.Integer, comment='总套数')
     constructionUnit = db.Column(db.Text, comment='施工单位')

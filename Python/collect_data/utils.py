@@ -68,3 +68,17 @@ def compress_image(origin_path: str, compressed_path: str, size: int):
         width, high = image.size
         image = image.resize((int(rate * width), int(rate * high)), Image.ANTIALIAS)
         image.save(compressed_path)
+
+
+def is_excel_end(the_list_like) -> bool:
+    """
+    用于判断excel表格是否终止
+    :param the_list_like:
+    :return:
+    """
+    if None in the_list_like:
+        return True
+    for item in the_list_like:
+        if str(item).strip() == '':
+            return True
+    return False
