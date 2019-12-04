@@ -153,7 +153,7 @@ def map_data(user_id: int, *args, **kwargs):
     except SQLAlchemyError:
         db.session.rollback()
         return generate_result(2, '添加建筑失败')
-    return generate_result(0, '添加建筑成功')
+    return generate_result(0, '添加数据成功', {'mapDataId': map_data.id})
 
 
 @data_bp.route('/garden_picture_kind', methods=['POST'])
