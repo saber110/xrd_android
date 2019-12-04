@@ -300,6 +300,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 } else {
                     if (addMark(latLng)) {
                         Toast.makeText(BaiduMapActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
+                        name.setText(null);
                         dialog.dismiss();
                     }
                 }
@@ -340,6 +341,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 } else {
                     if (changeMarkData(marker.getPosition(), marker.getExtraInfo().getInt("id"))) {
                         marker.remove();
+                        name.setText(null);
                         changeDialog.dismiss();
                     }
                 }
@@ -367,7 +369,8 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
         try {
             UploadMarkerReturnDao result = (UploadMarkerReturnDao) asyncTask.get();
-            if (result != null && "0".equals(result.getCode())) {
+            if (result != null && result.getCode()==0) {
+                Log.d(">>>>>>", "addMark: 在百度地图上面添加数据");
                 MarkerOptions options = new MarkerOptions().position(latLng).
                         icon(BitmapDescriptorFactory.fromBitmap((drawBitMap(name.getText().toString()))));
                 Bundle bundle = new Bundle();

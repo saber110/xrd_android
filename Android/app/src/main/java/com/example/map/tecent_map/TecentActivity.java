@@ -315,6 +315,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 } else {
                     if (addMark(latLng)) {
                         Toast.makeText(TecentActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
+                        name.setText(null);
                         dialog.dismiss();
                     }
                 }
@@ -345,6 +346,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                     Log.d(">>>>>>>>", "onClick: "+marker.getTag());
                     if (changeMarkData(marker.getPosition(), (Integer) marker.getTag())) {
                         marker.remove();
+                        name.setText(null);
                         changeDialog.dismiss();
                     }
                 }
@@ -376,7 +378,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
         try {
             UploadMarkerReturnDao result = (UploadMarkerReturnDao) asyncTask.get();
-            if (result != null && "0".equals(result.getCode())) {
+            if (result != null && result.getCode()==0) {
                 Log.d(">>>>>", "添加maker"+name.getText().toString());
                 MarkerOptions options = new MarkerOptions(latLng).icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(name.getText().toString())));
                 options.tag(result.getData().getMapDataId());
