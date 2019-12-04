@@ -66,6 +66,47 @@ def garden(*args, **kwargs):
     return generate_result(0, '添加小区成功', {'gardenId': garden.id})
 
 
+@data_bp.route('/init_building', methods=['POST'])
+@token_check
+def init_building(user_id: int, *args, **kwargs):
+    """
+    初始化楼幢信息
+    """
+    data = request.get_json()
+    schema = {
+        'gardenId': {'type': 'integer', 'min': 1},
+        'number': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    already_building = BuildingInfo.query.filter_by(gardenId=data['gardenId']).all()
+    building_ids = [i.id for i in already_building]
+    add_number = data['number'] - len(already_building)
+    insert_building = [BuildingInfo(collectTime=datetime.now(), gardenId=data['gardenId'], userId=user_id) for i in
+                       range(add_number)]
+    try:
+        db.session.add_all(insert_building)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return generate_result(2, '初始化楼幢失败')
+    for info in insert_building:
+        building_ids.append(info.id)
+    try:
+        for id in building_ids:
+            import_info = BuildingImportInfo.query.get(id)
+            if import_info is None:
+                db.session.add(BuildingImportInfo(collectTime=datetime.now(), id=id, userId=user_id))
+        db.session.commit()
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return generate_result(3, '初始化失败')
+    return generate_result(0, '初始化楼幢成功', {'buildingIds': building_ids})
+
+
 @data_bp.route('/building', methods=['POST'])
 @token_check
 def building(*args, **kwargs):
