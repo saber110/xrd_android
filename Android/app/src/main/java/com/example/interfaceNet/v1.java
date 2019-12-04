@@ -1,27 +1,38 @@
 package com.example.interfaceNet;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Looper;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
+import com.example.collectdata.BuildingMessageActivity;
+import com.example.collectdata.DataActivity;
 import com.example.collectdata.MessageActivity;
+import com.example.collectdata.bean.CommonItemBean;
 import com.example.collectdata.bean.MessageListBean;
+import com.example.collectdata.tools.CacheTools;
 import com.example.collectdata.tools.JsonTools;
+import com.example.collectdata_01.BuildConfig;
 import com.example.collectdata_01.MainActivity;
 import com.example.collectdata_01.R;
+import com.example.dialog.CreatDialog;
 import com.example.login.login;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,6 +46,8 @@ import okhttp3.Response;
 
 public class v1{
 
+    private Dialog ProcessDialog;
+    private View DialogView;
     final static String SUCCESS = "0";
 
     private static Context context;
@@ -149,6 +162,7 @@ public class v1{
     public void callBack(String res, final String entry) {
         Map map = JSON.parseObject(res, HashMap.class);
         Log.i(TAG, "callBack: " + entry + " " +res);
+        desDialog();
         if(Objects.requireNonNull(map.get("code")).toString().equals(SUCCESS)){
             if(entry.equals(cbLogin)){
                 callbackLogin(res);
@@ -169,17 +183,24 @@ public class v1{
         Map map = new HashMap<String, String>(5);
         map.put("token", login.token);
         map.put("gardenId", gardenId);
-
+        initAndShowDialog();
         post(getGardenBaseInfoAPI, JSON.toJSONString(map), cbUpdateGardenBaseInfo);
     }
 
     public void getBuildingBaseInfoAPI(int buildingId) {
+        /*
         Map map = new HashMap<String, String>(5);
         map.put("token", login.token);
         map.put("buildingId", buildingId);
-
+        //测试，修改为小区信息
         post(getBuildingBaseInfoAPI, JSON.toJSONString(map), cbUpdateBuildingBaseInfo);
-
+        */
+        //TODO 目前测试使用gardenBase的数据
+        Map map = new HashMap<String, String>(5);
+        map.put("token", login.token);
+        map.put("gardenId", 1);
+        initAndShowDialog();
+        post(getGardenBaseInfoAPI, JSON.toJSONString(map), cbUpdateBuildingBaseInfo);
     }
 
     public void getGardenImportInfoAPI(int gardenId) {
@@ -187,16 +208,15 @@ public class v1{
         Map map = new HashMap<String, String>(5);
         map.put("token", login.token);
         map.put("gardenId", gardenId);
-
+        initAndShowDialog();
         post(getGardenImportInfoApi, JSON.toJSONString(map), cbUpdateGardenImportInfo);
 
     }
-
     public void getBuildingImportInfoAPI(int buildingId) {
         Map map = new HashMap<String, String>(5);
         map.put("token", login.token);
         map.put("buildingId", buildingId);
-
+        initAndShowDialog();
         post(getBuildingImportInfoApi, JSON.toJSONString(map), cbUpdateBuildingImportInfo);
 
     }
@@ -230,6 +250,8 @@ public class v1{
 
         Looper.prepare();
         Intent i2 = new Intent(this.getContext(), MessageActivity.class);
+        ((AppCompatActivity)(this.getContext())).finish();
+        desDialog();
         this.getContext().startActivity(i2);
         Looper.loop();
     }
@@ -244,7 +266,10 @@ public class v1{
         }
 
         Looper.prepare();
-        Intent i2 = new Intent(this.getContext(), MessageActivity.class);
+//        Intent i2 = new Intent(this.getContext(), MessageActivity.class);
+        //TODO buildingBase目前用的是小区信息的api
+        Intent i2 = new Intent(this.getContext(), BuildingMessageActivity.class);
+        ((AppCompatActivity)(this.getContext())).finish();
         this.getContext().startActivity(i2);
         Looper.loop();
     }
@@ -260,6 +285,7 @@ public class v1{
 
         Looper.prepare();
         Intent i2 = new Intent(this.getContext(), MessageActivity.class);
+        ((AppCompatActivity)(this.getContext())).finish();
         this.getContext().startActivity(i2);
         Looper.loop();
     }
@@ -275,6 +301,7 @@ public class v1{
 
         Looper.prepare();
         Intent i2 = new Intent(this.getContext(), MessageActivity.class);
+        ((AppCompatActivity)(this.getContext())).finish();
         this.getContext().startActivity(i2);
         Looper.loop();
     }
@@ -285,6 +312,7 @@ public class v1{
         Map map = new HashMap<String, String>(5);
         map.put("iemi", iemi);
         map.put("password", password);
+        initAndShowDialog();
         post(loginApi, JSON.toJSONString(map),cbLogin);
     }
 
@@ -323,5 +351,16 @@ public class v1{
         Log.i(TAG, "funToastMakeText: " + msg);
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
         Looper.loop();
+    }
+
+    public void initAndShowDialog(){
+        LayoutInflater inflater = LayoutInflater.from(context);
+        DialogView = inflater.inflate(R.layout.loading_dialog,null);
+        ProcessDialog = CreatDialog.createChangeMarkDialog(this.getContext(), DialogView);
+        ProcessDialog.show();
+    }
+    public void desDialog(){
+        if (ProcessDialog != null)
+                ProcessDialog.dismiss();
     }
 }

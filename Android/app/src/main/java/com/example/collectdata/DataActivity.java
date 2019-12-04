@@ -14,6 +14,7 @@ import com.example.collectdata.listener.DataListener;
 import com.example.collectdata.tools.ConstTools;
 import com.example.collectdata_01.R;
 import com.example.dialog.CreatDialog;
+import com.example.interfaceNet.v1;
 
 /**
  * 数据采集页面
@@ -31,6 +32,7 @@ public class DataActivity extends AppCompatActivity {
     private Button buttonCancel;
     private EditText editBuildingNum;
 
+    private v1 interfaceForGetData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class DataActivity extends AppCompatActivity {
         louzhuangdiaocha = this.findViewById(R.id.data_louzhuangdiaocha);
         louzhuanxinxi = this.findViewById(R.id.data_louzhuangxinxi);
 
+        interfaceForGetData = new v1(this);
         initDialog();
         //添加监听器
         xiaoqugaikuang.setOnClickListener(new DataListener(this, ConstTools.XIAOQUGAIKUANG, DataActivity.this));
@@ -72,7 +75,16 @@ public class DataActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Toast.makeText(DataActivity.this,"提交测试成功",Toast.LENGTH_SHORT).show();
-
+            String buildingNum = editBuildingNum.getText().toString();
+            try {
+                //在这做网络请求，
+                //TODO 这个地方发送网络请求，获取楼栋信息数据，并显示在BuildingMessageActivity中
+                int num = Integer.parseInt(buildingNum);
+                interfaceForGetData.getBuildingBaseInfoAPI(1);
+            }catch (Exception e){
+                Toast.makeText(DataActivity.this,"请输入数字",Toast.LENGTH_SHORT).show();
+                return;
+            }
             buildingNumDialog.dismiss();
         }
     };

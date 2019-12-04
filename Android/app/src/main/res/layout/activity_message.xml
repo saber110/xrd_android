@@ -7,7 +7,6 @@
     android:orientation="vertical"
     tools:context="com.example.collectdata.MessageActivity">
     <include layout="@layout/ui_title_bar"/>
-
     <!--信息收集页面-->
     <ListView
         android:layout_width="match_parent"

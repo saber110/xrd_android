@@ -42,6 +42,7 @@ public class DataListener implements View.OnClickListener {
         v1 interfaceForGetData = new v1(this.context);
         switch (type) {
             case ConstTools.LOUZHUANGDIAOCHA:
+                //此处已没有楼栋接口的listener
 //                interfaceForGetData.getBuildingBaseInfoAPI(buildingId);
                 break;
             case ConstTools.XIAOQUXINXI: interfaceForGetData.getGardenImportInfoAPI(gardenId);break;

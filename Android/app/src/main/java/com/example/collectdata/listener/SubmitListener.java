@@ -68,9 +68,9 @@ public class SubmitListener implements View.OnClickListener {
             String requiredType = commonItemBean.getRequireType();
 
             Log.i("Submit",title+" "+commonItemBean.getKey());
-
+            //一次显示后这个map会清零，造成闪退。将其改为static，之后应根据listview渲染流程修改
             ViewItemBean viewItemBean = viewItemBeanMap.get(title);
-            //判断必填项是否完成
+            //TODO 判断必填项仍有问题
             if (required && viewItemBean == null) {
                 Toast.makeText(activity, "请输入必填信息"  , Toast.LENGTH_SHORT).show();
                 return;//如果未获取到，则不更新
@@ -88,12 +88,6 @@ public class SubmitListener implements View.OnClickListener {
                 }
             } else if (viewItemBean.getType() == ConstTools.MESSAGE_BEANTYPE_SELECTOR) {
                 //不需要做任何操作
-//                int focusedButtonId = viewItemBean.getButtonToggleGroup().getCheckedButtonId();
-//                Button chosedButton = viewItemBean.getButtonToggleGroup().findViewById(focusedButtonId);
-//                String content = chosedButton.getText().toString();
-//                SelectorItemBean selectorItemBean = (SelectorItemBean)beans.get(i);
-//                selectorItemBean.setCurrentSelect(content);
-//                map.put(commonItemBean.getKey(),content);
                 List<Integer> ids = viewItemBean.getButtonToggleGroup().getCheckedButtonIds();
                 ArrayList<String> contents = new ArrayList<>();
                 if (contents == null) {
