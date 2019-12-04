@@ -249,6 +249,7 @@ def search_garden(*args, **kwargs):
         city = City.query.get(garden.cityId)
         province = Province.query.get(garden.provinceId)
         result.append({
+            'gardenId': garden.id,
             'gardenName': garden.name,
             'communityName': community.name,
             'streetName': street.name,
