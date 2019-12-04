@@ -112,11 +112,12 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 if (mapMarkerDataDao.getData().getMap_data().size() != 0) {
                     MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(0);
                     LatLng ll = new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude());
-                    MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(ll);
-                    baiduMap.animateMapStatus(msu);
-                    MapStatus.Builder builder = new MapStatus.Builder();
-                    builder.target(ll).zoom(18.0f);
-                    baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                    MapStatus mMapStatus = new MapStatus.Builder()//定义地图状态
+                        .target(ll)
+                        .zoom(18)
+                        .build(); //定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
+                        MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mMapStatus);
+                    baiduMap.setMapStatus(mMapStatusUpdate);//改变地图状态
                 }
             }
         } catch (Exception e) {
