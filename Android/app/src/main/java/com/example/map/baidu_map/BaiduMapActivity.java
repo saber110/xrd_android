@@ -37,10 +37,9 @@ import com.example.collectdata_01.R;
 import com.example.dialog.CreatDialog;
 import com.example.map.dao.MapMarkerDataDao;
 import com.example.map.dao.StanderDao;
+import com.example.map.dao.UploadMarkerReturnDao;
 import com.example.map.google.GoogleMapActivity;
-import com.example.map.net.GetMarkerData;
 import com.example.map.net.MarkerNetUtil;
-import com.example.map.net.SendMapMsg;
 import com.example.map.tecent_map.TecentActivity;
 import com.example.net.AsyncRequest;
 
@@ -93,7 +92,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
      */
     private void initMark() {
         // 代表百度地图
-        GetMarkerData getMarkerData = new GetMarkerData(gardenId, 1);
+        MarkerNetUtil.GetMarkerData getMarkerData = new MarkerNetUtil.GetMarkerData(gardenId, 1);
 
         AsyncTask asyncTask = new AsyncRequest().execute(getMarkerData);
         try {
@@ -364,13 +363,16 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     private boolean addMark(LatLng latLng) {
 
         Log.d(">>>", "新添加的数据"+name.getText().toString());
-        SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1, choose);
+        MarkerNetUtil.AddMarker sendMapMsg = new MarkerNetUtil.AddMarker(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1, choose);
         AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
         try {
-            StanderDao result = (StanderDao) asyncTask.get();
+            UploadMarkerReturnDao result = (UploadMarkerReturnDao) asyncTask.get();
             if (result != null && "0".equals(result.getCode())) {
                 MarkerOptions options = new MarkerOptions().position(latLng).
                         icon(BitmapDescriptorFactory.fromBitmap((drawBitMap(name.getText().toString()))));
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", result.getData().getMapDataId());
+                options.extraInfo(bundle);
                 baiduMap.addOverlay(options);
                 return true;
             }
@@ -413,7 +415,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         Bitmap bitmap;
         int width = 100;
         int height = 100;
-        bitmap = Bitmap.createBitmap(width*str.length(), height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
+        bitmap = Bitmap.createBitmap(width*str.length()==0?100:width*str.length(), height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);//抗锯齿
         paint.setDither(true); // 获取跟清晰的图像采样
         paint.setFilterBitmap(true);// 过滤

@@ -24,10 +24,9 @@ import com.example.dialog.CreatDialog;
 import com.example.map.baidu_map.BaiduMapActivity;
 import com.example.map.dao.MapMarkerDataDao;
 import com.example.map.dao.StanderDao;
+import com.example.map.dao.UploadMarkerReturnDao;
 import com.example.map.google.GoogleMapActivity;
-import com.example.map.net.GetMarkerData;
 import com.example.map.net.MarkerNetUtil;
-import com.example.map.net.SendMapMsg;
 import com.example.net.AsyncRequest;
 import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
@@ -87,7 +86,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
     private void initMark() {
         // 2代表腾讯
-        GetMarkerData getMarkerData = new GetMarkerData(gardenId, 2);
+        MarkerNetUtil.GetMarkerData getMarkerData = new MarkerNetUtil.GetMarkerData(gardenId, 2);
         AsyncTask asyncTask = new AsyncRequest().execute(getMarkerData);
         try {
             MapMarkerDataDao mapMarkerDataDao = (MapMarkerDataDao) asyncTask.get();
@@ -373,13 +372,14 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
      * @return
      */
     private boolean addMark(LatLng latLng) {
-        SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 2, choose);
+        MarkerNetUtil.AddMarker sendMapMsg = new MarkerNetUtil.AddMarker(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 2, choose);
         AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
         try {
-            StanderDao result = (StanderDao) asyncTask.get();
+            UploadMarkerReturnDao result = (UploadMarkerReturnDao) asyncTask.get();
             if (result != null && "0".equals(result.getCode())) {
                 Log.d(">>>>>", "添加maker"+name.getText().toString());
                 MarkerOptions options = new MarkerOptions(latLng).icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(name.getText().toString())));
+                options.tag(result.getData().getMapDataId());
                 tencentMap.addMarker(options);
                 return true;
             }
