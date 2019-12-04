@@ -6,7 +6,7 @@ public class SearchGardenResultDao {
 
     /**
      * code : 0
-     * data : {"gardens":[{"cityName":"长沙市","communityName":"识字里社区","districtName":"芙蓉区","gardenName":"测试小区1","provinceName":"湖南省","streetName":"文艺路街道"}]}
+     * data : {"gardens":[{"cityName":"长沙市","communityName":"识字里社区","districtName":"芙蓉区","gardenId":16,"gardenName":"测试小区1","provinceName":"湖南省","streetName":"文艺路街道"}]}
      * message : 查找小区成功
      */
 
@@ -72,6 +72,7 @@ public class SearchGardenResultDao {
                         "cityName='" + cityName + '\'' +
                         ", communityName='" + communityName + '\'' +
                         ", districtName='" + districtName + '\'' +
+                        ", gardenId='" + gardenId + '\'' +
                         ", gardenName='" + gardenName + '\'' +
                         ", provinceName='" + provinceName + '\'' +
                         ", streetName='" + streetName + '\'' +
@@ -90,6 +91,7 @@ public class SearchGardenResultDao {
             private String cityName;
             private String communityName;
             private String districtName;
+            private int gardenId;
             private String gardenName;
             private String provinceName;
             private String streetName;
@@ -116,6 +118,14 @@ public class SearchGardenResultDao {
 
             public void setDistrictName(String districtName) {
                 this.districtName = districtName;
+            }
+
+            public int getGardenId() {
+                return gardenId;
+            }
+
+            public void setGardenId(int gardenId) {
+                this.gardenId = gardenId;
             }
 
             public String getGardenName() {

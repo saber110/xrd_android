@@ -42,6 +42,9 @@
     <string name="dataTab">data</string>
     <string name="createGardenApi">garden</string>
     <string name="addMapDataAPI">map</string>
+    <string name="uploadGardenPictureApi">garden_picture</string>
+    <string name="uploadOtherPictureApi">other_picture</string>
+    <string name="uploadBuildingPictureApi">building_picture</string>
 
 
     <string name="administrationTab">administration</string>
@@ -51,6 +54,9 @@
     <string name="getStreetApi">street</string>
     <string name="getCommunityApi">community</string>
     <string name="searchGardenApi">search_garden</string>
+
+    <string name="delDataTab">del_data</string>
+    <string name="deleteMapDataApi">map</string>
     
     <!--    Data页面的string    -->
     <string name="data_xiaoqugaikuang">小区概况表</string>

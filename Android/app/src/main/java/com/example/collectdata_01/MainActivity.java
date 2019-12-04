@@ -85,7 +85,7 @@ public class MainActivity extends TakePhotoActivity{
     private RelativeLayout dataCollectLayout;
     public static LocationAllDao locationAllDao = new LocationAllDao();
     private String gardenName;
-    private Integer gardenId;
+    private static Integer gardenId;
 
 
     @Override
@@ -122,7 +122,7 @@ public class MainActivity extends TakePhotoActivity{
             public void onClick(View v) {
                 if (gardenName != null && !gardenName.isEmpty()) {
                     Intent intent = new Intent(MainActivity.this, BaiduMapActivity.class);
-                    intent.putExtra("gardenId", gardenId);
+                    intent.putExtra("gardenId", MainActivity.getGardenId());
                     startActivity(intent);
                 } else {
                     Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
@@ -165,9 +165,7 @@ public class MainActivity extends TakePhotoActivity{
                                     @Override
                                     public void onItemClick(View view, int position) {
                                         SearchGardenResultDao.DataBean.GardensBean bean = gardenResultDao.getData().getGardens().get(position);
-                                        // Todo 这个地方需要返回一个gardenid
-                                        gardenId = 1;
-//                                        gardenId = bean.get();
+                                        setGardenId(bean.getGardenId());
                                         gardenName = bean.getGardenName();
                                         neighbourWorking.setText(gardenName);
                                         gardenDialog.dismiss();
@@ -230,7 +228,7 @@ public class MainActivity extends TakePhotoActivity{
                     uploadImgUtil.uploadOtherImg(qitalist.get(i).getGardenId(), qitalist.get(i).getCollectTime(), qitalist.get(i).getToken(), qitalist.get(i).getImage());
                     mainDB.delete(qitalist.get(i));
                 }
-
+                Toast.makeText(MainActivity.this, "图片上传完毕", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -389,6 +387,7 @@ public class MainActivity extends TakePhotoActivity{
         try {
             AddGradenResult addGradenResult = (AddGradenResult) asyncTask.get();
             gardenId = addGradenResult.getData().getGardenId();
+            this.setGardenId(gardenId);
             locationDialog.dismiss();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -402,6 +401,9 @@ public class MainActivity extends TakePhotoActivity{
     ArrayList<Users> qitalist = new ArrayList<>();
 
     private void dividedData() {
+        gardenlist.clear();
+        buildinglist.clear();
+        qitalist.clear();
         ArrayList<Users> list = mainDB.query(Users.class);
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getpictureKind().equals("平面图")
@@ -417,7 +419,7 @@ public class MainActivity extends TakePhotoActivity{
             if (list.get(i).getpictureKind().equals("其他")) {
                 qitalist.add(list.get(i));
             }
-            Toast.makeText(MainActivity.this, "图片上传完毕", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, "图片上传完毕", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -432,7 +434,6 @@ public class MainActivity extends TakePhotoActivity{
     private Intent intent;
     private String pictureKind;
 
-    private String gdid = "1";
     public String locationString;
     public String jpegName;
     /**
@@ -455,7 +456,7 @@ public class MainActivity extends TakePhotoActivity{
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);
         showImg(result.getImage());
-        Users musers = new Users(gdid, locationString, Integer.toString((int) System.currentTimeMillis()), login.token, jpegName);
+        Users musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Integer.toString((int) System.currentTimeMillis()), login.token, jpegName);
         System.out.println("用户创建成功");
         mainDB.save(musers);
         System.out.println("保存数据成功");
@@ -466,11 +467,11 @@ public class MainActivity extends TakePhotoActivity{
     //普通の方法
     public void formatString(int i) {
         if (i < 10) {
-            n = "00" + Integer.toString(i);
+            n = "00" + Integer.toString(i + 1);
         } else if (i >= 100) {
-            n = Integer.toString(i);
+            n = Integer.toString(i + 1);
         } else {
-            n = "0" + Integer.toString(i);
+            n = "0" + Integer.toString(i + 1);
         }
     }
 
@@ -656,7 +657,6 @@ public class MainActivity extends TakePhotoActivity{
         builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                // TODO Auto-generated method stub
                 for (int i = 0; i < checkedItems.length; i++) {
                     checkedItems[i] = false;
                 }
@@ -666,7 +666,6 @@ public class MainActivity extends TakePhotoActivity{
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                // TODO Auto-generated method stub
                 String str = "";
                 for (int i = 0; i < checkedItems.length; i++) {
                     if (checkedItems[i]) {
@@ -695,6 +694,14 @@ public class MainActivity extends TakePhotoActivity{
         saveToSystemAlbum(image.getOriginalPath());
         singleDialog();
         Toast.makeText(MainActivity.this, "已存储", Toast.LENGTH_SHORT).show();
+    }
+
+    public static int getGardenId(){
+        return MainActivity.gardenId;
+    }
+
+    private void setGardenId(int gardenId) {
+        MainActivity.gardenId = gardenId;
     }
 }
 

@@ -8,4 +8,5 @@
     <!--为矩形绘制边框-->
     <stroke android:color="#000000"
         android:width="2dp"/>
+
 </shape>

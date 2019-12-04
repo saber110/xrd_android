@@ -64,6 +64,12 @@ public class v1{
     public static String createGardenApi;
     public static String getMapDataAPI;
     public static String addMapDataAPI;
+
+    public static String deleteMapDataApi;
+
+    public static String uploadGardenPictureApi;
+    public static String uploadOtherPictureApi;
+    public static String uploadBuildingPictureApi;
     private static Resources res;
 
 
@@ -97,6 +103,11 @@ public class v1{
         v1.searchGardenApi = String.format(pattern, res.getString(R.string.administrationTab), res.getString(R.string.searchGardenApi));
         v1.getMapDataAPI = String.format(pattern,res.getString(R.string.getDataTab), res.getString(R.string.getMapDataAPI));
         v1.addMapDataAPI = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.addMapDataAPI));
+        v1.uploadGardenPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadGardenPictureApi));
+        v1.uploadOtherPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadOtherPictureApi));
+        v1.uploadBuildingPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadBuildingPictureApi));
+
+        v1.deleteMapDataApi = String.format(pattern,res.getString(R.string.delDataTab), res.getString(R.string.deleteMapDataApi));
     }
 
     public void setToken(String token){
