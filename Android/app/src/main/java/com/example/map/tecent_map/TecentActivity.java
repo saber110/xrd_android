@@ -143,10 +143,8 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
         TextView baiduText = findViewById(R.id.baidu_map);
         TextView tecentText = findViewById(R.id.tecent_map);
-        TextView googleText = findViewById(R.id.google_map);
         baiduText.setBackgroundColor(0x99EEE6E6);
         tecentText.setBackgroundColor(Color.RED);
-        googleText.setBackgroundColor(0x99EEE6E6);
 
         /**
          * 点击百度地图进行跳转
@@ -160,16 +158,6 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                                              finish();
                                          }
                                      }
-        );
-        googleText.setOnClickListener(new View.OnClickListener() {
-                                          @Override
-                                          public void onClick(View v) {
-                                              Intent intent = new Intent(TecentActivity.this, GoogleMapActivity.class);
-                                              intent.putExtra("gardenId", gardenId);
-                                              startActivity(intent);
-                                              finish();
-                                          }
-                                      }
         );
 
     }

@@ -139,10 +139,8 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
 
         TextView baiduText = findViewById(R.id.baidu_map);
         TextView tecentText = findViewById(R.id.tecent_map);
-        TextView googleText = findViewById(R.id.google_map);
         baiduText.setBackgroundColor(Color.RED);
         tecentText.setBackgroundColor(0x99EEE6E6);
-        googleText.setBackgroundColor(0x99EEE6E6);
 
         /**
          * 点击百度地图进行跳转
@@ -151,17 +149,6 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                                           @Override
                                           public void onClick(View v) {
                                               Intent intent = new Intent(BaiduMapActivity.this, TecentActivity.class);
-                                              intent.putExtra("gardenId", gardenId);
-                                              startActivity(intent);
-                                              finish();
-                                          }
-                                      }
-        );
-
-        googleText.setOnClickListener(new View.OnClickListener() {
-                                          @Override
-                                          public void onClick(View v) {
-                                              Intent intent = new Intent(BaiduMapActivity.this, GoogleMapActivity.class);
                                               intent.putExtra("gardenId", gardenId);
                                               startActivity(intent);
                                               finish();
