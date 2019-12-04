@@ -2,8 +2,6 @@ package com.example.collectdata_01.util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.example.collectdata_01.CollectActivity;
@@ -52,7 +50,6 @@ public class BottomUtil {
                                                            switch (po){
                                                                case 0:
                                                                    context.startActivity(new Intent(context, MainActivity.class));
-
                                                                    break;
                                                                case 1:
                                                                    Intent intent =new Intent(context,MainActivity.class);
@@ -63,7 +60,6 @@ public class BottomUtil {
                                                                    context.startActivity(new Intent(context, ResultActivity.class));
                                                                    break;
                                                                case 3:
-
                                                                    context.startActivity(new Intent(context, CollectActivity.class));
                                                                    break;
                                                                default:break;

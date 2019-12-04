@@ -2,6 +2,7 @@ package com.example.map.net;
 
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.login.login;
 import com.example.map.dao.CityDao;
@@ -25,15 +26,15 @@ public class GetLoctionIdUtil {
      * @return
      */
     public static ProvinceDao getProvinceId(){
-        Log.i("777", "getProvinceId: ");
         Map map = new HashMap(1);
         map.put("token", login.token);
         try {
-            HttpRequest request = new HttpRequest(v1.getProvinceApi, "POST").form(map);
+            HttpRequest request = new HttpRequest(v1.getProvinceApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
             String result = request.body();
-            Log.i("777", "getProvinceId: " + result);
-
             ProvinceDao provinceDao = JSONObject.parseObject(result, ProvinceDao.class);
+            Log.d(">>>>>", "省的数据: "+provinceDao);
             return provinceDao;
         } catch (Exception e) {
             return null;
@@ -51,8 +52,12 @@ public class GetLoctionIdUtil {
         map.put("token", login.token);
         map.put("provinceId", provinceId);
         try {
-            HttpRequest request = new HttpRequest(v1.getCityApi, "POST").form(map);
-            CityDao getCityIdDao = JSONObject.parseObject(request.body(), CityDao.class);
+            HttpRequest request = new HttpRequest(v1.getCityApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
+            String res = request.body();
+            Log.d(">>>>>", "市的数据: "+res);
+            CityDao getCityIdDao = JSONObject.parseObject(res, CityDao.class);
             return getCityIdDao;
         } catch (Exception e) {
             return null;
@@ -69,8 +74,12 @@ public class GetLoctionIdUtil {
         map.put("token", login.token);
         map.put("cityId", cityId);
         try {
-            HttpRequest request = new HttpRequest(v1.getDistrictApi, "POST").form(map);
-            DistrictDao districtDao = JSONObject.parseObject(request.body(), DistrictDao.class);
+            HttpRequest request = new HttpRequest(v1.getDistrictApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
+            String res = request.body();
+            Log.d(">>>>>", "行政区的数据: "+res);
+            DistrictDao districtDao = JSONObject.parseObject(res, DistrictDao.class);
             return districtDao;
         } catch (Exception e) {
             return null;
@@ -87,8 +96,12 @@ public class GetLoctionIdUtil {
         map.put("token", login.token);
         map.put("districtId", districtId);
         try {
-            HttpRequest request = new HttpRequest(v1.getStreetApi, "POST").form(map);
-            StreetDao streetDao = JSONObject.parseObject(request.body(), StreetDao.class);
+            HttpRequest request = new HttpRequest(v1.getStreetApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
+            String res = request.body();
+            Log.d(">>>>>", "街道的数据: "+res);
+            StreetDao streetDao = JSONObject.parseObject(res, StreetDao.class);
             return streetDao;
         } catch (Exception e) {
             return null;
@@ -105,8 +118,12 @@ public class GetLoctionIdUtil {
         map.put("token", login.token);
         map.put("streetId", streetId);
         try {
-            HttpRequest request = new HttpRequest(v1.getCommunityApi, "POST").form(map);
-            CommunityDao communityDao = JSONObject.parseObject(request.body(), CommunityDao.class);
+            HttpRequest request = new HttpRequest(v1.getCommunityApi, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
+            String res = request.body();
+            Log.d(">>>>>", "街道的数据: "+res);
+            CommunityDao communityDao = JSONObject.parseObject(res, CommunityDao.class);
             return communityDao;
         } catch (Exception e) {
             return null;

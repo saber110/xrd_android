@@ -6,15 +6,33 @@ import com.example.collectdata.tools.ConstTools;
  * 信息详情页普通行
  */
 public class CommonItemBean {
-
-    public final int type;
-
+     public final int type;
     //标题
     private String title;
     //text内容
     private String content;
+    private String key;
+    private boolean change;
+    private boolean require;
+    private String requireType;
 
-    public CommonItemBean(String title, String content ,int type) {
+    public String getRequireType() {
+        return requireType;
+    }
+
+    public void setRequireType(String requireType) {
+        this.requireType = requireType;
+    }
+
+    public boolean isRequire() {
+        return require;
+    }
+
+    public void setRequire(boolean require) {
+        this.require = require;
+    }
+
+    public CommonItemBean(String title, String content , int type) {
         this.title = title;
         this.content = content;
         this.type = type;
@@ -41,6 +59,22 @@ public class CommonItemBean {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public boolean isChange() {
+        return change;
+    }
+
+    public void setChange(boolean change) {
+        this.change = change;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     @Override

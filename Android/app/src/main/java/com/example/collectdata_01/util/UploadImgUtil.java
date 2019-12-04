@@ -3,6 +3,7 @@ package com.example.collectdata_01.util;
 import android.os.Environment;
 import android.util.Log;
 
+import com.example.interfaceNet.v1;
 import com.example.login.login;
 
 import java.io.File;
@@ -68,9 +69,13 @@ public class UploadImgUtil {
         }
         Request request = new Request.Builder().url(url).post(requestBody.build()).build();
         // readTimeout("请求超时时间" , 时间单位);
-        client.newBuilder().readTimeout(5000, TimeUnit.MILLISECONDS).build().newCall(request).enqueue(new Callback() {
+        client.newBuilder()
+                .connectTimeout(5, TimeUnit.MINUTES) // connect timeout
+                .writeTimeout(5, TimeUnit.MINUTES) // write timeout
+                .readTimeout(5, TimeUnit.MINUTES).build().newCall(request).enqueue(new Callback() { // read timeout
             @Override
             public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
                 Log.d(">>>>>>", "onFailure: 上传图片失败");
             }
 
@@ -104,7 +109,7 @@ public class UploadImgUtil {
         map.put("collectTime",collectTime);
         map.put("token", token);
         map.put("image", jpeg);
-        postFile("http://rap2api.taobao.org/app/mock/234350/api/v1/data/garden_picture",map,jpeg);
+        postFile(v1.uploadGardenPictureApi,map,jpeg);
     }
 
     /**
@@ -122,7 +127,7 @@ public class UploadImgUtil {
         map.put("collectTime",collectTime);
         map.put("token", token);
         map.put("image", jpeg);
-        postFile("http://rap2api.taobao.org/app/mock/234350/api/v1/data/other_picture",map, jpeg);
+        postFile(v1.uploadOtherPictureApi,map, jpeg);
     }
 
     /**
@@ -144,6 +149,6 @@ public class UploadImgUtil {
         map.put("token", login.token);
         map.put("gardenId",gardenId);
         map.put("image", jpeg);
-        postFile("http://rap2api.taobao.org/app/mock/234350/api/v1/data/building_picture",map, jpeg);
+        postFile(v1.uploadBuildingPictureApi,map, jpeg);
     }
 }

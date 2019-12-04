@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.collectdata.MessageActivity">
+    <include layout="@layout/ui_title_bar"/>
+    <!--信息收集页面-->
+    <!--TabLayout_tabMode:MODE_SCROLLABLE属性负责让tab可以滚动-->
+    <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <com.google.android.material.tabs.TabItem
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="tab-one"/>
+            <com.google.android.material.tabs.TabItem
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="tab-one"/>
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/building_message_list"
+        >
+    </ListView>
+
+
+    <!--底部提交按钮-->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:textColor="#ffffff"
+        android:id="@+id/building_message_submit"
+        android:text="@string/message_submit"
+        android:background="@drawable/login_button"
+        android:layout_margin="10dp"
+        />
+
+</LinearLayout>

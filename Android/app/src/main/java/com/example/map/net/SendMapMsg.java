@@ -1,7 +1,14 @@
 package com.example.map.net;
 
+import android.util.Log;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.amap.api.navi.INavi;
+import com.example.interfaceNet.v1;
 import com.example.login.login;
 import com.example.map.dao.MapData;
+import com.example.map.dao.StanderDao;
 import com.example.net.ProcessInterface;
 import com.github.kevinsawicki.http.HttpRequest;
 
@@ -12,7 +19,25 @@ public class SendMapMsg implements ProcessInterface {
 
     private MapData mapData = new MapData();
 
-    public SendMapMsg(double lat, double lg, String name, String gardenId, int mapId,int kindId) {
+    /**
+     * {
+     *   "longitude": 1,
+     *   "latitude": 1,
+     *   "kindId": 1,
+     *   "name": "",
+     *   "gardenId": 1,
+     *   "token": "",
+     *   "mapId": 0,
+     *   "id": "地图数据id"
+     * }
+     * @param lat
+     * @param lg
+     * @param name
+     * @param gardenId
+     * @param mapId
+     * @param kindId
+     */
+    public SendMapMsg(double lat, double lg, String name, Integer gardenId, int mapId, int kindId) {
         mapData.setLatitude(lat);
         mapData.setLongitude(lg);
         mapData.setKindId(kindId);
@@ -20,7 +45,6 @@ public class SendMapMsg implements ProcessInterface {
         mapData.setGardenId(gardenId);
         mapData.setToken(login.token);
         mapData.setMapId(mapId);
-
     }
 
     @Override
@@ -35,8 +59,12 @@ public class SendMapMsg implements ProcessInterface {
         map.put("mapId", mapData.getMapId());
 
         try {
-            HttpRequest request = new HttpRequest("http://rap2api.taobao.org/app/mock/234350/api/v1/data/map", "POST").form(map);
-            return request.body();
+            HttpRequest request = new HttpRequest(v1.addMapDataAPI, "POST")
+                    .header("Content-Type", "application/json")
+                    .send(JSON.toJSONString(map));
+            String result = request.body();
+            Log.d(">>>>", "添加: "+result);
+            return JSONObject.parseObject(result, StanderDao.class);
         } catch (Exception e) {
             return null;
         }

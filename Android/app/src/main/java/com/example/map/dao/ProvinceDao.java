@@ -4,6 +4,15 @@ import java.util.List;
 
 public class ProvinceDao {
 
+    @Override
+    public String toString() {
+        return "ProvinceDao{" +
+                "code=" + code +
+                ", data=" + data +
+                ", message='" + message + '\'' +
+                '}';
+    }
+
     /**
      * code : 0
      * data : {"provinces":[{"id":1,"name":"湖南省"}]}
@@ -45,6 +54,13 @@ public class ProvinceDao {
             return provinces;
         }
 
+        @Override
+        public String toString() {
+            return "DataBean{" +
+                    "provinces=" + provinces +
+                    '}';
+        }
+
         public void setProvinces(List<ProvincesBean> provinces) {
             this.provinces = provinces;
         }
@@ -57,6 +73,14 @@ public class ProvinceDao {
 
             private int id;
             private String name;
+
+            @Override
+            public String toString() {
+                return "ProvincesBean{" +
+                        "id=" + id +
+                        ", name='" + name + '\'' +
+                        '}';
+            }
 
             public int getId() {
                 return id;
