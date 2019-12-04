@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,8 +23,10 @@ import com.example.collectdata_01.R;
 import com.example.dialog.CreatDialog;
 import com.example.map.baidu_map.BaiduMapActivity;
 import com.example.map.dao.MapMarkerDataDao;
+import com.example.map.dao.StanderDao;
 import com.example.map.google.GoogleMapActivity;
 import com.example.map.net.GetMarkerData;
+import com.example.map.net.MarkerNetUtil;
 import com.example.map.net.SendMapMsg;
 import com.example.net.AsyncRequest;
 import com.tencent.map.geolocation.TencentLocation;
@@ -53,17 +56,17 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     private LocationListener listener;
     private Dialog dialog;
     private View view;
-    private String gardenId;
+    private Integer gardenId;
     private TextView huayuan;
     private TextView louceng;
     private TextView lu;
     private TextView qita;
     private TextView lat;
     private TextView lng;
-    private int choose;
+    private int choose = 1;
     private View changeView;
     private Dialog changeDialog;
-
+    private EditText name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +76,11 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         mapview = findViewById(R.id.tecent_mapview);
         view = getLayoutInflater().inflate(R.layout.send_map_data, null);
         changeView = getLayoutInflater().inflate(R.layout.change_mark_data, null);
-
+        name = view.findViewById(R.id.input_msg);
         dialog = CreatDialog.createSendMapDataDialog(this, view);
         changeDialog = CreatDialog.createChangeMarkDialog(this, changeView);
 
-        gardenId = getIntent().getStringExtra("gardenId");
+        gardenId = getIntent().getIntExtra("gardenId",0);
         init();
         initLoc();
         initMark();
@@ -90,21 +93,25 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         try {
             MapMarkerDataDao mapMarkerDataDao = (MapMarkerDataDao) asyncTask.get();
             if (mapMarkerDataDao.getCode() == 0) {
-                for (MapMarkerDataDao.DataBean.MapDataBean mapDataBean :
-                        mapMarkerDataDao.getData().getMap_data()) {
-                    MarkerOptions options = new MarkerOptions().position(new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude())).
-                            icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(mapDataBean.getName())));
+                for (int i = 0; i < mapMarkerDataDao.getData().getMap_data().size(); i++) {
+                    MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(i);
+                    MarkerOptions options = new MarkerOptions(new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude())).
+                            icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(mapDataBean.getName()))).tag(mapDataBean.getId());
                     tencentMap.addMarker(options);
-                }
-                if (mapMarkerDataDao.getData().getMap_data().size() != 0) {
-                    MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(0);
-                    tencentMap.animateCamera(CameraUpdateFactory.zoomTo(17));
-                    tencentMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude())));
+                    /**
+                     * 镜头移动
+                     */
+                    if (mapMarkerDataDao.getData().getMap_data().size() != 0) {
+                        MapMarkerDataDao.DataBean.MapDataBean data = mapMarkerDataDao.getData().getMap_data().get(0);
+                        tencentMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+                        tencentMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(data.getLatitude(), data.getLongitude())));
+                    }
                 }
             }
-
-        } catch (Exception e) {
-
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
     }
 
@@ -113,7 +120,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         Bitmap bitmap;
         int width = 100;
         int height = 100;
-        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
+        bitmap = Bitmap.createBitmap(width*str.length(), height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);//抗锯齿
         paint.setDither(true); // 获取跟清晰的图像采样
         paint.setFilterBitmap(true);// 过滤
@@ -214,7 +221,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 louceng.setBackgroundColor(0x99EEE6E6);
                 lu.setBackgroundColor(0x99EEE6E6);
                 qita.setBackgroundColor(0x99EEE6E6);
-                choose = 0;
+                choose = 1;
             }
         });
 
@@ -225,7 +232,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 huayuan.setBackgroundColor(0x99EEE6E6);
                 lu.setBackgroundColor(0x99EEE6E6);
                 qita.setBackgroundColor(0x99EEE6E6);
-                choose = 1;
+                choose = 2;
             }
         });
         lu.setOnClickListener(new View.OnClickListener() {
@@ -235,7 +242,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 louceng.setBackgroundColor(0x99EEE6E6);
                 huayuan.setBackgroundColor(0x99EEE6E6);
                 qita.setBackgroundColor(0x99EEE6E6);
-                choose = 2;
+                choose = 3;
             }
         });
         qita.setOnClickListener(new View.OnClickListener() {
@@ -245,7 +252,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 louceng.setBackgroundColor(0x99EEE6E6);
                 lu.setBackgroundColor(0x99EEE6E6);
                 huayuan.setBackgroundColor(0x99EEE6E6);
-                choose = 3;
+                choose = 4;
             }
         });
     }
@@ -305,27 +312,12 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         view.findViewById(R.id.send_map_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText name = view.findViewById(R.id.input_msg);
-                if (name.getText().toString() == null && name.getText().toString().length() == 0) {
-
+                if (name.getText().toString().length() == 0) {
+                    Toast.makeText(TecentActivity.this, "请输入内容", Toast.LENGTH_SHORT).show();
                 } else {
-                    SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1, choose);
-                    AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
-                    try {
-                        String result = (String) asyncTask.get();
-                        if (result != null) {
-                            Toast.makeText(TecentActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
-                            MarkerOptions options = new MarkerOptions(latLng).icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(name.getText().toString())));
-                            tencentMap.addMarker(options);
-                        }
-                    } catch (ExecutionException e) {
-                        Toast.makeText(TecentActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        Toast.makeText(TecentActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    } finally {
-                        dialog.cancel();
+                    if (addMark(latLng)) {
+                        Toast.makeText(TecentActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
                 }
             }
@@ -340,22 +332,23 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         changeView.findViewById(R.id.delete_data_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (deleteMark()) {
-                    marker.setVisible(false);
+                if (deleteMark((Integer) marker.getTag())) {
+                    marker.remove();
+                    changeDialog.dismiss();
                 }
-                changeDialog.cancel();
             }
         });
+
         changeView.findViewById(R.id.change_data_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (title.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (changeMarkData()) {
-                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawBitMap(title.getText().toString())));
+                    if (changeMarkData(marker.getPosition(), (Integer) marker.getTag())) {
+                        marker.remove();
+                        changeDialog.dismiss();
                     }
-                    changeDialog.cancel();
                 }
             }
         });
@@ -364,13 +357,41 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
 
     /**
-     * 修改marker
+     * 修改，先删除，然后添加
      *
+     * @param id
      * @return
      */
-    private boolean changeMarkData() {
+    private boolean changeMarkData(LatLng latLng, int id) {
+        if (deleteMark(id) || addMark(latLng)) {
+            return true;
+        }
+        return false;
+    }
 
-        return true;
+    /**
+     * 添加marker
+     *
+     * @param latLng
+     * @return
+     */
+    private boolean addMark(LatLng latLng) {
+        SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1, choose);
+        AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
+        try {
+            StanderDao result = (StanderDao) asyncTask.get();
+            Log.d(TAG, "deleteMark: "+"0".equals(result.getCode()));
+            if (result != null && "0".equals(result.getCode())) {
+                MarkerOptions options = new MarkerOptions(latLng).icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(name.getText().toString())));
+                tencentMap.addMarker(options);
+            }
+        } catch (ExecutionException e) {
+            Toast.makeText(TecentActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -378,8 +399,22 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
      *
      * @return
      */
-    private boolean deleteMark() {
-        return true;
+    private boolean deleteMark(Integer id) {
+        MarkerNetUtil.DeletMarkerUtil deletMarkerUtil = new MarkerNetUtil.DeletMarkerUtil(id);
+        AsyncTask asyncTask = new AsyncRequest().execute(deletMarkerUtil);
+        try {
+            StanderDao result = (StanderDao) asyncTask.get();
+            if (result != null && "0".equals(result.getCode())) {
+                return true;
+            }
+        } catch (ExecutionException e) {
+            Toast.makeText(getApplicationContext(), "发送数据失败", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            Toast.makeText(getApplicationContext(), "发送数据失败", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return false;
     }
 
 

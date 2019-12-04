@@ -72,7 +72,7 @@ public class v1{
     static OkHttpClient client = new OkHttpClient();
 
     public v1(Context context) {
-        this.context = context;
+        v1.context = context;
         res = context.getResources();
         v1.preFix = res.getString(R.string.preFix);
         v1.pattern = res.getString(R.string.preFix);

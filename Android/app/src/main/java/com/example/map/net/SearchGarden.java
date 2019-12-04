@@ -36,10 +36,11 @@ public class SearchGarden implements ProcessInterface {
             HttpRequest request = new HttpRequest(v1.searchGardenApi, "POST")
                     .header("Content-Type", "application/json")
                     .send(param);
-            Log.i(TAG, "SearchGardencall: " + request.body());
+            String result = request.body();
+            Log.i(TAG, "SearchGardencall: " + result);
 
             // 接口已通，需要调整SearchGardenResultDao
-            SearchGardenResultDao searchGardenResultDao = JSONObject.parseObject(request.body(), SearchGardenResultDao.class);
+            SearchGardenResultDao searchGardenResultDao = JSONObject.parseObject(result, SearchGardenResultDao.class);
             return searchGardenResultDao;
         } catch (Exception e) {
             e.printStackTrace();

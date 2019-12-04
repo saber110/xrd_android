@@ -16,7 +16,7 @@ public class MapData {
     private double latitude;
     private int kindId;
     private String name;
-    private String gardenId;
+    private Integer gardenId;
     private String token;
     private int mapId;
 
@@ -52,11 +52,11 @@ public class MapData {
         this.name = name;
     }
 
-    public String getGardenId() {
+    public Integer getGardenId() {
         return gardenId;
     }
 
-    public void setGardenId(String gardenId) {
+    public void setGardenId(Integer gardenId) {
         this.gardenId = gardenId;
     }
 

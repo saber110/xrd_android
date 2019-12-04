@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GetMarkerData implements ProcessInterface {
-    private String gardenId;
-    private int mapId;
+    private Integer gardenId;
+    private Integer mapId;
 
-    public GetMarkerData(String gardenId, int mapId) {
+    public GetMarkerData(Integer gardenId, Integer mapId) {
         this.gardenId = gardenId;
         this.mapId = mapId;
     }

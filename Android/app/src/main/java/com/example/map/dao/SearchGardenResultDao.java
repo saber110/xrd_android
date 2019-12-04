@@ -5,29 +5,30 @@ import java.util.List;
 public class SearchGardenResultDao {
 
     /**
-     * code :
-     * message :
-     * data : {"buildingKinds":[{"kindName":1,"id":""}]}
+     * code : 0
+     * data : {"gardens":[{"cityName":"长沙市","communityName":"识字里社区","districtName":"芙蓉区","gardenName":"测试小区1","provinceName":"湖南省","streetName":"文艺路街道"}]}
+     * message : 查找小区成功
      */
 
-    private String code;
-    private String message;
+    private int code;
     private DataBean data;
+    private String message;
 
-    public String getCode() {
+    @Override
+    public String toString() {
+        return "SearchGardenResultDao{" +
+                "code=" + code +
+                ", data=" + data +
+                ", message='" + message + '\'' +
+                '}';
+    }
+
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public DataBean getData() {
@@ -38,40 +39,107 @@ public class SearchGardenResultDao {
         this.data = data;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public static class DataBean {
-        private List<BuildingKindsBean> buildingKinds;
-
-        public List<BuildingKindsBean> getBuildingKinds() {
-            return buildingKinds;
+        @Override
+        public String toString() {
+            return "DataBean{" +
+                    "gardens=" + gardens +
+                    '}';
         }
 
-        public void setBuildingKinds(List<BuildingKindsBean> buildingKinds) {
-            this.buildingKinds = buildingKinds;
+        private List<GardensBean> gardens;
+
+        public List<GardensBean> getGardens() {
+            return gardens;
         }
 
-        public static class BuildingKindsBean {
+        public void setGardens(List<GardensBean> gardens) {
+            this.gardens = gardens;
+        }
+
+        public static class GardensBean {
+            @Override
+            public String toString() {
+                return "GardensBean{" +
+                        "cityName='" + cityName + '\'' +
+                        ", communityName='" + communityName + '\'' +
+                        ", districtName='" + districtName + '\'' +
+                        ", gardenName='" + gardenName + '\'' +
+                        ", provinceName='" + provinceName + '\'' +
+                        ", streetName='" + streetName + '\'' +
+                        '}';
+            }
+
             /**
-             * kindName : 1
-             * id :
+             * cityName : 长沙市
+             * communityName : 识字里社区
+             * districtName : 芙蓉区
+             * gardenName : 测试小区1
+             * provinceName : 湖南省
+             * streetName : 文艺路街道
              */
 
-            private int kindName;
-            private String id;
+            private String cityName;
+            private String communityName;
+            private String districtName;
+            private String gardenName;
+            private String provinceName;
+            private String streetName;
 
-            public int getKindName() {
-                return kindName;
+            public String getCityName() {
+                return cityName;
             }
 
-            public void setKindName(int kindName) {
-                this.kindName = kindName;
+            public void setCityName(String cityName) {
+                this.cityName = cityName;
             }
 
-            public String getId() {
-                return id;
+            public String getCommunityName() {
+                return communityName;
             }
 
-            public void setId(String id) {
-                this.id = id;
+            public void setCommunityName(String communityName) {
+                this.communityName = communityName;
+            }
+
+            public String getDistrictName() {
+                return districtName;
+            }
+
+            public void setDistrictName(String districtName) {
+                this.districtName = districtName;
+            }
+
+            public String getGardenName() {
+                return gardenName;
+            }
+
+            public void setGardenName(String gardenName) {
+                this.gardenName = gardenName;
+            }
+
+            public String getProvinceName() {
+                return provinceName;
+            }
+
+            public void setProvinceName(String provinceName) {
+                this.provinceName = provinceName;
+            }
+
+            public String getStreetName() {
+                return streetName;
+            }
+
+            public void setStreetName(String streetName) {
+                this.streetName = streetName;
             }
         }
     }
