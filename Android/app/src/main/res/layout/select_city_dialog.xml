@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/card_style"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:paddingTop="100dp"
+    android:divider="@drawable/divider"
+    android:dividerPadding="3dp"
+    android:showDividers="middle">
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/select_city_recycleview"
+        />
+</LinearLayout>

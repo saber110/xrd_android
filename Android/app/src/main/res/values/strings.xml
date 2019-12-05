@@ -1,0 +1,90 @@
+<resources>
+    <string name="app_name">数据采集</string>
+    <string name="login_success">login success</string>
+    <string name="login">登录系统</string>
+    <string name="Username">设备识别码</string>
+    <string name="Password">密码</string>
+    <string name="oldPassword">旧密码</string>
+    <string name="newPassword">新密码</string>
+    <string name="forgot_your_password"></string>
+    <string name="go">登录</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="next">NEXT</string>
+    <string name="register">REGISTER</string>
+    <string name="label_neighbour">工作小区：</string>
+    <string name="label_neighbour_working">请选择工作小区</string>
+
+    <!--    API-->
+<!--    <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/%1$s/%2$s</string>-->
+    <string name="preFix">http://kms.yinaoxiong.cn:8888/api/v1/%1$s/%2$s</string>
+<!--    <string name="preFix">http://192.168.137.52:5000/api/v1/%1$s/%2$s</string>-->
+
+    <string name="userTab">user</string>
+    <string name="loginApi">login</string>
+    <string name="cbLogin">cb_Login</string>
+    <string name="refreshTokenApi">refresh_token</string>
+    <string name="updateUserApi">update</string>
+    <string name="updatePasswordApi">reset_password</string>
+    
+    <string name="getDataTab">get_data</string>
+    <string name="getMapDataAPI">map</string>
+    <string name="getGardenBaseInfoAPI">garden_base_info</string>
+    <string name="cbUpdateBuildingBaseInfo">cb_update_building_base_info</string>
+    <string name="cbUpdateGardenBaseInfo">cb_update_garden_base_info</string>
+    <string name="cbUpdateBuildingImportInfo">cb_update_building_import_info</string>
+    <string name="cbUpdateGardenImportInfo">cb_update_garden_import_info</string>
+    <string name="getBuildBaseInfoAPI">building_base_info</string>
+    <string name="importGardenBaseInfoApi">garden_import_info</string>
+    <string name="importBuildingBaseInfoApi">building_import_info</string>
+    <string name="getGardenImportInfoApi">garden_import_info</string>
+    <string name="getBuildingImportInfoApi">building_import_info</string>
+
+    <string name="dataTab">data</string>
+    <string name="createGardenApi">garden</string>
+    <string name="addMapDataAPI">map</string>
+    <string name="uploadGardenPictureApi">garden_picture</string>
+    <string name="uploadOtherPictureApi">other_picture</string>
+    <string name="uploadBuildingPictureApi">building_picture</string>
+
+
+    <string name="administrationTab">administration</string>
+    <string name="getProvinceApi">province</string>
+    <string name="getCityApi">city</string>
+    <string name="getDistrictApi">district</string>
+    <string name="getStreetApi">street</string>
+    <string name="getCommunityApi">community</string>
+    <string name="searchGardenApi">search_garden</string>
+
+    <string name="delDataTab">del_data</string>
+    <string name="deleteMapDataApi">map</string>
+    
+    <!--    Data页面的string    -->
+    <string name="data_xiaoqugaikuang">小区概况表</string>
+    <string name="data_louzhuangdiaocha">楼幢调查</string>
+    <string name="data_xiaoquxinxi">小区信息</string>
+    <string name="data_louzhuangxinxi">楼幢信息</string>
+
+    <!-- 信息收集页的string  -->
+    <string name="message_submit">提交信息</string>
+    <string name="message_hint">请在此输入信息...</string>
+    <string name="message_title">信息详情</string>
+
+
+    <string name="cat_single_select">Single-select</string>
+    <string name="cat_multi_select">Multi-select</string>
+    <string name="cat_icon_only">Icon only</string>
+    <string name="cat_button_label_private">Private</string>
+    <string name="cat_button_label_team">Team</string>
+    <string name="cat_button_label_everyone">Everyone</string>
+    <string name="cat_button_label_custom">Custom</string>
+    <string name="cat_button_label_cheese">Cheese</string>
+    <string name="cat_button_label_tomatoes">Tomatoes</string>
+    <string name="cat_button_label_mushrooms">Mushrooms</string>
+
+
+    <string name="api_error">接口出了点问题....，请联系管理员</string>
+    <string name="loading">努力加载中，请稍候...</string>
+
+
+    <string name="cat_textfield_label" translatable="false">Label</string>
+</resources>
