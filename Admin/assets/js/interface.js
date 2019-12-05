@@ -8,6 +8,8 @@ const login = user + "login";
 const updateToken = user + "refresh_token";
 const userList = user + "all_info";
 const updateUser = user + "update";
+// excel导入用户接口
+const userFileUpload = user + "import_user";
 
 
 const admin = preFix + "administration/";
@@ -25,6 +27,7 @@ const community = admin + "community";
 const garden = admin + "garden";
 // excel导入数据接口
 const fileUpload = admin + "import_data";
+
 
 
 const data = preFix + "data/";
@@ -263,10 +266,15 @@ function adminUpdateFun() {
 
 function uploadFun(id) {
     var formData = new FormData();
+    var url;
+    switch(id){
+        case "userUpload": url = userFileUpload;break;
+        case "administrationUpload": url = fileUpload;
+    }
     formData.append("token", getCookie("token"));
     formData.append("file", document.getElementById(id).files[0]);
     $.ajax({
-        url: fileUpload,
+        url: url,
         method: "POST",
         cache: false,
         data: formData,
