@@ -72,8 +72,6 @@ public class GoogleMapActivity extends AppCompatActivity implements LocationList
     private void initChoose() {
         TextView baiduText = findViewById(R.id.baidu_map);
         TextView tecentText = findViewById(R.id.tecent_map);
-        TextView googleText = findViewById(R.id.google_map);
-        googleText.setBackgroundColor(Color.RED);
         tecentText.setBackgroundColor(0x99EEE6E6);
         baiduText.setBackgroundColor(0x99EEE6E6);
 

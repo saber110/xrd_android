@@ -21,13 +21,4 @@
         android:gravity="center"
         android:text="腾讯"
         android:textSize="@dimen/main_text_size" />
-    <TextView
-        android:id="@+id/google_map"
-        android:layout_weight="1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:text="谷歌"
-        android:textSize="@dimen/main_text_size" />
 </LinearLayout>
