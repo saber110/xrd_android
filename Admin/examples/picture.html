@@ -36,7 +36,7 @@
   <link href="../assets/css/jquery.bsPhotoGallery.css" rel="stylesheet">
 </head>
 
-<body class="">
+<body class="" >
   <div class="wrapper ">
     <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg" id = "sidebar">
     </div>
@@ -46,12 +46,7 @@
       </nav>
       <!-- End Navbar -->
       <div class="content">
-        <div class="container-fluid">
-          <div class="card card-plain">
-            <div class="col-lg-12 col-md-12">
-              <div class="card card-plain">
-                <div class="card-header card-header-tabs card-header-primary">
-                  <form class="form">
+        <form class="form">
                     <span id="city_china_val" class="bmd-form-group"><div class="input-group no-border">
                         <select class="province other form-control" data-first-title="选择省" id = "province">
                           <option value="">请选择</option>
@@ -74,9 +69,12 @@
                           <!-- <option value="识字岭社区" selected>识字岭社区</option> -->
                         </select>
                     </div>
-                  </span>
+                    </span>
                   </form>
-                </div>
+        <div class="container-fluid">
+          <div class="card card-plain">
+            <div class="col-lg-12 col-md-12">
+              <div class="card card-plain">
                 <div class="row">
                   <ul class="nav">
                     <span class="input-group " id = "neighboutLists">
@@ -84,35 +82,11 @@
                   </ul>
                 </div>
                 <div class="card-body" >
-                  <ul class="row first">
-                      <li>
+                  <ul class="row first" id = "pictureListss">
+                      <!-- <li>
                           <img alt="Rocking the night away"  src="http://demo.michaelsoriano.com/images/photodune-174908-rocking-the-night-away-xs.jpg">
                           <p>Consectetur adipiscing elit</p>
-                      </li>
-                      <li>
-                          <img alt="Yellow sign"  src="http://demo.michaelsoriano.com/images/photodune-287182-blah-blah-blah-yellow-road-sign-xs.jpg">
-                          <p>Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam</p>
-                      </li>
-                      <li>
-                          <img alt="Colors"  src="http://demo.michaelsoriano.com/images/photodune-460760-colors-xs.jpg">
-                           <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
-                      </li>
-                      <li>
-                          <img alt="Retro party"  src="http://demo.michaelsoriano.com/images/photodune-461673-retro-party-xs.jpg">
-                          <p>Lorem, do eiusmod tempor incid Ut enim ad minim veniam</p>
-                      </li>
-                      <li>
-                          <img alt="Technology soup"  src="http://demo.michaelsoriano.com/images/photodune-514834-touchscreen-technology-xs.jpg">
-                          <p>Do eiusmod tempor</p>
-                      </li>
-                      <li>
-                          <img alt="Legal docs"  src="http://demo.michaelsoriano.com/images/photodune-916206-legal-xs.jpg" data-bsp-large-src="http://demo.michaelsoriano.com/images/photodune-916206-legal-large.jpg">
-                          <p>Eiusmod tempor enim ad minim veniam</p>
-                      </li>
-                      <li>
-                          <img alt="Nature shot"  src="http://demo.michaelsoriano.com/images/photodune-1062948-nature-xs.jpg">
-                          <p>Adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
-                      </li>
+                      </li> -->
 
                   </ul>
                 </div>
@@ -172,6 +146,18 @@
   <script type="text/javascript" src="../assets/js/interface.js"></script>
   <script type="text/javascript" src="../assets/js/plugins/city.js"></script>
   <script type="text/javascript">
+    function show_element(e){
+        if(!e){
+          var e = window.event;
+        }
+        //获取事件点击元素
+        var targ = e.target;
+        //获取元素名称
+        var tname = targ.id;
+        alert(tname);
+      }
+  </script>
+  <script type="text/javascript">
     communitySelect.onchange = function() {
       var communityId = communitySelect.options[communitySelect.options.selectedIndex].value;
       var gardens = getGardenListOfCommunity(communityId);
@@ -179,15 +165,24 @@
       for(var p in gardens){
         var li = document.createElement("li");
         li.className = "nav-item";
-        var a = document.createElement("a");
-        a.className = "nav-link";
-        a.id = "gardenId" + gardens[p].id;
-        a.innerHTML = gardens[p].name;
-        a.href = "#";
-        li.appendChild(a);
+        $(li).html("<a class='nav-link' id = 'gardenId" + gardens[p].id + "' onclick = getGardenPictures(" + gardens[p].id + ")>" + gardens[p].name + "</a>");
         neighboutLists.appendChild(li);
       }
     };
+
+    function getGardenPictures(gardenId) {
+      var pictureLists = document.getElementById("pictureListss");
+      var pictures = getGardenPictureFun(gardenId);
+      for(var p in pictures){
+        var li = document.createElement("li");
+        li.className = "col-xl-3 col-lg-2 col-md-4 col-sm-4 bspHasModal";
+        var url = '"' + pictures[p].compressedFilePath + '"';
+        $(li).html("<div class='bspImgWrapper' style='background:url(" + url + "');'></div><p class='bspText'>" + 
+          pictures[p].compressedFilePath + "</p>");
+          pictureLists.appendChild(li);
+      }
+      console.log(pictures);
+    }
   </script>
   <script>
     $(document).ready(function(){

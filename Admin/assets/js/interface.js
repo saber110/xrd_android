@@ -28,7 +28,8 @@ const garden = admin + "garden";
 // excel导入数据接口
 const fileUpload = admin + "import_data";
 
-
+const getData = preFix + "get_data/";
+const getGardenPicture = getData + "garden_picture";
 
 const data = preFix + "data/";
 // 图片相关接口
@@ -66,12 +67,29 @@ const excelTable = [excelData + "garden_base_table", excelData + "garden_table",
 var token;
 var userLists;
 
+// 照片管理
+function getGardenPictureFun(gardenId) {
+    var result;
+    var json = {
+            "token": getCookie("token"),
+            "id": gardenId
+        };
+    xhrPost(getGardenPicture, JSON.stringify(json), false)
+        .done(function (res) {
+            result = res.data.gardenPictures;
+        });
+    return result;
+}
+
 // 地图
 function getMapDataFun(gardenId, mapId) {
     var result;
-    xhrPost(getMapData, conJson(conSplit("token", getCookie("token")),
-        conSplit("gardenId", gardenId),
-        conSplit("mapId", mapId)), false)
+    var json = {
+            "token": getCookie("token"),
+            "gardenId": gardenId,
+            "mapId": mapId
+        };
+    xhrPost(getMapData, JSON.stringify(json), false)
         .done(function (res) {
             result = res.data.map_data;
         });

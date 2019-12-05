@@ -44,6 +44,31 @@
       </nav>
       <!-- End Navbar -->
       <div class="content">
+        <form class="form">
+                    <span id="city_china_val" class="bmd-form-group"><div class="input-group no-border">
+                        <select class="province other form-control" data-first-title="选择省" id = "province">
+                          <option value="">请选择</option>
+                          <!-- <option value="湖南省" selected>湖南省</option> -->
+                        </select>
+                        <select class="city form-control" data-first-title="选择市"  id = "city">
+                          <option value="">请选择</option>
+                          <!-- <option value="长沙市" selected>长沙市</option> -->
+                        </select>
+                        <select class="area form-control" data-first-title="选择地区" id = "district">
+                          <option value="">请选择</option>
+                          <!-- <option value="芙蓉区" selected>芙蓉区</option> -->
+                        </select>
+                        <select class="street form-control" data-first-title="选择街道" id = "street">
+                          <option value="">请选择</option>
+                          <!-- <option value="文艺路街道" selected>文艺路街道</option> -->
+                        </select>
+                        <select class="community form-control" data-first-title="选择社区" id = "community">
+                          <option value="">请选择</option>
+                          <!-- <option value="识字岭社区" selected>识字岭社区</option> -->
+                        </select>
+                    </div>
+                  </span>
+                  </form>
         <ul class="nav">
           <span class="input-group " id = "neighboutLists">
           </span>
@@ -133,7 +158,11 @@
   </script>
   <script type="text/javascript">
     function mapLabel(gardenId, mapId) {
-      var mapData = getMapDataFun(1, BAIDU_MAP);
+      var mapData = getMapDataFun(gardenId, BAIDU_MAP);
+      if(mapData[0] == null){
+        md.showNotification("bottom", "right", "该小区没有标定数据哦", "danger");
+      }
+
       for(var p in mapData) {
         var point = new BMap.Point(mapData[p].longitude, mapData[p].latitude);
         var opts = {
