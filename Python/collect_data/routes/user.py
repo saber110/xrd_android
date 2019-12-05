@@ -266,3 +266,18 @@ def delete(*args, **kwargs):
         db.session.rollback()
         return generate_result(2, '用户以录入信息无法删除')
     return generate_result(0, '删除用户成功')
+
+
+@user_bp.route('/info', methods=['POST'])
+@token_check
+def info(user_id, *args, **kwargs):
+    """
+    获取用户信息
+    """
+    user = User.query.get(user_id)
+    if user is None:
+        return generate_result(2, '用户不存在')
+    user = user.to_dict
+    del user['password']
+
+    return generate_result(0, '获取用户信息成功', user)
