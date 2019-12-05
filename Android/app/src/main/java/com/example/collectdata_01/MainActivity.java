@@ -206,29 +206,36 @@ public class MainActivity extends TakePhotoActivity{
             @Override
             //监听时间，页面跳转
             public void onClick(View v) {
-                showSingleChoiceDialog();
-//                picture();
+                if (gardenName != null && !gardenName.isEmpty()) {
+                    showSingleChoiceDialog();
+                } else {
+                    Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
         updataLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dividedData();
-                UploadImgUtil uploadImgUtil = new UploadImgUtil();
-                for (int i = 0; i < gardenlist.size(); i++) {
-                    uploadImgUtil.uploadGardenImg(gardenlist.get(i).getGardenId(), gardenlist.get(i).getpictureKind(), gardenlist.get(i).getCollectTime(), gardenlist.get(i).getToken(), gardenlist.get(i).getImage());
-                    mainDB.delete(gardenlist.get(i));
+                if (gardenName != null && !gardenName.isEmpty()) {
+                    dividedData();
+                    UploadImgUtil uploadImgUtil = new UploadImgUtil(MainActivity.this);
+                    for (int i = 0; i < gardenlist.size(); i++) {
+                        uploadImgUtil.uploadGardenImg(gardenlist.get(i).getGardenId(), gardenlist.get(i).getpictureKind(), gardenlist.get(i).getCollectTime(), gardenlist.get(i).getToken(), gardenlist.get(i).getImage());
+                        mainDB.delete(gardenlist.get(i));
+                    }
+                    for (int i = 0; i < buildinglist.size(); i++) {
+                        uploadImgUtil.uploadBuildImg(Integer.toString(1), buildinglist.get(i).getCollectTime(), buildinglist.get(i).getGardenId(), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
+                        mainDB.delete(buildinglist.get(i));
+                    }
+                    for (int i = 0; i < qitalist.size(); i++) {
+                        uploadImgUtil.uploadOtherImg(qitalist.get(i).getGardenId(), qitalist.get(i).getCollectTime(), qitalist.get(i).getToken(), qitalist.get(i).getImage());
+                        mainDB.delete(qitalist.get(i));
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
                 }
-                for (int i = 0; i < buildinglist.size(); i++) {
-                    uploadImgUtil.uploadBuildImg(Integer.toString(1), buildinglist.get(i).getCollectTime(), buildinglist.get(i).getGardenId(), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
-                    mainDB.delete(buildinglist.get(i));
-                }
-                for (int i = 0; i < qitalist.size(); i++) {
-                    uploadImgUtil.uploadOtherImg(qitalist.get(i).getGardenId(), qitalist.get(i).getCollectTime(), qitalist.get(i).getToken(), qitalist.get(i).getImage());
-                    mainDB.delete(qitalist.get(i));
-                }
-                Toast.makeText(MainActivity.this, "图片上传完毕", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -236,17 +243,17 @@ public class MainActivity extends TakePhotoActivity{
         dataCollectLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IntentTools.activitySwich(MainActivity.this, DataActivity.class, false);
+//                IntentTools.activitySwich(MainActivity.this, DataActivity.class, false);
             }
         });
 
-        BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
-        // 第一个参数是导航，第二个参数是this，第三个参数代表这个是哪一个activity的位置，这个与之前的对应
-        BottomUtil bottomUtil = new BottomUtil(bottomNavigationBar, this, 1000);
-        /**
-         * 设置样式添加监听
-         */
-        bottomUtil.setBottomBarStytle();
+//        BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
+//        // 第一个参数是导航，第二个参数是this，第三个参数代表这个是哪一个activity的位置，这个与之前的对应
+//        BottomUtil bottomUtil = new BottomUtil(bottomNavigationBar, this, 1000);
+//        /**
+//         * 设置样式添加监听
+//         */
+//        bottomUtil.setBottomBarStytle();
 
         //页面被创建时就生成数据库
         if (mainDB == null) {
@@ -492,32 +499,32 @@ public class MainActivity extends TakePhotoActivity{
         //保存的文件名，先格式化000字符
         formatString((int) (count++));
         if (locationString.equals("平面图")) {
-            jpegName = "2_" + neighbourWorking.getText() + "平面图_" + n + ".jpg";
+            jpegName = "2_" + neighbourWorking.getText() + "_平面图_" + n + ".jpg";
             pictureKind = Integer.toString(2);
         }
-        if (locationString.equals("小区入口")) {
-            jpegName = "2_" + neighbourWorking.getText() + "入口_" + n + ".jpg";
+        if(locationString.equals("小区入口")){
+            jpegName = "2_"+ neighbourWorking.getText() + "_小区入口_" + n  + ".jpg";
             pictureKind = Integer.toString(2);
         }
-        if (locationString.equals("外景图")) {
-            jpegName = "2_" + neighbourWorking.getText() + "外景图_" + n + ".jpg";
+        if(locationString.equals("外景图")){
+            jpegName = "2_"+ neighbourWorking.getText() + "_外景图_" + n + ".jpg";
             pictureKind = Integer.toString(2);
         }
-        if (locationString.equals("内景图")) {
-            jpegName = "3_" + neighbourWorking.getText() + "内景图_" + n + ".jpg";
+        if(locationString.equals("内景图")){
+            jpegName = "3_"+ neighbourWorking.getText() + "_内景图_" + n + ".jpg";
             pictureKind = Integer.toString(2);
         }
-        if (locationString.equals("楼牌号")) {
-            jpegName = "3_" + neighbourWorking.getText() + "楼牌号_" + n + ".jpg";
+        if(locationString.equals("幢牌号")){
+            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "栋_幢牌号_" + n + ".jpg";
             pictureKind = Integer.toString(3);
         }
-        if (locationString.equals("建筑立面")) {
+        if(locationString.equals("建筑立面")){
             pictureKind = Integer.toString(3);
-            jpegName = "3_" + neighbourWorking.getText() + "建筑立面_" + n + ".jpg";
+            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "栋_建筑立面_" + n +".jpg";
         }
-        if (locationString.equals("其他")) {
+        if(locationString.equals("其他")){
             pictureKind = Integer.toString(3);
-            jpegName = "4_" + neighbourWorking.getText() + "其他_" + n + ".jpg";
+            jpegName = "4_"+ neighbourWorking.getText() + "_其他_" + n +".jpg";
         }
 
         File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + jpegName);
@@ -568,8 +575,9 @@ public class MainActivity extends TakePhotoActivity{
     /**
      * 图片种类选择对话框
      */
-    private void showSingleChoiceDialog() {
-        final String[] items = {"平面图", "小区入口", "外景图", "内景图", "建筑立面", "楼牌号", "其他"};
+    private String loudong;
+    private void showSingleChoiceDialog(){
+        final String[] items = {"平面图","小区入口","外景图","内景图","建筑立面","幢牌号","其他"};
         yourChoice = -1;
         AlertDialog.Builder singleChoiceDialog =
                 new AlertDialog.Builder(MainActivity.this);
@@ -591,23 +599,23 @@ public class MainActivity extends TakePhotoActivity{
                         //自定义对话框
                         final Context context = MainActivity.this;
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setTitle("请输入地点");    //设置对话框标题
-                        builder.setIcon(R.drawable.icon_cricle);   //设置对话框标题前的图标
+                        builder.setTitle("请输入楼栋");    //设置对话框标题
+                        builder.setIcon(R.drawable.logo);   //设置对话框标题前的图标
                         final EditText edit = new EditText(context);
                         builder.setView(edit);
                         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(context, "你确立的地点是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "你确立的楼栋是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
                                 //把输入的地点赋给 fu.locationString
-                                locationString = edit.getText().toString();
+                                loudong = edit.getText().toString();
                                 //调用拍照方法
                                 picture();
                             }
                         });
 //                            builder.setPositiveButton("不清楚", new DialogInterface.OnClickListener() {
 //                                @Override
-//                                public void onClick(DialogInterface gardenDialog, int which) {
+//                                public void onClick(DialogInterface dialog, int which) {
 //                                    Toast.makeText(context, "遗憾，你不知道这个地方: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
 //                                }
 //                            });
@@ -618,15 +626,16 @@ public class MainActivity extends TakePhotoActivity{
                             }
                         });
                         if (yourChoice != -1) {
-                            Toast.makeText(MainActivity.this, "你选择了" + items[yourChoice], Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this,"你选择了" + items[yourChoice], Toast.LENGTH_SHORT).show();
 
                             //若选择了立面则立马跳出来自定义对话框
-                            if (items[yourChoice].equals("立面")) {
+                            if(items[yourChoice].equals("建筑立面") || items[yourChoice].equals("幢牌号")){
                                 builder.setCancelable(true);    //设置按钮是否可以按返回键取消,false则不可以取消
                                 AlertDialog dialoga = builder.create();  //创建对话框
                                 dialoga.setCanceledOnTouchOutside(true); //设置弹出框失去焦点是否隐藏,即点击屏蔽其它地方是否隐藏
                                 dialoga.show();
-                            } else {
+                            }
+                            else {
                                 picture();
                             }
                         }

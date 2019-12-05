@@ -12,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:scrollingCache="false"
+        android:animationCache="false"
         android:id="@+id/message_list"
         >
     </ListView>

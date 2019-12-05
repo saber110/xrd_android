@@ -1,9 +1,11 @@
 package com.example.collectdata_01.util;
 
+import android.content.Context;
 import android.os.Environment;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.example.interfaceNet.v1;
 import com.example.login.login;
 
 import java.io.File;
@@ -21,32 +23,36 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.litesuits.orm.db.impl.CascadeSQLiteImpl.TAG;
 import static java.lang.String.valueOf;
 
 /**
  * 上传图片的接口工具类
  */
-public class UploadImgUtil {
+public class UploadImgUtil{
 
-    private void post(final String url){
-        OkHttpClient okHttpClient = new OkHttpClient();
-        final Request request = new Request.Builder()
-                .url(url)
-                .get()//默认就是GET请求，可以不写
-                .build();
-        Call call = okHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d("http", "onFailure: ");
-            }
+    public int N;
+    public int n = 0;
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Log.d("http", "onResponse: " + response.body().string());
-            }
-        });
+    public Context context;
+
+    public void funToastMakeText(String msg) {
+        Looper.prepare();
+        Log.i(TAG, "funToastMakeText: " + msg);
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+        Looper.loop();
     }
+
+    public UploadImgUtil(Context context) {
+        this.context = context;
+    }
+
+    public  Context getContext() {
+        return context;
+    }
+
+
+
 
     private void postFile(final String url, Map<String, String> map, String jpeg) {
         OkHttpClient client = new OkHttpClient();
@@ -69,13 +75,9 @@ public class UploadImgUtil {
         }
         Request request = new Request.Builder().url(url).post(requestBody.build()).build();
         // readTimeout("请求超时时间" , 时间单位);
-        client.newBuilder()
-                .connectTimeout(5, TimeUnit.MINUTES) // connect timeout
-                .writeTimeout(5, TimeUnit.MINUTES) // write timeout
-                .readTimeout(5, TimeUnit.MINUTES).build().newCall(request).enqueue(new Callback() { // read timeout
+        client.newBuilder().readTimeout(5000, TimeUnit.MILLISECONDS).build().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
                 Log.d(">>>>>>", "onFailure: 上传图片失败");
             }
 
@@ -83,6 +85,11 @@ public class UploadImgUtil {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String str = response.body().string();
+                    n++;
+                    if(n>=N){
+                        funToastMakeText("数据上传完毕");
+                        n = 0;
+                    }
                     Log.d(">>>", "onResponse: "+str);
                 } else {
                     Log.i(">>>>" ,response.message() + " error : body " + response.body().string());
@@ -109,7 +116,7 @@ public class UploadImgUtil {
         map.put("collectTime",collectTime);
         map.put("token", token);
         map.put("image", jpeg);
-        postFile(v1.uploadGardenPictureApi,map,jpeg);
+        postFile("http://rap2api.taobao.org/app/mock/234350/api/v1/data/garden_picture",map,jpeg);
     }
 
     /**
@@ -127,7 +134,7 @@ public class UploadImgUtil {
         map.put("collectTime",collectTime);
         map.put("token", token);
         map.put("image", jpeg);
-        postFile(v1.uploadOtherPictureApi,map, jpeg);
+        postFile("http://rap2api.taobao.org/app/mock/234350/api/v1/data/other_picture",map, jpeg);
     }
 
     /**
@@ -149,6 +156,6 @@ public class UploadImgUtil {
         map.put("token", login.token);
         map.put("gardenId",gardenId);
         map.put("image", jpeg);
-        postFile(v1.uploadBuildingPictureApi,map, jpeg);
+        postFile("http://rap2api.taobao.org/app/mock/234350/api/v1/data/building_picture",map, jpeg);
     }
 }

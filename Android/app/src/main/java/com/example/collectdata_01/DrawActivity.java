@@ -128,7 +128,7 @@ public class DrawActivity extends AppCompatActivity {
                 saveBitmap(bitmap, jpeg);
             }
             else {
-                saveBitmap(bitmap ,"涂鸦_"+ jpeg);
+                saveBitmap(bitmap2 ,"涂鸦_"+ jpeg);
             }
             System.out.println("save ok...");
             singleDialog();
@@ -197,7 +197,7 @@ public class DrawActivity extends AppCompatActivity {
             File file = new File(imagePath);
             jpeg = file.getName();
             System.out.println("content");
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+        } else if ("file".equalsIgnoreCase(uri.getScheme())){
             // 如果是file类型的Uri，直接获取图片路径即可
             imagePath = uri.getPath();
             File file = new File(imagePath);
@@ -212,7 +212,7 @@ public class DrawActivity extends AppCompatActivity {
      * android 4.4以前的处理方式
      * @param data
      */
-    private void handleImageBeforeKitKat(Intent data) {
+    private void handleImageBeforeKitKat(Intent data){
         Uri uri = data.getData();
         String imagePath = getImagePath(uri, null);
         displayImage(imagePath);
@@ -279,9 +279,9 @@ public class DrawActivity extends AppCompatActivity {
 
     //保存
     public void saveBitmap(Bitmap bitmap, String bitName){
-        String fileName ;
-        File file ;
-        if(Build.BRAND .equals("Xiaomi") ){ // 小米手机
+        String fileName;
+        File file;
+        if(Build.BRAND .equals("Xiaomi")){ // 小米手机
             fileName = Environment.getExternalStorageDirectory().getPath()+"/DCIM/Camera/"+bitName ;
         }else{  //Meizu 、Oppo
             Log.v("qwe","002");
@@ -349,10 +349,13 @@ public class DrawActivity extends AppCompatActivity {
                 paint.setStrokeWidth(5f);
                 //实心
                 paint.setStyle(Paint.Style.FILL);
+                System.out.println(v.getWidth());
+
                 int action = e.getAction();
                 if(action == MotionEvent.ACTION_DOWN){
                     x1 = e.getX();
                     y1 = e.getY();
+                    System.out.println(x1);
                 }
                 if(action == MotionEvent.ACTION_MOVE){
                     x2 = e.getX();
