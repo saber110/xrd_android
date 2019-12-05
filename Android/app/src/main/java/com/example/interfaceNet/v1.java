@@ -330,7 +330,6 @@ public class v1{
     public void loginSucess(String data){
         String[] keyValue = data.substring(1, data.length() - 1).split(":");
         login.token = keyValue[1].substring(1,keyValue[1].length()-1);
-        Log.i(TAG, "loginSucess: " + login.token);
         Looper.prepare();
         Intent i2 = new Intent(this.getContext(), MainActivity.class);
         ((AppCompatActivity)(this.getContext())).finish();

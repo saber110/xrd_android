@@ -16,9 +16,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSON;
-import com.example.collectdata.bean.CommonItemBean;
-import com.example.collectdata.bean.MessageListBean;
-import com.example.collectdata.tools.JsonTools;
 import com.example.collectdata_01.MainActivity;
 import com.example.collectdata_01.R;
 import com.example.interfaceNet.v1;
@@ -39,6 +36,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import com.example.deviceId.getSN;
 
 public class login extends AppCompatActivity {
 
@@ -70,13 +69,10 @@ public class login extends AppCompatActivity {
 
     private void initView() {
         etUsername = findViewById(R.id.et_username);
-//        etUsername.setText(getIemi.getIMEI(this));
-        etUsername.setText("2");
-
-        etUsername.setFocusable(false);
-        etUsername.setFocusableInTouchMode(false);
+//        etUsername.setText(getSN.getSerialNumber());
+//        etUsername.setFocusable(false);
+//        etUsername.setFocusableInTouchMode(false);
         etPassword = findViewById(R.id.et_password);
-        etPassword.setText("2");
         btGo = findViewById(R.id.bt_go);
         fab = findViewById(R.id.fab);
     }
@@ -92,7 +88,6 @@ public class login extends AppCompatActivity {
         btGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            btGo.setText("登录中...");
             try {
                 v1 hh = new v1(login.this);
                 hh.loginApi(etUsername.getText().toString(), etPassword.getText().toString());
@@ -103,12 +98,12 @@ public class login extends AppCompatActivity {
 
             }
         });
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(login.this, updatePassword.class));
-            }
-        });
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivity(new Intent(login.this, updatePassword.class));
+//            }
+//        });
     }
 
     @Override
