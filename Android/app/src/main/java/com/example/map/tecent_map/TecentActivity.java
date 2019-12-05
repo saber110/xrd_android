@@ -19,15 +19,15 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.baidu.mapapi.map.BaiduMap;
 import com.example.collectdata_01.R;
 import com.example.dialog.CreatDialog;
 import com.example.map.baidu_map.BaiduMapActivity;
 import com.example.map.dao.MapMarkerDataDao;
 import com.example.map.dao.StanderDao;
+import com.example.map.dao.UploadMarkerReturnDao;
 import com.example.map.google.GoogleMapActivity;
-import com.example.map.net.GetMarkerData;
 import com.example.map.net.MarkerNetUtil;
-import com.example.map.net.SendMapMsg;
 import com.example.net.AsyncRequest;
 import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
@@ -87,7 +87,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
     private void initMark() {
         // 2代表腾讯
-        GetMarkerData getMarkerData = new GetMarkerData(gardenId, 2);
+        MarkerNetUtil.GetMarkerData getMarkerData = new MarkerNetUtil.GetMarkerData(gardenId, 2);
         AsyncTask asyncTask = new AsyncRequest().execute(getMarkerData);
         try {
             MapMarkerDataDao mapMarkerDataDao = (MapMarkerDataDao) asyncTask.get();
@@ -144,10 +144,8 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
         TextView baiduText = findViewById(R.id.baidu_map);
         TextView tecentText = findViewById(R.id.tecent_map);
-        TextView googleText = findViewById(R.id.google_map);
         baiduText.setBackgroundColor(0x99EEE6E6);
         tecentText.setBackgroundColor(Color.RED);
-        googleText.setBackgroundColor(0x99EEE6E6);
 
         /**
          * 点击百度地图进行跳转
@@ -162,16 +160,6 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                                          }
                                      }
         );
-        googleText.setOnClickListener(new View.OnClickListener() {
-                                          @Override
-                                          public void onClick(View v) {
-                                              Intent intent = new Intent(TecentActivity.this, GoogleMapActivity.class);
-                                              intent.putExtra("gardenId", gardenId);
-                                              startActivity(intent);
-                                              finish();
-                                          }
-                                      }
-        );
 
     }
 
@@ -185,6 +173,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         tencentMap.setOnMarkerClickListener(TecentActivity.this);
     }
 
+    private boolean isNormalMap = true;
     /**
      * 初始化腾讯地图配置
      */
@@ -195,13 +184,29 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         uiSettings = tencentMap.getUiSettings();
         uiSettings.setMyLocationButtonEnabled(true);
         uiSettings.setRotateGesturesEnabled(false);
-        // 设置卫星地图
-        tencentMap.setSatelliteEnabled(true);
+        uiSettings.setCompassEnabled(false);
+        tencentMap.setMapType(TencentMap.MAP_TYPE_NORMAL);
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
         myLocationStyle.strokeColor(android.R.color.transparent);
         myLocationStyle.fillColor(android.R.color.transparent);
         tencentMap.setMyLocationStyle(myLocationStyle);
+
+        findViewById(R.id.change_tencent_map_style).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isNormalMap = !isNormalMap;
+                if (isNormalMap){
+                    /**
+                     * 设置为普通3d地图
+                     */
+                    tencentMap.setMapType(TencentMap.MAP_TYPE_NORMAL);
+                }else{
+                    // 设置为卫星地图
+                    tencentMap.setMapType(TencentMap.MAP_TYPE_SATELLITE);
+                }
+            }
+        });
     }
 
     private void initChoose() {
@@ -316,6 +321,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 } else {
                     if (addMark(latLng)) {
                         Toast.makeText(TecentActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
+                        name.setText(null);
                         dialog.dismiss();
                     }
                 }
@@ -346,6 +352,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                     Log.d(">>>>>>>>", "onClick: "+marker.getTag());
                     if (changeMarkData(marker.getPosition(), (Integer) marker.getTag())) {
                         marker.remove();
+                        name.setText(null);
                         changeDialog.dismiss();
                     }
                 }
@@ -373,13 +380,14 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
      * @return
      */
     private boolean addMark(LatLng latLng) {
-        SendMapMsg sendMapMsg = new SendMapMsg(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 2, choose);
+        MarkerNetUtil.AddMarker sendMapMsg = new MarkerNetUtil.AddMarker(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 2, choose);
         AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
         try {
-            StanderDao result = (StanderDao) asyncTask.get();
-            if (result != null && "0".equals(result.getCode())) {
+            UploadMarkerReturnDao result = (UploadMarkerReturnDao) asyncTask.get();
+            if (result != null && result.getCode()==0) {
                 Log.d(">>>>>", "添加maker"+name.getText().toString());
                 MarkerOptions options = new MarkerOptions(latLng).icon(BitmapDescriptorFactory.fromBitmap(drawBitMap(name.getText().toString())));
+                options.tag(result.getData().getMapDataId());
                 tencentMap.addMarker(options);
                 return true;
             }

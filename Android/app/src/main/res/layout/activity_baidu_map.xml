@@ -13,12 +13,19 @@
 
     <Button
         android:id="@+id/dw_bt"
-        android:layout_width="40dp"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:background="@drawable/round_data_usage_black_18dp"
-        android:layout_marginLeft="25dp"/>
+        android:text="定位"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="切换"
+        android:id="@+id/change_baidu_map_style"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        />
 
     <include
         layout="@layout/change_map_layout" />
