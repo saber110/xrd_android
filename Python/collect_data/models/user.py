@@ -76,6 +76,6 @@ class User(BaseModel):
             data = s.loads(token)
         except BadSignature:
             return False
-        if permission != data['permission']:
+        if permission > data['permission']:
             return False
         return True

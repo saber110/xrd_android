@@ -234,8 +234,12 @@ def search_garden(*args, **kwargs):
     data = request.get_json()
     if 'gardenName' not in data:
         return generate_result(1)
-    gardens = Garden.query.filter_by(name=data['gardenName'])
-    if gardens is None:
+    try:
+        gardens = Garden.query.filter(Garden.name.like('%' + data['gardenName'] + '%')).all()
+    except SQLAlchemyError as e:
+        print(str(e))
+        return generate_result(2, '搜索失败')
+    if len(gardens) == 0:
         return generate_result(2, '小区不存在')
     result = []
     for garden in gardens:
@@ -245,6 +249,7 @@ def search_garden(*args, **kwargs):
         city = City.query.get(garden.cityId)
         province = Province.query.get(garden.provinceId)
         result.append({
+            'gardenId': garden.id,
             'gardenName': garden.name,
             'communityName': community.name,
             'streetName': street.name,

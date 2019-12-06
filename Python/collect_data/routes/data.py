@@ -66,6 +66,47 @@ def garden(*args, **kwargs):
     return generate_result(0, '添加小区成功', {'gardenId': garden.id})
 
 
+@data_bp.route('/init_building', methods=['POST'])
+@token_check
+def init_building(user_id: int, *args, **kwargs):
+    """
+    初始化楼幢信息
+    """
+    data = request.get_json()
+    schema = {
+        'gardenId': {'type': 'integer', 'min': 1},
+        'number': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    already_building = BuildingInfo.query.filter_by(gardenId=data['gardenId']).all()
+    building_ids = [i.id for i in already_building]
+    add_number = data['number'] - len(already_building)
+    insert_building = [BuildingInfo(collectTime=datetime.now(), gardenId=data['gardenId'], userId=user_id) for i in
+                       range(add_number)]
+    try:
+        db.session.add_all(insert_building)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return generate_result(2, '初始化楼幢失败')
+    for info in insert_building:
+        building_ids.append(info.id)
+    try:
+        for id in building_ids:
+            import_info = BuildingImportInfo.query.get(id)
+            if import_info is None:
+                db.session.add(BuildingImportInfo(collectTime=datetime.now(), id=id, userId=user_id))
+        db.session.commit()
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return generate_result(3, '初始化失败')
+    return generate_result(0, '初始化楼幢成功', {'buildingIds': building_ids})
+
+
 @data_bp.route('/building', methods=['POST'])
 @token_check
 def building(*args, **kwargs):
@@ -112,7 +153,7 @@ def map_data(user_id: int, *args, **kwargs):
     except SQLAlchemyError:
         db.session.rollback()
         return generate_result(2, '添加建筑失败')
-    return generate_result(0, '添加建筑成功')
+    return generate_result(0, '添加数据成功', {'mapDataId': map_data.id})
 
 
 @data_bp.route('/garden_picture_kind', methods=['POST'])
@@ -311,7 +352,9 @@ def garden_base_info(user_id: int, *args, **kwargs):
         return generate_result(1, data=v.errors)
     data['userId'] = user_id
     data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
-
+    for key in list(data.keys()):
+        if key not in schema and str(data[key]).strip() == '':
+            del data[key]
     try:
         base_info = GardenBaseInfo.query.get(data['id'])
         if base_info is None:
@@ -320,7 +363,8 @@ def garden_base_info(user_id: int, *args, **kwargs):
             base_info.update(**data)  # 更新信息
         db.session.add(base_info)
         db.session.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
+        print(str(e))
         db.session.rollback()
         return generate_result(2)
     return generate_result(0, '上传小区基本数据成功')
@@ -355,7 +399,9 @@ def building_base_info(user_id: int, *args, **kwargs):
         return generate_result(1, data=v.errors)
     data['userId'] = user_id
     data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
-
+    for key in list(data.keys()):
+        if key not in schema and str(data[key]).strip() == '':
+            del data[key]
     try:
         if 'id' in data:
             info = BuildingInfo.query.get(data['id'])
@@ -390,7 +436,9 @@ def garden_import_info(user_id: int, *args, **kwargs):
         return generate_result(1, data=v.errors)
     data['userId'] = user_id
     data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
-
+    for key in list(data.keys()):
+        if key not in schema and str(data[key]).strip() == '':
+            del data[key]
     try:
         import_info = GardenImportInfo.query.get(data['id'])
         if import_info is None:
@@ -424,7 +472,9 @@ def building_import_info(user_id: int, *args, **kwargs):
         return generate_result(1, data=v.errors)
     data['userId'] = user_id
     data['collectTime'] = datetime.fromtimestamp(int(data['collectTime']) / 1000.0)
-
+    for key in list(data.keys()):
+        if key not in schema and str(data[key]).strip() == '':
+            del data[key]
     try:
         import_info = BuildingImportInfo.query.get(data['id'])
         if import_info is None:
