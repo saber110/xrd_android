@@ -15,8 +15,9 @@
 
         <ImageView
             android:id="@+id/round_add_comment_black"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
             android:src="@drawable/round_add_comment_black_18dp" />
 
         <TextView

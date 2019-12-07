@@ -67,7 +67,6 @@ public class DrawActivity extends AppCompatActivity {
 
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                // TODO Auto-generated method stub
                 for (int i = 0; i < checkedItems.length; i++) {
                     checkedItems[i] = false;
                 }
@@ -78,7 +77,6 @@ public class DrawActivity extends AppCompatActivity {
 
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                // TODO Auto-generated method stub
                 arg0.dismiss();
                 startActivity(new Intent(DrawActivity.this, MainActivity.class));
             }
@@ -88,7 +86,6 @@ public class DrawActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
                 final Context context = DrawActivity.this;
-                // TODO Auto-generated method stub
                 String str = "";
                 for (int i = 0; i < checkedItems.length; i++) {
                     if (checkedItems[i]) {
@@ -100,7 +97,7 @@ public class DrawActivity extends AppCompatActivity {
                 }
                 else {
                     Toast.makeText(context, "返回主页", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(DrawActivity.this, MainActivity.class));
+                    finish();
                 }
             }
         });

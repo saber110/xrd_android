@@ -75,55 +75,55 @@ public class GoogleMapActivity extends AppCompatActivity implements LocationList
         tecentText.setBackgroundColor(0x99EEE6E6);
         baiduText.setBackgroundColor(0x99EEE6E6);
 
-        huayuan = view.findViewById(R.id.huayuan);
-        louceng = view.findViewById(R.id.louceng);
-        lu = view.findViewById(R.id.lu);
-        qita = view.findViewById(R.id.qita);
-
-        lat = view.findViewById(R.id.lat);
-        lng = view.findViewById(R.id.lng);
-
-        huayuan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                huayuan.setBackgroundColor(Color.RED);
-                louceng.setBackgroundColor(0x99EEE6E6);
-                lu.setBackgroundColor(0x99EEE6E6);
-                qita.setBackgroundColor(0x99EEE6E6);
-                choose = 0;
-            }
-        });
-
-        louceng.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                louceng.setBackgroundColor(Color.RED);
-                huayuan.setBackgroundColor(0x99EEE6E6);
-                lu.setBackgroundColor(0x99EEE6E6);
-                qita.setBackgroundColor(0x99EEE6E6);
-                choose = 1;
-            }
-        });
-        lu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                lu.setBackgroundColor(Color.RED);
-                louceng.setBackgroundColor(0x99EEE6E6);
-                huayuan.setBackgroundColor(0x99EEE6E6);
-                qita.setBackgroundColor(0x99EEE6E6);
-                choose = 2;
-            }
-        });
-        qita.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                qita.setBackgroundColor(Color.RED);
-                louceng.setBackgroundColor(0x99EEE6E6);
-                lu.setBackgroundColor(0x99EEE6E6);
-                huayuan.setBackgroundColor(0x99EEE6E6);
-                choose = 3;
-            }
-        });
+//        huayuan = view.findViewById(R.id.huayuan);
+//        louceng = view.findViewById(R.id.louceng);
+//        lu = view.findViewById(R.id.lu);
+//        qita = view.findViewById(R.id.qita);
+//
+//        lat = view.findViewById(R.id.lat);
+//        lng = view.findViewById(R.id.lng);
+//
+//        huayuan.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                huayuan.setBackgroundColor(Color.RED);
+//                louceng.setBackgroundColor(0x99EEE6E6);
+//                lu.setBackgroundColor(0x99EEE6E6);
+//                qita.setBackgroundColor(0x99EEE6E6);
+//                choose = 0;
+//            }
+//        });
+//
+//        louceng.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                louceng.setBackgroundColor(Color.RED);
+//                huayuan.setBackgroundColor(0x99EEE6E6);
+//                lu.setBackgroundColor(0x99EEE6E6);
+//                qita.setBackgroundColor(0x99EEE6E6);
+//                choose = 1;
+//            }
+//        });
+//        lu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                lu.setBackgroundColor(Color.RED);
+//                louceng.setBackgroundColor(0x99EEE6E6);
+//                huayuan.setBackgroundColor(0x99EEE6E6);
+//                qita.setBackgroundColor(0x99EEE6E6);
+//                choose = 2;
+//            }
+//        });
+//        qita.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                qita.setBackgroundColor(Color.RED);
+//                louceng.setBackgroundColor(0x99EEE6E6);
+//                lu.setBackgroundColor(0x99EEE6E6);
+//                huayuan.setBackgroundColor(0x99EEE6E6);
+//                choose = 3;
+//            }
+//        });
     }
 
     @Override
