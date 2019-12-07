@@ -82,7 +82,6 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         gardenId = getIntent().getIntExtra("gardenId",0);
         init();
         initLoc();
-        initMark();
     }
 
     private void initMark() {
@@ -210,55 +209,55 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     }
 
     private void initChoose() {
-        huayuan = view.findViewById(R.id.huayuan);
-        louceng = view.findViewById(R.id.louceng);
-        lu = view.findViewById(R.id.lu);
-        qita = view.findViewById(R.id.qita);
-
+//        huayuan = view.findViewById(R.id.huayuan);
+//        louceng = view.findViewById(R.id.louceng);
+//        lu = view.findViewById(R.id.lu);
+//        qita = view.findViewById(R.id.qita);
+//
         lat = view.findViewById(R.id.lat);
         lng = view.findViewById(R.id.lng);
-
-        huayuan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                huayuan.setBackgroundColor(Color.RED);
-                louceng.setBackgroundColor(0x99EEE6E6);
-                lu.setBackgroundColor(0x99EEE6E6);
-                qita.setBackgroundColor(0x99EEE6E6);
-                choose = 1;
-            }
-        });
-
-        louceng.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                louceng.setBackgroundColor(Color.RED);
-                huayuan.setBackgroundColor(0x99EEE6E6);
-                lu.setBackgroundColor(0x99EEE6E6);
-                qita.setBackgroundColor(0x99EEE6E6);
-                choose = 2;
-            }
-        });
-        lu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                lu.setBackgroundColor(Color.RED);
-                louceng.setBackgroundColor(0x99EEE6E6);
-                huayuan.setBackgroundColor(0x99EEE6E6);
-                qita.setBackgroundColor(0x99EEE6E6);
-                choose = 3;
-            }
-        });
-        qita.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                qita.setBackgroundColor(Color.RED);
-                louceng.setBackgroundColor(0x99EEE6E6);
-                lu.setBackgroundColor(0x99EEE6E6);
-                huayuan.setBackgroundColor(0x99EEE6E6);
-                choose = 4;
-            }
-        });
+//
+//        huayuan.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                huayuan.setBackgroundColor(Color.RED);
+//                louceng.setBackgroundColor(0x99EEE6E6);
+//                lu.setBackgroundColor(0x99EEE6E6);
+//                qita.setBackgroundColor(0x99EEE6E6);
+//                choose = 1;
+//            }
+//        });
+//
+//        louceng.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                louceng.setBackgroundColor(Color.RED);
+//                huayuan.setBackgroundColor(0x99EEE6E6);
+//                lu.setBackgroundColor(0x99EEE6E6);
+//                qita.setBackgroundColor(0x99EEE6E6);
+//                choose = 2;
+//            }
+//        });
+//        lu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                lu.setBackgroundColor(Color.RED);
+//                louceng.setBackgroundColor(0x99EEE6E6);
+//                huayuan.setBackgroundColor(0x99EEE6E6);
+//                qita.setBackgroundColor(0x99EEE6E6);
+//                choose = 3;
+//            }
+//        });
+//        qita.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                qita.setBackgroundColor(Color.RED);
+//                louceng.setBackgroundColor(0x99EEE6E6);
+//                lu.setBackgroundColor(0x99EEE6E6);
+//                huayuan.setBackgroundColor(0x99EEE6E6);
+//                choose = 4;
+//            }
+//        });
     }
 
 
@@ -266,6 +265,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     protected void onStart() {
         super.onStart();
         mapview.onStart();
+        initMark();
     }
 
     @Override
@@ -311,8 +311,8 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     public void onMapLongClick(final LatLng latLng) {
         name = view.findViewById(R.id.input_msg);
         dialog.show();
-        lat.setText(latLng.latitude + "");
-        lng.setText(latLng.longitude + "");
+        lat.setText((latLng.latitude + "").substring(0, 7));
+        lng.setText((latLng.longitude + "").substring(0, 7));
         view.findViewById(R.id.send_map_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

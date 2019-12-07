@@ -161,55 +161,55 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
 
     private void initChoose() {
 
-        huayuan = view.findViewById(R.id.huayuan);
-        louceng = view.findViewById(R.id.louceng);
-        lu = view.findViewById(R.id.lu);
-        qita = view.findViewById(R.id.qita);
-
+//        huayuan = view.findViewById(R.id.huayuan);
+//        louceng = view.findViewById(R.id.louceng);
+//        lu = view.findViewById(R.id.lu);
+//        qita = view.findViewById(R.id.qita);
+//
         lat = view.findViewById(R.id.lat);
         lng = view.findViewById(R.id.lng);
-
-        huayuan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                huayuan.setBackgroundColor(Color.RED);
-                louceng.setBackgroundColor(0x99EEE6E6);
-                lu.setBackgroundColor(0x99EEE6E6);
-                qita.setBackgroundColor(0x99EEE6E6);
-                choose = 1;
-            }
-        });
-
-        louceng.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                louceng.setBackgroundColor(Color.RED);
-                huayuan.setBackgroundColor(0x99EEE6E6);
-                lu.setBackgroundColor(0x99EEE6E6);
-                qita.setBackgroundColor(0x99EEE6E6);
-                choose = 2;
-            }
-        });
-        lu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                lu.setBackgroundColor(Color.RED);
-                louceng.setBackgroundColor(0x99EEE6E6);
-                huayuan.setBackgroundColor(0x99EEE6E6);
-                qita.setBackgroundColor(0x99EEE6E6);
-                choose = 3;
-            }
-        });
-        qita.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                qita.setBackgroundColor(Color.RED);
-                louceng.setBackgroundColor(0x99EEE6E6);
-                lu.setBackgroundColor(0x99EEE6E6);
-                huayuan.setBackgroundColor(0x99EEE6E6);
-                choose = 4;
-            }
-        });
+//
+//        huayuan.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                huayuan.setBackgroundColor(Color.RED);
+//                louceng.setBackgroundColor(0x99EEE6E6);
+//                lu.setBackgroundColor(0x99EEE6E6);
+//                qita.setBackgroundColor(0x99EEE6E6);
+//                choose = 1;
+//            }
+//        });
+//
+//        louceng.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                louceng.setBackgroundColor(Color.RED);
+//                huayuan.setBackgroundColor(0x99EEE6E6);
+//                lu.setBackgroundColor(0x99EEE6E6);
+//                qita.setBackgroundColor(0x99EEE6E6);
+//                choose = 2;
+//            }
+//        });
+//        lu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                lu.setBackgroundColor(Color.RED);
+//                louceng.setBackgroundColor(0x99EEE6E6);
+//                huayuan.setBackgroundColor(0x99EEE6E6);
+//                qita.setBackgroundColor(0x99EEE6E6);
+//                choose = 3;
+//            }
+//        });
+//        qita.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                qita.setBackgroundColor(Color.RED);
+//                louceng.setBackgroundColor(0x99EEE6E6);
+//                lu.setBackgroundColor(0x99EEE6E6);
+//                huayuan.setBackgroundColor(0x99EEE6E6);
+//                choose = 4;
+//            }
+//        });
     }
 
     private void beginLoc() {

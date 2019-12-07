@@ -13,9 +13,10 @@
 
         <ImageView
             android:id="@+id/round_data_usage_black"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
             android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:src="@drawable/round_data_usage_black_18dp" />
 
         <TextView
@@ -48,8 +49,9 @@
 
         <ImageView
             android:id="@+id/round_add_comment_black"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
             android:src="@drawable/round_add_comment_black_18dp" />
 
         <TextView
@@ -57,7 +59,7 @@
             android:layout_height="wrap_content"
             android:textColor="#000000"
             android:layout_toRightOf="@+id/round_add_comment_black"
-            android:text="请输入标记数据"
+            android:text=" 请输入标记数据"
             android:textSize="@dimen/main_text_size" />
     </RelativeLayout>
     <EditText
@@ -65,51 +67,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="5dp"
-        android:layout_weight="@android:integer/config_longAnimTime"
-        >
-        <TextView
-            android:id="@+id/huayuan"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:layout_toRightOf="@+id/round_add_comment_black"
-            android:text="花园"
-            android:textSize="@dimen/main_text_size" />
-        <TextView
-            android:id="@+id/louceng"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:layout_toRightOf="@+id/round_add_comment_black"
-            android:text="楼层"
-            android:textSize="@dimen/main_text_size" />
-        <TextView
-            android:id="@+id/lu"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:layout_toRightOf="@+id/round_add_comment_black"
-            android:text="路"
-            android:textSize="@dimen/main_text_size" />
-        <TextView
-            android:id="@+id/qita"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:layout_toRightOf="@+id/round_add_comment_black"
-            android:text="其他"
-            android:textSize="@dimen/main_text_size" />
-
-    </LinearLayout>
 
     <Button
         android:layout_marginTop="5dp"

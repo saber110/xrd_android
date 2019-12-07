@@ -323,6 +323,7 @@ public class v1{
             loginSucess(data);
         }
         else {
+            Log.i(TAG, "callbackLogin: ");
             loginFailure(map.get("message").toString());
         }
     }
