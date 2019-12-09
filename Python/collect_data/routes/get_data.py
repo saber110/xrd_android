@@ -2430,22 +2430,23 @@ def export_zip(*args, **kwargs):
     """
     导出小区zip文件
     """
+    try:
+        garden_id = request.form['gardenId']
+    except KeyError:
+        return generate_result(1)
     data = request.get_json()
     schema = {
         'gardenId': {'type': 'integer', 'min': 1},
     }
-    v = generate_validator(schema)
-    if not v(data):
-        return generate_result(1, data=v.errors)
-    garden = Garden.query.get(data['gardenId'])
+    garden = Garden.query.get(garden_id)
     if garden is None:
         return generate_result(2, '该小区不存在')
-    zip_dir = os.path.join(config.UPLOADED_IMAGES_DEST, 'zip', str(data['gardenId']))
+    zip_dir = os.path.join(config.UPLOADED_IMAGES_DEST, 'zip', str(garden_id))
     os.makedirs(zip_dir, exist_ok=True)
     community = Community.query.get(garden.communityId)
-    garden_pictures = GardenPicture.query.filter_by(gardenId=data['gardenId']).all()
-    building_pictures = BuildingPicture.query.join(BuildingInfo).filter_by(gardenId=data['gardenId']).all()
-    other_pictures = OtherPicture.query.filter_by(gardenId=data['gardenId']).all()
+    garden_pictures = GardenPicture.query.filter_by(gardenId=garden_id).all()
+    building_pictures = BuildingPicture.query.join(BuildingInfo).filter_by(gardenId=garden_id).all()
+    other_pictures = OtherPicture.query.filter_by(gardenId=garden_id).all()
     all_pictures = garden_pictures + building_pictures + other_pictures
     timestamp_file = os.path.join(zip_dir, 'timestamp.txt')
     zip_path = os.path.join(zip_dir, f'{community.name}_{garden.name}.zip')
