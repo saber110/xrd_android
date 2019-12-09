@@ -374,7 +374,7 @@ function downloadExcel(url, gardenId) {
     // var tableId = item.data('table-id');
     // var url = excelTable[tableId - 1];
     var $form = $("<form>"); //定义一个form表单
-    $form.hide().attr({target: '', method: 'post', 'action': url});
+    $form.hide().attr({target: '_blank', method: 'post', 'action': url});
     var $token = $("<input>");
     $token.attr({"type": "hidden", "name": 'token'}).val(getCookie("token"));
     $form.append($token);
