@@ -300,10 +300,12 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 if (name.getText().toString().length() == 0) {
                     Toast.makeText(BaiduMapActivity.this, "请输入数据", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (addMark(latLng)) {
-                        Toast.makeText(BaiduMapActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
+                    if (addMark(latLng))
+                    {
                         name.setText(null);
                         dialog.dismiss();
+                        addMark(latLng);
+                        Toast.makeText(BaiduMapActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

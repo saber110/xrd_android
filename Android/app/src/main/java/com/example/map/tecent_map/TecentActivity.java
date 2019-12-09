@@ -319,10 +319,13 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 if (name.getText().toString().length() == 0) {
                     Toast.makeText(TecentActivity.this, "请输入内容", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (addMark(latLng)) {
-                        Toast.makeText(TecentActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
+                    if (addMark(latLng))
+                    {
                         name.setText(null);
                         dialog.dismiss();
+                        addMark(latLng);
+                        Toast.makeText(TecentActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
+
                     }
                 }
             }
