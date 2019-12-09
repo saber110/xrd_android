@@ -7,7 +7,7 @@
 import math
 import os
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 from . import config
 
@@ -67,8 +67,18 @@ def compress_image(origin_path: str, compressed_path: str, size: int):
         image = Image.open(compressed_path)
         width, high = image.size
         image = image.resize((int(rate * width), int(rate * high)), Image.ANTIALIAS)
-        image.save(compressed_path)
+        # image.save(compressed_path)
+        addWatermarkAndSave(compressed_path)
 
+def addWatermarkAndSave(image_path):
+    watermark = "湖南新融达"
+    draw = ImageDraw.Draw(image_path)
+    myfont = ImageFont.truetype('./assets/arial.ttf', size=40)
+    fillcolor = "#ff0000"
+    width, height = img.size
+    draw.text((width-50, 5), watermark, font=myfont, fill=fillcolor)
+    img.save(image_path)
+    
 
 def is_excel_end(the_list_like) -> bool:
     """
