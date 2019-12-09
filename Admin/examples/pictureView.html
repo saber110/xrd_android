@@ -172,6 +172,7 @@
 
     function getGardenPictures(gardenId) {
       var pictureLists = document.getElementById("pictureListss");
+      pictureLists.innerHTML = "";
       var pictures = getGardenPictureFun(gardenId);
       for(var p in pictures){
         var li = document.createElement("li");

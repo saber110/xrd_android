@@ -116,20 +116,44 @@
                     </div>
                   </div>
                 </div>
+                
                 <div class="card-body" style="overflow-x:auto">
                   <div class="tab-content">
                     <div class="tab-pane active" id="table1" >
-                      <div id="spreadsheet1" style="padding-right:10px"></div>
+                      <div class="row">
+                        <ul class="nav">
+                          <span class="input-group " id = "neighboutLists1">
+                          </span>
+                        </ul>
+                      </div>
+                      <!-- <div id="spreadsheet1" style="padding-right:10px"></div> -->
                     </div>
                     <div class="tab-pane" id="table2">
-                      <div id="spreadsheet2" style="padding-right:10px"></div>
-
+                      <!-- <div id="spreadsheet2" style="padding-right:10px"></div> -->
+                      <div class="row">
+                        <ul class="nav">
+                          <span class="input-group " id = "neighboutLists2">
+                          </span>
+                        </ul>
+                      </div>
                     </div>
                     <div class="tab-pane" id="table3">
-                      <div id="spreadsheet3" style="padding-right:10px"></div>
+                      <!-- <div id="spreadsheet3" style="padding-right:10px"></div> -->
+                      <div class="row">
+                        <ul class="nav">
+                          <span class="input-group " id = "neighboutLists3">
+                          </span>
+                        </ul>
+                      </div>
                     </div>
                     <div class="tab-pane" id="table4">
-                      <div id="spreadsheet4" style="padding-right:10px"></div>
+                      <!-- <div id="spreadsheet4" style="padding-right:10px"></div> -->
+                      <div class="row">
+                        <ul class="nav">
+                          <span class="input-group " id = "neighboutLists4">
+                          </span>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -195,13 +219,19 @@
     function getExcelDataOfTable(tableId, idName) {
       var communityId = communitySelect.options[communitySelect.options.selectedIndex].value;
       var excelData = getExcelData(tableId, idName, communityId);
-      var main = document.getElementById('spreadsheet' + tableId);
+      var main = document.getElementById('neighboutLists' + tableId);
       $("#getTable" + tableId).removeAttr("onclick");
+      console.log(excelData);
+
       for(var p in excelData){
-        var div = document.createElement("div");
-        div.id = 'spreadsheet' + tableId + p;
-        div.innerHTML = excelData[p].name;
-        main.appendChild(div);
+        // var div = document.createElement("div");
+        // div.id = 'spreadsheet' + tableId + p;
+        // div.innerHTML = excelData[p].name;   // 每个小区的名字
+        // main.appendChild(div);
+        var li = document.createElement("li");
+        li.className = "nav-item";
+        $(li).html("<a class='nav-link' id = 'spreadsheet" + tableId + p + "' onclick = downloadExcel('" + excelTable[tableId - 1] + "'," + excelData[p].id + ")>" + excelData[p].name + "</a>");
+        main.appendChild(li);
 
         // jexcel(document.getElementById('spreadsheet1' + p), {
         //   data: excelData[p].gardenInfo,
