@@ -1326,10 +1326,10 @@ def building_base_info(*args, **kwargs):
         },
         {
             'label': '价格初判',
-            'key': 'unitNumber',
+            'key': 'preliminaryPrice',
             'required': False,
             'changed': True,
-            'type': 'preliminaryPrice',
+            'type': 'text',
             'value': ''
         },
     ]
@@ -2362,10 +2362,10 @@ def garden_building_base_info(*args, **kwargs):
             },
             {
                 'label': '价格初判',
-                'key': 'unitNumber',
+                'key': 'preliminaryPrice',
                 'required': False,
                 'changed': True,
-                'type': 'preliminaryPrice',
+                'type': 'text',
                 'value': ''
             },
         ]
