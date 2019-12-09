@@ -5,6 +5,8 @@
 # @Desc : 数据获取模块
 
 import os
+import zipfile
+from datetime import datetime
 from io import BytesIO
 
 import openpyxl as excel
@@ -2419,3 +2421,66 @@ def disk(*args, **kwargs):
     return generate_result(0, '获取磁盘数据成功',
                            data={'total': disk_usage.total, 'used': disk_usage.used, 'free': disk_usage.free,
                                  'percent': disk_usage.percent})
+
+
+@get_data_bp.route('/export_zip', methods=['POST'])
+@token_check
+@admin_required
+def export_zip(*args, **kwargs):
+    """
+    导出小区zip文件
+    """
+    data = request.get_json()
+    schema = {
+        'gardenId': {'type': 'integer', 'min': 1},
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    garden = Garden.query.get(data['gardenId'])
+    if garden is None:
+        return generate_result(2, '该小区不存在')
+    zip_dir = os.path.join(config.UPLOADED_IMAGES_DEST, 'zip', str(data['gardenId']))
+    os.makedirs(zip_dir, exist_ok=True)
+    community = Community.query.get(garden.communityId)
+    garden_pictures = GardenPicture.query.filter_by(gardenId=data['gardenId']).all()
+    building_pictures = BuildingPicture.query.join(BuildingInfo).filter_by(gardenId=data['gardenId']).all()
+    other_pictures = OtherPicture.query.filter_by(gardenId=data['gardenId']).all()
+    all_pictures = garden_pictures + building_pictures + other_pictures
+    timestamp_file = os.path.join(zip_dir, 'timestamp.txt')
+    zip_path = os.path.join(zip_dir, f'{community.name}_{garden.name}.zip')
+    compress_zip_path = os.path.join(zip_dir, f'{community.name}_图片.zip')
+    if os.path.exists(timestamp_file):
+        timestamp = ''
+        with open(timestamp_file, 'r') as file:
+            timestamp = file.read()
+        if timestamp != '':
+            last_time = datetime.fromtimestamp(float(timestamp))
+            flag = True
+            for item in all_pictures:
+                sync_time = getattr(item, 'syncTime')
+                if sync_time > last_time:
+                    flag = False
+                    break
+            if flag and os.path.exists(zip_path):
+                dir_path, filename = os.path.split(zip_path)
+                return my_send_file(zip_path, 'application/x-zip-compressed', filename)
+
+    with zipfile.ZipFile(compress_zip_path, 'w') as zf:
+        for picture in all_pictures:
+            picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, getattr(picture, 'compressedFilePath'))
+            if os.path.exists(picture_path):
+                dir_path, filename = os.path.split(picture_path)
+                zf.write(picture_path, filename)
+    with zipfile.ZipFile(zip_path, 'w') as zf:
+        dir_path, compress_filename = os.path.split(compress_zip_path)
+        zf.write(compress_zip_path, compress_filename)
+        for picture in all_pictures:
+            picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, getattr(picture, 'originFilePath'))
+            if os.path.exists(picture_path):
+                dir_path, filename = os.path.split(picture_path)
+                zf.write(picture_path, os.path.join('原图', filename))
+    with open(timestamp_file, 'w') as file:
+        file.write(str(datetime.now().timestamp()))
+    dir_path, filename = os.path.split(zip_path)
+    return my_send_file(zip_path, 'application/x-zip-compressed', filename)

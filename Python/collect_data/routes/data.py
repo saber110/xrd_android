@@ -251,7 +251,7 @@ def building_picture(user_id: int, *args, **kwargs):
     origin_file_path = f'origin/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
     origin_file_path = image_upload.save(image, name=origin_file_path)
     origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
-    compressed_file_path = f'compressed/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.jpg'
+    compressed_file_path = f'compressed/{garden_id}/{building_id}/3_{garden.name}_{building.buildingName}_{picture_kind}_{number}.jpg '
     compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = BuildingPicture(buildingId=building_id, pictureKind=picture_kind, collectTime=collect_time,
