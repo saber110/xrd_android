@@ -1783,7 +1783,7 @@ def garden_building_base_info(*args, **kwargs):
     infos = BuildingInfo.query.filter_by(gardenId=data['gardenId']).all()
     if len(infos) == 0:
         return generate_result(2, '该小区暂无楼幢信息')
-    building_info_list = {}
+    building_info_list = []
     for info in infos:
         init_result = [
             {
@@ -2370,9 +2370,9 @@ def garden_building_base_info(*args, **kwargs):
             },
         ]
         result = set_form_value(init_result, info.to_dict)
-        building_info_list[info.id] = result
+        building_info_list.append({"buildingId": info.id, "buildingBaseInfo": result})
 
-    return generate_result(0, '获取小区楼幢信息成功', building_info_list)
+    return generate_result(0, '获取小区楼幢信息成功', {"buildingBaseInfoList": building_info_list})
 
 
 @get_data_bp.route('/garden_building_import_info', methods=['POST'])
@@ -2392,7 +2392,7 @@ def garden_building_import_info(*args, **kwargs):
     if len(infos) == 0:
         return generate_result(2, '该小区暂无楼幢信息')
 
-    building_import_info_list = {}
+    building_import_info_list = []
     for building in infos:
         result = [
             {
@@ -2408,8 +2408,8 @@ def garden_building_import_info(*args, **kwargs):
         import_info = BuildingImportInfo.query.get(building.id)
         if import_info is not None:
             result = set_form_value(result, import_info.to_dict)
-        building_import_info_list[building.id] = result
-    return generate_result(0, '获取信息成功', building_import_info_list)
+        building_import_info_list.append({'buildingId': building.id, 'buildingImportInfo': result})
+    return generate_result(0, '获取信息成功', {'buildingImportInfoList': building_import_info_list})
 
 
 @get_data_bp.route('/disk', methods=['POST'])
