@@ -1,6 +1,7 @@
 const split = '|';
 // const preFix = "http://rap2api.taobao.org/app/mock/234350/api/v1/";
 const preFix = "http://139.199.8.103:8888/api/v1/"
+const SUCESSS = 0;
 
 const user = preFix + "user/";
 const register = user + "register";
@@ -11,6 +12,9 @@ const updateUser = user + "update";
 // excel导入用户接口
 const userFileUpload = user + "import_user";
 
+
+const getDataTab = preFix + "get_data/";
+const getDiskDetail = getDataTab + "disk"
 
 const admin = preFix + "administration/";
 // 省份数据获取接口
@@ -34,6 +38,7 @@ const getGardenPicture = getData + "garden_picture";
 const data = preFix + "data/";
 // 图片相关接口
 const picture = preFix + "data/";
+const pictureExport = preFix + "get_data/" + "export_zip"
 // 获取建筑类别接口
 // 返回已有建筑的种类名称和对应的id
 const building = data + "building";
@@ -63,9 +68,22 @@ const tableColumn = "column";
 const tableData = "data";
 const table = [excelData + "garden_base_info", excelData + "building_base_info",
     "", ""];
-const excelTable = [excelData + "garden_base_table", excelData + "garden_table", excelData + "building_base_table", excelData + "building_table"];
+const excelTable = [excelData + "garden_base_table", excelData + "building_base_table", excelData + "garden_table", excelData + "building_table"];
 var token;
 var userLists;
+
+// 磁盘 
+function getDiskDetailFun() {
+    var result; 
+    xhrPost(getDiskDetail, conJson(conSplit("token", getCookie("token"))), false)
+        .done(function (res) {
+            if(res.code == SUCESSS)
+                result = res.data;
+            else result = null;
+        });
+    return result;
+}
+
 
 // 照片管理
 function getGardenPictureFun(gardenId) {
@@ -234,11 +252,12 @@ function getExcelData(tableId, idName, communityId) {
     var result = [];
     var gardenLists = getGardenListOfCommunity(communityId);
     // console.log(gardenLists)
-    for (var p in gardenLists) {
-        result[p] = getSingleGardenExcelData(tableId, idName, gardenLists[p].id)
-        result[p].name = gardenLists[p].name;
-    }
-    return result;
+    // for (var p in gardenLists) {
+    //     // result[p] = getSingleGardenExcelData(tableId, idName, gardenLists[p].id)
+    //     result[p].name = gardenLists[p].name;
+    //     result[p].id = gardenLists[p].id;
+    // }
+    return gardenLists;
 }
 
 function getGardenListOfCommunity(communityId) {
@@ -349,11 +368,11 @@ function debugOutput(arg) {
     console.log(arg);
 }
 
-function downloadExcel() {
-    var item = $(this);
-    var gardenId = item.data('gardenId');
-    var tableId = item.data('table-id');
-    var url = excelTable[tableId - 1];
+function downloadExcel(url, gardenId) {
+    // var item = $(this);
+    // var gardenId = item.data('gardenId');
+    // var tableId = item.data('table-id');
+    // var url = excelTable[tableId - 1];
     var $form = $("<form>"); //定义一个form表单
     $form.hide().attr({target: '', method: 'post', 'action': url});
     var $token = $("<input>");
@@ -363,5 +382,27 @@ function downloadExcel() {
     $gardenId.attr({"type": "hidden", "name": 'gardenId'}).val(gardenId);
     $form.append($gardenId);
 
-    $form.appendTo($("body")).submit().remove();
+    $form.appendTo($("body")).submit();
+    $form.remove();
 }
+
+function downloadPoicture(gardenId) {
+    downloadExcel(pictureExport, gardenId);
+}
+
+$.fn.serializeObject = function()    
+{    
+   var o = {};    
+   var a = this.serializeArray();    
+   $.each(a, function() {    
+       if (o[this.name]) {    
+           if (!o[this.name].push) {    
+               o[this.name] = [o[this.name]];    
+           }    
+           o[this.name].push(this.value || '');    
+       } else {    
+           o[this.name] = this.value || '';    
+       }    
+   });    
+   return o;    
+};
