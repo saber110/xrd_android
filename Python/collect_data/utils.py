@@ -64,24 +64,26 @@ def compress_image(origin_path: str, compressed_path: str, size: int):
             break
         rate = config.COMPRESSED_SIZE / file_size
         rate = math.sqrt(rate)
+        rate = rate if rate < 0.9 else 0.9
         image = Image.open(compressed_path)
         width, high = image.size
         image = image.resize((int(rate * width), int(rate * high)), Image.ANTIALIAS)
         image.save(compressed_path)
 
-    add_water_mark_and_save(compressed_path)
+    add_water_mark_and_save(compressed_path, '湖南新融达', 80, '#fff', 0.4)
 
 
-def add_water_mark_and_save(image_path):
-    watermark = "湖南新融达"
+def add_water_mark_and_save(image_path, text, front_size, fill_color, alpha):
     img = Image.open(image_path)
+    bg = img.copy()
     draw = ImageDraw.Draw(img)
     father_dictionary = os.path.abspath(os.path.dirname(__file__))
     tff_path = os.path.join(father_dictionary, 'assets', 'SourceHanSansCN-Normal.ttf')
-    my_font = ImageFont.truetype(tff_path, size=42)
-    fillcolor = "#ff0000"
+    my_font = ImageFont.truetype(tff_path, size=front_size)
+    front_width, front_height = my_font.getsize(text)
     width, height = img.size
-    draw.text((width - 56 * len(watermark), height - 56), watermark, font=my_font, fill=fillcolor)
+    draw.text(((width - front_width) / 2, height * 3 / 4), text, font=my_font, fill=fill_color)
+    img = Image.blend(bg, img, alpha)
     img.save(image_path)
 
 
