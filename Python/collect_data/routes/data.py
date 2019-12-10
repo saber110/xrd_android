@@ -233,7 +233,7 @@ def building_picture(user_id: int, *args, **kwargs):
     """
     try:
         picture_kind = request.form['pictureKind']
-        building_name = request.form['buildingId'] + '栋'
+        building_name = request.form['buildingName']
         garden_id = request.form['gardenId']
         collect_time = request.form['collectTime']
         image = request.files['image']
