@@ -402,8 +402,7 @@ def garden_base_info(*args, **kwargs):
             'key': 'mainRoad',
             'required': False,
             'changed': True,
-            'type': 'map',
-            'radius': 100,
+            'type': 'text',
             'value': ''
         },
         {
