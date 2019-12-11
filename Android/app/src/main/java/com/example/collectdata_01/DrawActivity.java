@@ -63,7 +63,7 @@ public class DrawActivity extends AppCompatActivity {
         // ，false为未选中，和setSingleChoiceItems中第二个参数对应
         // 为对话框添加单选列表项
         // 第一个参数存放选项的数组，第二个参数存放默认被选中的项，第三个参数点击事件
-        builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(items, 1, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
@@ -95,6 +95,11 @@ public class DrawActivity extends AppCompatActivity {
                 if(str.equals("是")){
                     Toast.makeText(context, "请继续作图或者选择导入图片", Toast.LENGTH_SHORT).show();
                 }
+                if(str.equals("否")) {
+                    Toast.makeText(context, "返回主页", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                //默认
                 else {
                     Toast.makeText(context, "返回主页", Toast.LENGTH_SHORT).show();
                     finish();
@@ -180,26 +185,22 @@ public class DrawActivity extends AppCompatActivity {
                 imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
                 File file = new File(imagePath);
                 jpeg = file.getName();
-                System.out.println("me");
             } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
                 Uri contentUri = ContentUris.withAppendedId(Uri.parse("content: //downloads/public_downloads"), Long.valueOf(docId));
                 imagePath = getImagePath(contentUri, null);
                 File file = new File(imagePath);
                 jpeg = file.getName();
-                System.out.println("do");
             }
         } else if ("content".equalsIgnoreCase(uri.getScheme())) {
             // 如果是content类型的Uri，则使用普通方式处理
             imagePath = getImagePath(uri, null);
             File file = new File(imagePath);
             jpeg = file.getName();
-            System.out.println("content");
         } else if ("file".equalsIgnoreCase(uri.getScheme())){
             // 如果是file类型的Uri，直接获取图片路径即可
             imagePath = uri.getPath();
             File file = new File(imagePath);
             jpeg = file.getName();
-            System.out.println("uri");
         }
         // 根据图片路径显示图片
         displayImage(imagePath);
@@ -227,6 +228,9 @@ public class DrawActivity extends AppCompatActivity {
         }
         return path;
     }
+
+
+
 
     Bitmap bitmap2;
     int screenWidth,screenHeight;
@@ -326,7 +330,6 @@ public class DrawActivity extends AppCompatActivity {
         Bundle bundle = this.getIntent().getExtras();
         //接收name值
         jpeg = bundle.getString("jpeg");
-        System.out.println(jpeg);
         String filepath1 = Environment.getExternalStorageDirectory()+ "/temp/" + jpeg;
         displayImage(filepath1);
         imageview.setOnTouchListener(new View.OnTouchListener() {
@@ -338,7 +341,6 @@ public class DrawActivity extends AppCompatActivity {
                     canvas = new Canvas(bitmap);
                     paint.setColor(Color.WHITE);
                     paint.setStyle(Paint.Style.FILL);
-                    System.out.println("执行了这个方法");
                     canvas.drawRect(0f,0f,v.getWidth(),v.getHeight(),paint);
                 }
                 paint.setColor(Color.RED);
@@ -346,17 +348,14 @@ public class DrawActivity extends AppCompatActivity {
                 paint.setStrokeWidth(5f);
                 //实心
                 paint.setStyle(Paint.Style.FILL);
-                System.out.println(v.getWidth());
 
                 int action = e.getAction();
                 if(action == MotionEvent.ACTION_DOWN){
                     x1 = e.getX();
                     y1 = e.getY();
-                    System.out.println(x1);
                 }
                 if(action == MotionEvent.ACTION_MOVE){
                     x2 = e.getX();
-                    System.out.println(x2);
                     y2 = e.getY();
                     if(str.equals("开始")){
                         canvas.drawLine(x1-30,y1-300,x2-30,y2-300,paint);

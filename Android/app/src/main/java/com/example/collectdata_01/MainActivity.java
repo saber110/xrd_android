@@ -86,6 +86,8 @@ public class MainActivity extends TakePhotoActivity{
     public static LocationAllDao locationAllDao = new LocationAllDao();
     private String gardenName;
     private static Integer gardenId;
+    private static String buildingId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +117,7 @@ public class MainActivity extends TakePhotoActivity{
 
         searchKey = selectGardenView.findViewById(R.id.search_garden_key);
         addGardenBtn = selectGardenView.findViewById(R.id.add_garden);
+        setBuildingId(null);
 
         mapLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,7 +227,8 @@ public class MainActivity extends TakePhotoActivity{
                         mainDB.delete(gardenlist.get(i));
                     }
                     for (int i = 0; i < buildinglist.size(); i++) {
-                        uploadImgUtil.uploadBuildImg(Integer.toString(1), buildinglist.get(i).getCollectTime(), buildinglist.get(i).getGardenId(), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
+                        // 复用gardenId
+                        uploadImgUtil.uploadBuildImg(buildinglist.get(i).getGardenId(), buildinglist.get(i).getCollectTime(), Integer.toString(MainActivity.getGardenId()), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
                         mainDB.delete(buildinglist.get(i));
                     }
                     for (int i = 0; i < qitalist.size(); i++) {
@@ -462,7 +466,11 @@ public class MainActivity extends TakePhotoActivity{
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);
         showImg(result.getImage());
-        Users musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Integer.toString((int) System.currentTimeMillis()), login.token, jpegName);
+        Users musers;
+        if(getBuildingId() == null)
+            musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Integer.toString((int) System.currentTimeMillis()), login.token, jpegName);
+        else
+            musers = new Users(getBuildingId(), locationString, Integer.toString((int) System.currentTimeMillis()), login.token, jpegName);
         System.out.println("用户创建成功");
         mainDB.save(musers);
         System.out.println("保存数据成功");
@@ -605,6 +613,7 @@ public class MainActivity extends TakePhotoActivity{
                         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                setBuildingId(edit.getText().toString());
                                 Toast.makeText(context, "你确立的楼栋是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
                                 //把输入的地点赋给 fu.locationString
                                 loudong = edit.getText().toString();
@@ -635,6 +644,7 @@ public class MainActivity extends TakePhotoActivity{
                                 dialoga.show();
                             }
                             else {
+                                setBuildingId(null);
                                 picture();
                             }
                         }
@@ -645,6 +655,8 @@ public class MainActivity extends TakePhotoActivity{
                                     Toast.LENGTH_SHORT).show();
                             locationString = "平面图";
                             picture();
+                            setBuildingId(null);
+
                         }
                     }
                 });
@@ -706,6 +718,13 @@ public class MainActivity extends TakePhotoActivity{
 
     public static int getGardenId(){
         return MainActivity.gardenId;
+    }
+
+    public void  setBuildingId(String buildingId) {
+        MainActivity.buildingId = buildingId;
+    }
+    public static String getBuildingId(){
+        return MainActivity.buildingId;
     }
 
     private void setGardenId(int gardenId) {

@@ -256,9 +256,9 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 if (name.getText().toString().length() == 0) {
                     Toast.makeText(BaiduMapActivity.this, "请输入数据", Toast.LENGTH_SHORT).show();
                 } else {
-                    name.setText(null);
                     dialog.dismiss();
                     addMark(latLng);
+                    name.setText(null);
                 }
             }
         });
@@ -295,11 +295,11 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 if (name.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
-
-                    name.setText(null);
                     changeDialog.dismiss();
                     deleteMark(marker,marker.getExtraInfo().getInt("id"));
                     addMark(marker.getPosition());
+                    name.setText(null);
+
                 }
             }
         });

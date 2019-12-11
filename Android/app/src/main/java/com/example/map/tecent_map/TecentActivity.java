@@ -324,11 +324,12 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                 if (name.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
-                    name.setText(null);
                     changeDialog.dismiss();
                     Log.d(">>>>>>>>", "onClick: " + marker.getTag());
                     deleteMark((Integer) marker.getTag(), marker);
                     addMark(marker.getPosition());
+                    name.setText(null);
+
                 }
             }
         });

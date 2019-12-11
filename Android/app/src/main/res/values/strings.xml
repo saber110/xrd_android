@@ -15,7 +15,7 @@
     <string name="label_neighbour_working">请选择工作小区</string>
 
     <!--    API-->
-<!--    <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/%1$s/%2$s</string>-->
+    <!--    <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/%1$s/%2$s</string>-->
     <string name="preFix">http://kms.yinaoxiong.cn:8888/api/v1/%1$s/%2$s</string>
 <!--    <string name="preFix">http://gjb.hnxrd.com.cn:9998/api/v1/%1$s/%2$s</string>-->
 
@@ -25,7 +25,7 @@
     <string name="refreshTokenApi">refresh_token</string>
     <string name="updateUserApi">update</string>
     <string name="updatePasswordApi">reset_password</string>
-    
+
     <string name="getDataTab">get_data</string>
     <string name="getMapDataAPI">map</string>
     <string name="getGardenBaseInfoAPI">garden_base_info</string>
@@ -57,7 +57,7 @@
 
     <string name="delDataTab">del_data</string>
     <string name="deleteMapDataApi">map</string>
-    
+
     <!--    Data页面的string    -->
     <string name="data_xiaoqugaikuang">小区概况表</string>
     <string name="data_louzhuangdiaocha">楼幢调查</string>
