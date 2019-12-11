@@ -57,6 +57,10 @@ def compress_image(origin_path: str, compressed_path: str, size: int):
     origin_image = Image.open(origin_path)
     dir_name = os.path.dirname(compressed_path)
     os.makedirs(dir_name, exist_ok=True)
+    # 将图片等比例缩放高到1000px
+    width, high = origin_image.size
+    rate = 1000 / high
+    origin_image = origin_image.resize((int(rate * width), int(rate * high)), Image.ANTIALIAS)
     origin_image.save(compressed_path)
     while True:
         file_size = os.path.getsize(compressed_path) / float(1024)
