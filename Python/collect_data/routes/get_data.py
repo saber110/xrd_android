@@ -2433,20 +2433,40 @@ def export_zip(*args, **kwargs):
         garden_id = request.form['gardenId']
     except KeyError:
         return generate_result(1)
-    data = request.get_json()
-    schema = {
-        'gardenId': {'type': 'integer', 'min': 1},
-    }
     garden = Garden.query.get(garden_id)
     if garden is None:
         return generate_result(2, '该小区不存在')
     zip_dir = os.path.join(config.UPLOADED_IMAGES_DEST, 'zip', str(garden_id))
     os.makedirs(zip_dir, exist_ok=True)
     community = Community.query.get(garden.communityId)
+    # 查询小区所拥有的图片
     garden_pictures = GardenPicture.query.filter_by(gardenId=garden_id).all()
-    building_pictures = BuildingPicture.query.join(BuildingInfo).filter_by(gardenId=garden_id).all()
+    # 根据图片种类对小区图片进行划分
+    garden_picture_dict = {}
+    for picture in garden_pictures:
+        if picture.pictureKind in garden_picture_dict:
+            garden_picture_dict[picture.pictureKind].append(picture)
+        else:
+            garden_picture_dict[picture.pictureKind] = [picture]
+    building_pictures = db.session.query(BuildingInfo.buildingName, BuildingPicture) \
+        .join(BuildingInfo, BuildingInfo.id == BuildingPicture.buildingId) \
+        .filter_by(gardenId=garden_id) \
+        .order_by(BuildingPicture.collectTime).all()
+    # 根据楼幢id和照片类型对楼幢图片信息进行划分
+    building_picture_dict = {}
+    for building_name, picture in building_pictures:
+        setattr(picture, 'buildingName', building_name)
+        if picture.buildingId in building_picture_dict:
+            building_picture_in_id = building_picture_dict[picture.buildingId]
+            if picture.pictureKind in building_picture_in_id:
+                building_picture_in_id[picture.pictureKind].append(picture)
+            else:
+                building_picture_in_id[picture.pictureKind] = [picture]
+        else:
+            building_picture_dict[picture.buildingId] = {picture.pictureKind: [picture]}
     other_pictures = OtherPicture.query.filter_by(gardenId=garden_id).all()
-    all_pictures = garden_pictures + building_pictures + other_pictures
+    # 根据图片种类对小区图片进行划分
+    # 设置时间戳文件，压缩zip文件，结果zip文件路径
     timestamp_file = os.path.join(zip_dir, 'timestamp.txt')
     zip_path = os.path.join(zip_dir, f'{community.name}_{garden.name}.zip')
     compress_zip_path = os.path.join(zip_dir, f'{community.name}_图片.zip')
@@ -2457,29 +2477,63 @@ def export_zip(*args, **kwargs):
         if timestamp != '':
             last_time = datetime.fromtimestamp(float(timestamp))
             flag = True
-            for item in all_pictures:
-                sync_time = getattr(item, 'syncTime')
-                if sync_time > last_time:
+            for item in garden_pictures + building_pictures + other_pictures:
+                if item.syncTime > last_time:
                     flag = False
                     break
             if flag and os.path.exists(zip_path):
                 dir_path, filename = os.path.split(zip_path)
                 return my_send_file(zip_path, 'application/x-zip-compressed', filename)
-
+    # 添加小区和楼幢压缩图片到zip
     with zipfile.ZipFile(compress_zip_path, 'w') as zf:
-        for picture in all_pictures:
-            picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, getattr(picture, 'compressedFilePath'))
-            if os.path.exists(picture_path):
-                dir_path, filename = os.path.split(picture_path)
-                zf.write(picture_path, filename)
+        for garden_picture_in_kind in garden_picture_dict.values():
+            for index, picture in enumerate(garden_picture_in_kind):
+                picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.compressedFilePath)
+                number = f"{index + 1:03d}"
+                if os.path.exists(picture_path):
+                    zf.write(picture_path, f'2_{garden.name}_{picture.pictureKind}_{number}.jpg')
+        for building_picture_in_id in building_picture_dict.values():
+            for building_picture_in_kind in building_picture_in_id.values():
+                for index, picture in enumerate(building_picture_in_kind):
+                    picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.compressedFilePath)
+                    number = f"{index + 1:03d}"
+                    if os.path.exists(picture_path):
+                        zf.write(picture_path,
+                                 f'3_{garden.name} {picture.buildingName}_{picture.pictureKind}_{number}.jpg')
+
     with zipfile.ZipFile(zip_path, 'w') as zf:
         dir_path, compress_filename = os.path.split(compress_zip_path)
         zf.write(compress_zip_path, compress_filename)
-        for picture in all_pictures:
-            picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, getattr(picture, 'originFilePath'))
+        # 添加小区和楼幢压缩图片到zip
+        for garden_picture_in_kind in garden_picture_dict.values():
+            for index, picture in enumerate(garden_picture_in_kind):
+                picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.originFilePath)
+                number = f"{index + 1:03d}"
+                if os.path.exists(picture_path):
+                    # 获取原图后缀名
+                    dir_path, filename = os.path.split(picture_path)
+                    suffix = os.path.splitext(filename)[1]
+                    zf.write(picture_path,
+                             os.path.join('原图', f'2_{garden.name}_{picture.pictureKind}_{number}' + suffix))
+        for building_picture_in_id in building_picture_dict.values():
+            for building_picture_in_kind in building_picture_in_id.values():
+                for index, picture in enumerate(building_picture_in_kind):
+                    picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.originFilePath)
+                    number = f"{index + 1:03d}"
+                    if os.path.exists(picture_path):
+                        # 获取原图后缀名
+                        dir_path, filename = os.path.split(picture_path)
+                        suffix = os.path.splitext(filename)[1]
+                        zf.write(picture_path, os.path.join('原图',
+                                                            f'3_{garden.name} {picture.buildingName}_{picture.pictureKind}_{number}' + suffix))
+
+        for index, picture in enumerate(other_pictures):
+            picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.originFilePath)
+            number = f"{index + 1:03d}"
             if os.path.exists(picture_path):
                 dir_path, filename = os.path.split(picture_path)
-                zf.write(picture_path, os.path.join('原图', filename))
+                suffix = os.path.splitext(filename)[1]
+                zf.write(picture_path, os.path.join('其他图片', f'4_{garden.name}_{number}' + suffix))
     with open(timestamp_file, 'w') as file:
         file.write(str(datetime.now().timestamp()))
     dir_path, filename = os.path.split(zip_path)
