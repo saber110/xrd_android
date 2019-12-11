@@ -88,6 +88,20 @@ public class MainActivity extends TakePhotoActivity{
     private static Integer gardenId;
     private static String buildingId;
 
+    //定义了一些参数
+    private int yourChoice;
+    private String item;
+    private Intent intent;
+    private String pictureKind;
+
+    public String locationString;
+    public String jpegName;
+    private String loudong;
+
+    /**
+     * 数据库引用对象
+     */
+    static DataBase mainDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,21 +234,7 @@ public class MainActivity extends TakePhotoActivity{
             @Override
             public void onClick(View v) {
                 if (gardenName != null && !gardenName.isEmpty()) {
-                    dividedData();
-                    UploadImgUtil uploadImgUtil = new UploadImgUtil(MainActivity.this);
-                    for (int i = 0; i < gardenlist.size(); i++) {
-                        uploadImgUtil.uploadGardenImg(gardenlist.get(i).getGardenId(), gardenlist.get(i).getpictureKind(), gardenlist.get(i).getCollectTime(), gardenlist.get(i).getToken(), gardenlist.get(i).getImage());
-                        mainDB.delete(gardenlist.get(i));
-                    }
-                    for (int i = 0; i < buildinglist.size(); i++) {
-                        // 复用gardenId
-                        uploadImgUtil.uploadBuildImg(buildinglist.get(i).getGardenId(), buildinglist.get(i).getCollectTime(), Integer.toString(MainActivity.getGardenId()), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
-                        mainDB.delete(buildinglist.get(i));
-                    }
-                    for (int i = 0; i < qitalist.size(); i++) {
-                        uploadImgUtil.uploadOtherImg(qitalist.get(i).getGardenId(), qitalist.get(i).getCollectTime(), qitalist.get(i).getToken(), qitalist.get(i).getImage());
-                        mainDB.delete(qitalist.get(i));
-                    }
+                    startActivity(new Intent(MainActivity.this, Datalist.class));
                 } else {
                     Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
                 }
@@ -262,7 +262,6 @@ public class MainActivity extends TakePhotoActivity{
         if (mainDB == null) {
             // 创建数据库,传入当前上下文对象和数据库名称
             mainDB = LiteOrm.newSingleInstance(this, "imageData.db");
-            System.out.println("数据库创建成功");
         }
         Intent intent11 = getIntent();
         String flagMessage = intent11.getStringExtra("flag");
@@ -406,50 +405,10 @@ public class MainActivity extends TakePhotoActivity{
         }
     }
 
-    ArrayList<Users> gardenlist = new ArrayList<>();
-    ArrayList<Users> buildinglist = new ArrayList<>();
-    ArrayList<Users> qitalist = new ArrayList<>();
-
-    private void dividedData() {
-        gardenlist.clear();
-        buildinglist.clear();
-        qitalist.clear();
-        ArrayList<Users> list = mainDB.query(Users.class);
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getpictureKind().equals("平面图")
-                    || list.get(i).getpictureKind().equals("小区入口")
-                    || list.get(i).getpictureKind().equals("外景图")
-                    || list.get(i).getpictureKind().equals("内景图")) {
-                gardenlist.add(list.get(i));
-            }
-            if (list.get(i).getpictureKind().equals("建筑立面") ||
-                    list.get(i).getpictureKind().equals("楼牌号")) {
-                buildinglist.add(list.get(i));
-            }
-            if (list.get(i).getpictureKind().equals("其他")) {
-                qitalist.add(list.get(i));
-            }
-//            Toast.makeText(MainActivity.this, "图片上传完毕", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
     }
-
-    //定义了一些参数
-    private int yourChoice;
-    private String item;
-    private Intent intent;
-    private String pictureKind;
-
-    public String locationString;
-    public String jpegName;
-    /**
-     * 数据库引用对象
-     */
-    static DataBase mainDB;
 
     //以下是重写了方法
     @Override
@@ -468,12 +427,10 @@ public class MainActivity extends TakePhotoActivity{
         showImg(result.getImage());
         Users musers;
         if(getBuildingId() == null)
-            musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Integer.toString((int) System.currentTimeMillis()), login.token, jpegName);
+            musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Integer.toString((int) System.currentTimeMillis()), jpegName);
         else
-            musers = new Users(getBuildingId(), locationString, Integer.toString((int) System.currentTimeMillis()), login.token, jpegName);
-        System.out.println("用户创建成功");
+            musers = new Users(getBuildingId(), locationString, Integer.toString((int) System.currentTimeMillis()), jpegName, Integer.toString(MainActivity.getGardenId()));
         mainDB.save(musers);
-        System.out.println("保存数据成功");
     }
 
     String n;
@@ -501,7 +458,6 @@ public class MainActivity extends TakePhotoActivity{
                 .distinct(true)
                 .where("pictureKind" + "=?", new String[]{locationString});
         count = mainDB.queryCount(qb);
-        System.out.println(count);
 
         //保存的文件名，先格式化000字符
         formatString((int) (count++));
@@ -522,12 +478,12 @@ public class MainActivity extends TakePhotoActivity{
             pictureKind = Integer.toString(2);
         }
         if(locationString.equals("幢牌号")){
-            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "栋_幢牌号_" + n + ".jpg";
+            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_幢牌号_" + n + ".jpg";
             pictureKind = Integer.toString(3);
         }
         if(locationString.equals("建筑立面")){
             pictureKind = Integer.toString(3);
-            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "栋_建筑立面_" + n +".jpg";
+            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_建筑立面_" + n +".jpg";
         }
         if(locationString.equals("其他")){
             pictureKind = Integer.toString(3);
@@ -582,7 +538,6 @@ public class MainActivity extends TakePhotoActivity{
     /**
      * 图片种类选择对话框
      */
-    private String loudong;
     private void showSingleChoiceDialog(){
         final String[] items = {"平面图","小区入口","外景图","内景图","建筑立面","幢牌号","其他"};
         yourChoice = -1;

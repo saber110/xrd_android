@@ -21,11 +21,13 @@ public class Users extends BaseModel {
     private static final long serialVersionUID = 1L;
     // 非空约束 形同于@Check("userName NOT NULL")
     @NotNull
-    private String gardenId;
+    private String gardenId, buildingName;
     private String pictureKind;
     private String collectTime;
     private String token;
     private String image;
+    private boolean isUploaded;
+
 
 //    // 性别用 0 - 1 - 2替代,0=男,1=女,2=未知
 //    @Check("userSex >= 0 AND userSex < 3")
@@ -46,18 +48,37 @@ public class Users extends BaseModel {
      * @param gardenId
      * @param pictureKind
      * @param collectTime
-     * @param token
      * @param image
      */
-    public Users(String gardenId, String pictureKind, String collectTime, String token, String image) {
+    // 用作小区数据的持久化
+    public Users(String gardenId, String pictureKind, String collectTime, String image) {
         this.gardenId = gardenId;
         this.pictureKind = pictureKind;
         this.collectTime = collectTime;
-        this.token = token;
         this.image = image;
+        this.isUploaded = false;
     }
 
+    // 用作楼栋数据的持久化
+    public Users(String buildingName, String pictureKind, String collectTime, String image, String gardenId) {
+        this.buildingName = buildingName;
+        this.gardenId = gardenId;
+        this.pictureKind = pictureKind;
+        this.collectTime = collectTime;
+        this.image = image;
+        this.isUploaded = false;
+    }
+
+
     public Users() {
+    }
+
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
     }
 
     public String getGardenId() {

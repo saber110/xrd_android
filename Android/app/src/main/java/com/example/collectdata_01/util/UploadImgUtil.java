@@ -73,7 +73,6 @@ public class UploadImgUtil{
             }
         }
         Request request = new Request.Builder().url(url).post(requestBody.build()).build();
-        Log.i("post", "postFile: " + requestBody.toString());
         // readTimeout("请求超时时间" , 时间单位);
         client.newBuilder()
                 .connectTimeout(5, TimeUnit.SECONDS)
@@ -121,7 +120,7 @@ public class UploadImgUtil{
         map.put("gardenId",gardenId);
         map.put("pictureKind",pictureKind);
         map.put("collectTime",collectTime.substring(1, collectTime.length()));
-        map.put("token", token);
+        map.put("token", login.token);
         map.put("image", jpeg);
         postFile(v1.uploadGardenPictureApi,map,jpeg);
     }
@@ -139,7 +138,7 @@ public class UploadImgUtil{
         Map<String,String> map = new HashMap(4);
         map.put("gardenId",gardenId);
         map.put("collectTime",collectTime.substring(1, collectTime.length()));
-        map.put("token", token);
+        map.put("token", login.token);
         map.put("image", jpeg);
         postFile(v1.uploadOtherPictureApi, map, jpeg);
     }
@@ -155,9 +154,9 @@ public class UploadImgUtil{
      *   "pictureKind": ""
      * }
      */
-    public void uploadBuildImg(String buildingId,String collectTime,String gardenId,String pictureKind,String jpeg){
+    public void uploadBuildImg(String buildingName,String collectTime,String gardenId,String pictureKind,String jpeg){
         Map<String,String> map = new HashMap(8);
-        map.put("buildingId",buildingId);
+        map.put("buildingName",buildingName);
         map.put("pictureKind",pictureKind);
         map.put("collectTime",collectTime.substring(1, collectTime.length()));
         map.put("token", login.token);

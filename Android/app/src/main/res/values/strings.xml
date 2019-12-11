@@ -69,6 +69,10 @@
     <string name="message_hint">请在此输入信息...</string>
     <string name="message_title">信息详情</string>
 
+    <!--    照片上传-->
+    <string name="uploadPictures">确认上传</string>
+    <string name="outlineOfUpload">照片上传</string>
+
 
     <string name="cat_single_select">Single-select</string>
     <string name="cat_multi_select">Multi-select</string>
