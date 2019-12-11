@@ -87,7 +87,6 @@ public class MainActivity extends TakePhotoActivity{
     private String gardenName;
     private static Integer gardenId;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

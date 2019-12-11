@@ -13,4 +13,5 @@ public class AsyncRequest extends AsyncTask<ProcessInterface,Integer,Object> {
     protected Object doInBackground(ProcessInterface... processInterfaces) {
         return processInterfaces[0].call();
     }
+
 }
