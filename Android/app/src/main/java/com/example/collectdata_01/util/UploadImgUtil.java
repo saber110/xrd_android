@@ -119,7 +119,7 @@ public class UploadImgUtil{
         Map<String,String> map = new HashMap(4);
         map.put("gardenId",gardenId);
         map.put("pictureKind",pictureKind);
-        map.put("collectTime",collectTime.substring(1, collectTime.length()));
+        map.put("collectTime",collectTime);
         map.put("token", login.token);
         map.put("image", jpeg);
         postFile(v1.uploadGardenPictureApi,map,jpeg);
@@ -137,7 +137,7 @@ public class UploadImgUtil{
     public void uploadOtherImg(String gardenId,String collectTime,String token, String jpeg){
         Map<String,String> map = new HashMap(4);
         map.put("gardenId",gardenId);
-        map.put("collectTime",collectTime.substring(1, collectTime.length()));
+        map.put("collectTime",collectTime);
         map.put("token", login.token);
         map.put("image", jpeg);
         postFile(v1.uploadOtherPictureApi, map, jpeg);
@@ -158,7 +158,7 @@ public class UploadImgUtil{
         Map<String,String> map = new HashMap(8);
         map.put("buildingName",buildingName);
         map.put("pictureKind",pictureKind);
-        map.put("collectTime",collectTime.substring(1, collectTime.length()));
+        map.put("collectTime",collectTime);
         map.put("token", login.token);
         map.put("gardenId",gardenId);
         map.put("image", jpeg);

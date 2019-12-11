@@ -427,7 +427,7 @@ public class MainActivity extends TakePhotoActivity{
         showImg(result.getImage());
         Users musers;
         if(getBuildingId() == null)
-            musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Integer.toString((int) System.currentTimeMillis()), jpegName);
+            musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Long.toString(System.currentTimeMillis()), jpegName);
         else
             musers = new Users(getBuildingId(), locationString, Integer.toString((int) System.currentTimeMillis()), jpegName, Integer.toString(MainActivity.getGardenId()));
         mainDB.save(musers);
