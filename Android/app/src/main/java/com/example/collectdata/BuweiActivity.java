@@ -1,19 +1,20 @@
 package com.example.collectdata;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.collectdata_01.R;
 import com.example.dao.Position;
@@ -23,14 +24,19 @@ import java.util.ArrayList;
 public class BuweiActivity extends AppCompatActivity {
     private LinearLayout Linayout;
     private TextView textView;
+    private CheckBox checkBox;
     private ArrayList<Position> positions = new ArrayList<>();
-    private String retString = "";
+    public static String retString = "";
+    private Button save;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buwei);
         Linayout=findViewById(R.id.table);
         textView = (TextView)findViewById(R.id.textView3);
+        checkBox = (CheckBox)findViewById(R.id.check);
+        save = (Button)findViewById(R.id.save_buwei);
+        checkBox.setChecked(true);
 //        Linayout.setGravity(Gravity.CENTER_HORIZONTAL);
         initPositions();
         for (int i=0;i<7;i++){
@@ -55,7 +61,7 @@ public class BuweiActivity extends AppCompatActivity {
                         text.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Toast.makeText(BuweiActivity.this, finalI +"#"+ finalA,Toast.LENGTH_SHORT).show();
+
                                 createInputDialog(positions.get(finalJ).getText());
                             }
                         });
@@ -83,6 +89,16 @@ public class BuweiActivity extends AppCompatActivity {
             Linayout.addView(varlayout, LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
         }
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent();
+                i.putExtra("locationDescription",retString);
+                setResult(RESULT_OK, i);
+                Toast.makeText(BuweiActivity.this,"保存成功", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
     private void initPositions(){
         positions.add(new Position("西北",0,1));
@@ -113,9 +129,17 @@ public class BuweiActivity extends AppCompatActivity {
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String[] t = edit.getText().toString().split(";");
-                for(int i=0;i<t.length;i++){
-                    retString += text+t[i]+";";
+                if(checkBox.isChecked()){
+                    String[] t = edit.getText().toString().split(" ");
+                    for (int i = 0; i < t.length; i++) {
+                        retString += text + "0-" + t[i] + ";";
+                    }
+                }
+                else {
+                    String[] t = edit.getText().toString().split(";");
+                    for (int i = 0; i < t.length; i++) {
+                        retString += text + t[i] + ";";
+                    }
                 }
                  textView.setText(retString.substring(0,retString.length()-1));
                  Log.i("retString","retString="+retString);
