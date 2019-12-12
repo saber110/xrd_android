@@ -233,28 +233,33 @@ def building_picture(user_id: int, *args, **kwargs):
     """
     try:
         picture_kind = request.form['pictureKind']
-        building_id = request.form['buildingId']
+        building_name = request.form['buildingName']
         garden_id = request.form['gardenId']
         collect_time = request.form['collectTime']
         image = request.files['image']
     except KeyError:
         return generate_result(1)
     collect_time = datetime.fromtimestamp(int(collect_time) / 1000.0)
-    pictures = BuildingPicture.query.filter_by(buildingId=building_id).all()
     try:
         garden = Garden.query.get(garden_id)
-        building = BuildingInfo.query.get(building_id)
+        building = BuildingInfo.query.filter_by(gardenId=garden_id, buildingName=building_name).first()
+        if building is None:
+            building = BuildingInfo(collectTime=datetime.now(), gardenId=garden_id, userId=user_id,
+                                    buildingName=building_name)
+            db.session.add(building)
+            db.session.commit()
+        pictures = BuildingPicture.query.filter_by(buildingId=building.id).all()
     except SQLAlchemyError:
         db.session.rollback()
         return generate_result(2)
     number = f"{len(pictures) + 1:03d}"
-    origin_file_path = f'origin/{garden_id}/{building_id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
+    origin_file_path = f'origin/{garden_id}/{building.id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
     origin_file_path = image_upload.save(image, name=origin_file_path)
     origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
-    compressed_file_path = f'compressed/{garden_id}/{building_id}/3_{garden.name}_{building.buildingName}_{picture_kind}_{number}.jpg '
+    compressed_file_path = f'compressed/{garden_id}/{building.id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.jpg'
     compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
-    picture = BuildingPicture(buildingId=building_id, pictureKind=picture_kind, collectTime=collect_time,
+    picture = BuildingPicture(buildingId=building.id, pictureKind=picture_kind, collectTime=collect_time,
                               originFilePath=origin_file_path, compressedFilePath=compressed_file_path,
                               syncTime=datetime.now(), userId=user_id)
     try:
