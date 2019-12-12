@@ -26,7 +26,7 @@ from ..models.garden_picture import GardenPicture
 from ..models.garden_picture_kind import GardenPictureKind
 from ..models.map_data import MapData
 from ..models.other_picture import OtherPicture
-from ..utils import bd09_to_gcj02, compress_image
+from ..utils import bd09_to_gcj02, compress_image, get_suffix
 from ..wraps import token_check
 
 data_bp = Blueprint('data', __name__, url_prefix=config.URL_Prefix + '/data')
@@ -183,17 +183,18 @@ def garden_picture(user_id: int, *args, **kwargs):
     except KeyError:
         return generate_result(1)
     collect_time = datetime.fromtimestamp(int(collect_time) / 1000.0)
-    pictures = GardenPicture.query.filter_by(gardenId=garden_id, pictureKind=picture_kind).all()
     try:
         garden = Garden.query.get(garden_id)
+        if garden is None:
+            return generate_result(2, '小区不存在')
     except SQLAlchemyError:
         db.session.rollback()
         return generate_result(2)
-    number = f"{len(pictures) + 1:03d}"
-    origin_file_path = f'origin/{garden.id}/2_{garden.name}_{picture_kind}_{number}.'
+    origin_file_path = f'origin/{garden.id}/2_{garden.name}_{picture_kind}_{datetime.now().timestamp()}' + get_suffix(
+        image.filename)
     origin_file_path = image_upload.save(image, name=origin_file_path)
     origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
-    compressed_file_path = f'compressed/{garden.id}/2_{garden.name}_{picture_kind}_{number}.jpg'
+    compressed_file_path = f'compressed/{garden.id}/2_{garden.name}_{picture_kind}_{datetime.now().timestamp()}.jpg'
     compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = GardenPicture(gardenId=garden_id, pictureKind=picture_kind, collectTime=collect_time,
@@ -242,21 +243,22 @@ def building_picture(user_id: int, *args, **kwargs):
     collect_time = datetime.fromtimestamp(int(collect_time) / 1000.0)
     try:
         garden = Garden.query.get(garden_id)
+        if garden is None:
+            return generate_result(2, '小区不存在')
         building = BuildingInfo.query.filter_by(gardenId=garden_id, buildingName=building_name).first()
         if building is None:
             building = BuildingInfo(collectTime=datetime.now(), gardenId=garden_id, userId=user_id,
                                     buildingName=building_name)
             db.session.add(building)
             db.session.commit()
-        pictures = BuildingPicture.query.filter_by(buildingId=building.id).all()
     except SQLAlchemyError:
         db.session.rollback()
         return generate_result(2)
-    number = f"{len(pictures) + 1:03d}"
-    origin_file_path = f'origin/{garden_id}/{building.id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.'
+    origin_file_path = f'origin/{garden_id}/{building.id}/3_{garden.name} {building.buildingName}_{picture_kind}_{datetime.now().timestamp()}' + get_suffix(
+        image.filename)
     origin_file_path = image_upload.save(image, name=origin_file_path)
     origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
-    compressed_file_path = f'compressed/{garden_id}/{building.id}/3_{garden.name} {building.buildingName}_{picture_kind}_{number}.jpg'
+    compressed_file_path = f'compressed/{garden_id}/{building.id}/3_{garden.name} {building.buildingName}_{picture_kind}_{datetime.now().timestamp()}.jpg'
     compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = BuildingPicture(buildingId=building.id, pictureKind=picture_kind, collectTime=collect_time,
@@ -290,16 +292,16 @@ def other_picture(user_id: int, *args, **kwargs):
     except KeyError:
         return generate_result(1)
     collect_time = datetime.fromtimestamp(int(collect_time) / 1000.0)
-    pictures = OtherPicture.query.all()
     try:
         garden = Garden.query.get(garden_id)
+        if garden is None:
+            return generate_result(2, '小区不存在')
     except SQLAlchemyError:
         return generate_result(2)
-    number = f"{len(pictures) + 1:03d}"
-    origin_file_path = f'origin/{garden.id}/4_{garden.name}_{number}.'
+    origin_file_path = f'origin/{garden.id}/4_{garden.name}_{datetime.now().timestamp()}' + get_suffix(image.filename)
     origin_file_path = image_upload.save(image, name=origin_file_path)
     origin_path = os.path.join(config.UPLOADED_IMAGES_DEST, origin_file_path)
-    compressed_file_path = f'compressed/{garden.id}/4_{garden.name}_{number}.jpg'
+    compressed_file_path = f'compressed/{garden.id}/4_{garden.name}_{datetime.now().timestamp()}.jpg'
     compressed_path = os.path.join(config.UPLOADED_IMAGES_DEST, compressed_file_path)
     compress_image(origin_path, compressed_path, config.COMPRESSED_SIZE)
     picture = OtherPicture(gardenId=garden_id, collectTime=collect_time,

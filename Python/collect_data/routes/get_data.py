@@ -30,7 +30,7 @@ from ..models.map_data import MapData
 from ..models.other_picture import OtherPicture
 from ..models.street import Street
 from ..models.user import User
-from ..utils import gcj02_to_bd09
+from ..utils import gcj02_to_bd09, get_suffix
 from ..wraps import token_check, admin_required
 
 get_data_bp = Blueprint('get_data', __name__, url_prefix=config.URL_Prefix + '/get_data')
@@ -2510,30 +2510,24 @@ def export_zip(*args, **kwargs):
                 picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.originFilePath)
                 number = f"{index + 1:03d}"
                 if os.path.exists(picture_path):
-                    # 获取原图后缀名
-                    dir_path, filename = os.path.split(picture_path)
-                    suffix = os.path.splitext(filename)[1]
                     zf.write(picture_path,
-                             os.path.join('原图', f'2_{garden.name}_{picture.pictureKind}_{number}' + suffix))
+                             os.path.join('原图',
+                                          f'2_{garden.name}_{picture.pictureKind}_{number}' + get_suffix(picture_path)))
         for building_picture_in_id in building_picture_dict.values():
             for building_picture_in_kind in building_picture_in_id.values():
                 for index, picture in enumerate(building_picture_in_kind):
                     picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.originFilePath)
                     number = f"{index + 1:03d}"
                     if os.path.exists(picture_path):
-                        # 获取原图后缀名
-                        dir_path, filename = os.path.split(picture_path)
-                        suffix = os.path.splitext(filename)[1]
                         zf.write(picture_path, os.path.join('原图',
-                                                            f'3_{garden.name} {picture.buildingName}_{picture.pictureKind}_{number}' + suffix))
+                                                            f'3_{garden.name} {picture.buildingName}_{picture.pictureKind}_{number}' + get_suffix(
+                                                                picture_path)))
 
         for index, picture in enumerate(other_pictures):
             picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.originFilePath)
             number = f"{index + 1:03d}"
             if os.path.exists(picture_path):
-                dir_path, filename = os.path.split(picture_path)
-                suffix = os.path.splitext(filename)[1]
-                zf.write(picture_path, os.path.join('其他图片', f'4_{garden.name}_{number}' + suffix))
+                zf.write(picture_path, os.path.join('其他图片', f'4_{garden.name}_{number}' + get_suffix(picture_path)))
     with open(timestamp_file, 'w') as file:
         file.write(str(datetime.now().timestamp()))
     dir_path, filename = os.path.split(zip_path)

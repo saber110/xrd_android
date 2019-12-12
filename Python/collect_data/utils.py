@@ -78,6 +78,15 @@ def compress_image(origin_path: str, compressed_path: str, size: int):
 
 
 def add_water_mark_and_save(image_path, text, front_size, fill_color, alpha):
+    """
+    生成水印函数
+    :param image_path: 图片路径
+    :param text: 水印内容
+    :param front_size: 字号大小
+    :param fill_color: 字体颜色
+    :param alpha: 透明度
+    :return:
+    """
     img = Image.open(image_path)
     bg = img.copy()
     draw = ImageDraw.Draw(img)
@@ -103,3 +112,13 @@ def is_excel_end(the_list_like) -> bool:
         if str(item).strip() == '':
             return True
     return False
+
+
+def get_suffix(path):
+    """
+    获取路径的文件后缀
+    :param path: 路径
+    :return:
+    """
+    dir_path, filename = os.path.split(path)
+    return os.path.splitext(filename)[1]
