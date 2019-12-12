@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.collectdata_01.util.UploadImgUtil;
 import com.example.login.login;
 import com.google.android.material.button.MaterialButton;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,23 +54,24 @@ public class Datalist extends AppCompatActivity {
         UploadImgUtil uploadImgUtil = new UploadImgUtil(Datalist.this);
         for (int i = 0; i < gardenlist.size(); i++) {
             uploadImgUtil.uploadGardenImg(gardenlist.get(i).getGardenId(), gardenlist.get(i).getpictureKind(), gardenlist.get(i).getCollectTime(), login.token, gardenlist.get(i).getImage());
-            mainDB.delete(gardenlist.get(i));
+//            mainDB.delete(gardenlist.get(i));
         }
         for (int i = 0; i < buildinglist.size(); i++) {
             // 复用gardenId
             uploadImgUtil.uploadBuildImg(buildinglist.get(i).getBuildingName(), buildinglist.get(i).getCollectTime(), Integer.toString(MainActivity.getGardenId()), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
-            mainDB.delete(buildinglist.get(i));
+//            mainDB.delete(buildinglist.get(i));
         }
         for (int i = 0; i < qitalist.size(); i++) {
             uploadImgUtil.uploadOtherImg(qitalist.get(i).getGardenId(), qitalist.get(i).getCollectTime(), login.token, qitalist.get(i).getImage());
-            mainDB.delete(qitalist.get(i));
+//            mainDB.delete(qitalist.get(i));
         }
     }
     private void dividedData(List<String> listView) {
         gardenlist.clear();
         buildinglist.clear();
         qitalist.clear();
-        ArrayList<Users> list = mainDB.query(Users.class);
+        ArrayList<Users> list = mainDB.query(new QueryBuilder<Users>(Users.class)
+            .whereEquals(Users.ISUPLOADED_COL , false));
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getpictureKind().equals("平面图")
                     || list.get(i).getpictureKind().equals("小区入口")

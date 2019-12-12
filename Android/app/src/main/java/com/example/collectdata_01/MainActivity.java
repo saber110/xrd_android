@@ -430,7 +430,7 @@ public class MainActivity extends TakePhotoActivity{
         if(getBuildingId() == null)
             musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Long.toString(System.currentTimeMillis()), jpegName);
         else
-            musers = new Users(getBuildingId(), locationString, Integer.toString((int) System.currentTimeMillis()), jpegName, Integer.toString(MainActivity.getGardenId()));
+            musers = new Users(getBuildingId(), locationString, Long.toString(System.currentTimeMillis()), jpegName, Integer.toString(MainActivity.getGardenId()));
         mainDB.save(musers);
     }
 
@@ -454,10 +454,10 @@ public class MainActivity extends TakePhotoActivity{
 
         QueryBuilder<Users> qb = new QueryBuilder<Users>(Users.class)
                 .columns(new String[]{"pictureKind"})
-                .appendOrderAscBy("pictureKind")
-                .appendOrderDescBy("pictureKind")
                 .distinct(true)
-                .where("pictureKind" + "=?", new String[]{locationString});
+                .whereEquals(Users.PICTUREKIND_COL, locationString)
+                .whereAppendAnd()
+                .whereEquals(Users.GARDENID_COL, Integer.toString(getGardenId()));
         count = mainDB.queryCount(qb);
 
         //保存的文件名，先格式化000字符

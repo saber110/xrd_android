@@ -10,6 +10,9 @@ import com.example.collectdata_01.Users;
 import com.example.interfaceNet.v1;
 import com.example.login.login;
 import com.litesuits.orm.db.assit.QueryBuilder;
+import com.litesuits.orm.db.model.ColumnsValue;
+import com.litesuits.orm.db.model.ConflictAlgorithm;
+import com.litesuits.orm.log.OrmLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,9 +100,13 @@ public class UploadImgUtil{
                     String str = response.body().string();
                     // 设置数据库中的上传控制项
                     // collectTime唯一
-//                    ArrayList<Users> updateUser = mainDB.query(new QueryBuilder<Users>(Users.class)
-//                        .where(Users.COLLECTTIOME_COL + "= ?", new String[]{map.get(Users.COLLECTTIOME_COL)}));
-//                    updateUser.get(i).setToken();
+                    ArrayList<Users> updateUser = mainDB.query(new QueryBuilder<Users>(Users.class)
+                            .whereEquals(Users.COLLECTTIOME_COL , map.get(Users.COLLECTTIOME_COL)));
+                    updateUser.get(0).setIsuploaded(true);
+                    ColumnsValue cv = new ColumnsValue(new String[]{Users.ISUPLOADED_COL});
+                    long c = mainDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
+                    OrmLog.i(this, "update boss ：" + c);
+
                     n++;
                     if(n>=N){
                         funToastMakeText("数据上传完毕");

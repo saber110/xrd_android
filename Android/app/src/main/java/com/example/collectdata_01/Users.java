@@ -9,6 +9,7 @@ import com.litesuits.orm.db.annotation.Table;
 import com.litesuits.orm.db.annotation.Unique;
 
 import java.io.File;
+import java.security.PublicKey;
 
 /**
  * 用户信息类
@@ -21,16 +22,26 @@ import java.io.File;
 public class Users extends BaseModel {
     private static final long serialVersionUID = 1L;
     public static final String COLLECTTIOME_COL = "collectTime";
+    public static final String ISUPLOADED_COL = "isUploaded";
+    public static final String GARDENID_COL = "gardenId";
+    public static final String PICTUREKIND_COL = "pictureKind";
+
     // 非空约束 形同于@Check("userName NOT NULL")
     @NotNull
-    private String gardenId, buildingName;
+    @Column(GARDENID_COL)
+    private String gardenId;
+    @Column(PICTUREKIND_COL)
     private String pictureKind;
 
     @Column(COLLECTTIOME_COL)
     private String collectTime;
     private String token;
     private String image;
-    private boolean isUploaded;
+    private String buildingName;
+    // false 为未上传
+    // true  为已上传
+    @Column(ISUPLOADED_COL)
+    private Boolean isUploaded;
 
 
 //    // 性别用 0 - 1 - 2替代,0=男,1=女,2=未知
@@ -57,6 +68,7 @@ public class Users extends BaseModel {
     // 用作小区数据的持久化
     public Users(String gardenId, String pictureKind, String collectTime, String image) {
         this.gardenId = gardenId;
+        this.buildingName = "非楼栋";
         this.pictureKind = pictureKind;
         this.collectTime = collectTime;
         this.image = image;
@@ -117,5 +129,13 @@ public class Users extends BaseModel {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean getIsuploaded(){
+        return isUploaded;
+    }
+
+    public void setIsuploaded(boolean isUploaded) {
+        this.isUploaded = isUploaded;
     }
 }
