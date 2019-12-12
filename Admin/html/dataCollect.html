@@ -1,0 +1,705 @@
+<!--
+=========================================================
+ Material Dashboard - v2.1.1
+=========================================================
+
+ Product Page: https://www.creative-tim.com/product/material-dashboard
+ Copyright 2019 Creative Tim (https://www.creative-tim.com)
+ Licensed under MIT (https://github.com/creativetimofficial/material-dashboard/blob/master/LICENSE.md)
+
+ Coded by Creative Tim
+
+=========================================================
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>
+    湖南新融达公司数据采集APP后台管理
+  </title>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+  <!-- CSS Files -->
+  <link href="../assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
+  <!-- CSS Just for demo purpose, don't include it in your project -->
+  <link href="../assets/demo/demo.css" rel="stylesheet" />
+  <!-- excel -->
+  <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
+  <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
+
+</head>
+
+<body class="">
+  <div class="wrapper ">
+    <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg" id = "sidebar">
+    </div>
+    <div class="main-panel">
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top " id = "navbar">
+      </nav>
+      <!-- End Navbar -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="container-fluid">
+            <div class="card card-plain">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card-body">
+                    此功能暂未上线，敬请期待...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="content">
+        <div class="container-fluid">
+          <div class="card card card-plain">
+            <div class="col-lg-12 col-md-12">
+              <div class="card card-plain">
+                <div class="card-header card-header-tabs card-header-primary">
+                  <form class="form">
+                    <span id="city_china_val" class="bmd-form-group"><div class="input-group no-border">
+                        <select class="province other form-control" data-first-title="选择省" id = "province">
+                          <option value="">请选择</option>
+                        </select>
+                        <select class="city form-control" data-first-title="选择市"  id = "city">
+                          <option value="">请选择</option>
+                        </select>
+                        <select class="area form-control" data-first-title="选择地区" id = "district">
+                          <option value="">请选择</option>
+                        </select>
+                        <select class="street form-control" data-first-title="选择街道" id = "street">
+                          <option value="">请选择</option>
+                        </select>
+                        <select class="community form-control" data-first-title="选择社区" id = "community">
+                          <option value="">请选择</option>
+                        </select>
+                    </div>
+                  </span>
+                  </form>
+
+                  <div class="nav-tabs-navigation">
+                    <div class="nav-tabs-wrapper">
+                      <span class="nav-tabs-title">Tasks:</span>
+                      <ul class="nav nav-tabs" data-tabs="tabs">
+                        <li class="nav-item" id = "getTable1" onclick="getExcelDataOfTable(1, 'gardenInfo')">
+                          <a class="nav-link active" href="#table1" data-toggle="tab">
+                            <i class="material-icons">bug_report</i> 小区概况表
+                            <div class="ripple-container"></div>
+                          </a>
+                        </li>
+                        <li class="nav-item" id = "getTable2" onclick="getExcelDataOfTable(2, 'buildingInfo')">
+                          <a class="nav-link" href="#table2" data-toggle="tab">
+                            <i class="material-icons">code</i> 楼幢调查表
+                            <div class="ripple-container"></div>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id = "getTable3" href="#table3" data-toggle="tab">
+                            <i class="material-icons">cloud</i> 小区信息数据导入表
+                            <div class="ripple-container"></div>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id = "getTable4" href="#table4" data-toggle="tab">
+                            <i class="material-icons">cloud</i> 楼幢信息数据导入表
+                            <div class="ripple-container"></div>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="card-body" style="overflow-x:auto">
+                  <div class="tab-content">
+                    <div class="tab-pane active" id="table1" >
+                      <div class="row">
+                        <ul class="nav">
+                          <span class="input-group " id = "neighboutLists1">
+                          </span>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="tab-pane" id="table2">
+                      <div class="row">
+                        <ul class="nav">
+                          <span class="input-group " id = "neighboutLists2">
+                          </span>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="tab-pane" id="table3">
+                      <div class="row">
+                        <ul class="nav">
+                          <span class="input-group " id = "neighboutLists3">
+                          </span>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="tab-pane" id="table4">
+                      <div class="row">
+                        <ul class="nav">
+                          <span class="input-group " id = "neighboutLists4">
+                          </span>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <footer id = "footer"></footer>
+
+    </div>
+  </div>
+
+  <!--   Core JS Files   -->
+  <script src="../assets/js/core/jquery.min.js"></script>
+  <script src="../assets/js/core/pageGenerated.js?contentOutline='数据采集'"></script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap-material-design.min.js"></script>
+  <script src="../assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+  <!-- Plugin for the momentJs  -->
+  <script src="../assets/js/plugins/moment.min.js"></script>
+  <!--  Plugin for Sweet Alert -->
+  <script src="../assets/js/plugins/sweetalert2.js"></script>
+  <!-- Forms Validations Plugin -->
+  <script src="../assets/js/plugins/jquery.validate.min.js"></script>
+  <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
+  <script src="../assets/js/plugins/jquery.bootstrap-wizard.js"></script>
+  <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
+  <script src="../assets/js/plugins/bootstrap-selectpicker.js"></script>
+  <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
+  <script src="../assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
+  <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  -->
+  <script src="../assets/js/plugins/jquery.dataTables.min.js"></script>
+  <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
+  <script src="../assets/js/plugins/bootstrap-tagsinput.js"></script>
+  <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
+  <script src="../assets/js/plugins/jasny-bootstrap.min.js"></script>
+  <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
+  <script src="../assets/js/plugins/fullcalendar.min.js"></script>
+  <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
+  <script src="../assets/js/plugins/jquery-jvectormap.js"></script>
+  <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+  <script src="../assets/js/plugins/nouislider.min.js"></script>
+  <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+  <!-- Library for adding dinamically elements -->
+  <script src="../assets/js/plugins/arrive.min.js"></script>
+  <!--  Google Maps Plugin    -->
+  <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script> -->
+  <!-- Chartist JS -->
+  <script src="../assets/js/plugins/chartist.min.js"></script>
+  <!--  Notifications Plugin    -->
+  <script src="../assets/js/plugins/bootstrap-notify.js"></script>
+  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
+  <script type="text/javascript" src="../assets/js/interface.js"></script>
+  <!-- excel -->
+  <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
+  <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+
+  <script type="text/javascript" src="../assets/js/plugins/city.js"></script>
+  <script type="text/javascript">
+    function getExcelDataOfTable(tableId, idName) {
+      var communityId = communitySelect.options[communitySelect.options.selectedIndex].value;
+      var excelData = getExcelData(tableId, idName, communityId);
+      var main = document.getElementById('neighboutLists' + tableId);
+      $("#getTable" + tableId).removeAttr("onclick");
+      console.log(excelData);
+
+      for(var p in excelData){
+        // var div = document.createElement("div");
+        // div.id = 'spreadsheet' + tableId + p;
+        // div.innerHTML = excelData[p].name;   // 每个小区的名字
+        // main.appendChild(div);
+        var li = document.createElement("li");
+        li.className = "nav-item";
+        $(li).html("<a class='nav-link' id = 'spreadsheet" + tableId + p + "' onclick = downloadExcel('" + excelTable[tableId - 1] + "'," + excelData[p].id + ")>" + excelData[p].name + "</a>");
+        main.appendChild(li);
+
+        // jexcel(document.getElementById('spreadsheet1' + p), {
+        //   data: excelData[p].gardenInfo,
+        //   columns: excelData[p].header
+        // });
+      }
+    }
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var data = [
+          ['BR', 'Cheese', 1],
+          ['CA', 'Apples', 0],
+          ['US', 'Carrots', 1],
+          ['GB', 'Oranges', 0],
+      ];
+
+      tableTest = jexcel(document.getElementById('spreadsheet1'), {
+          // data:getExcelData(1, 'gardenId', 1).gardenInfo
+          data: data,
+          columns: [
+              {
+                  title: '采集人员',
+                  width: '100'
+              },
+              {
+                  title: '采集日期',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: '市',
+                  title: '状态',
+                  width:'100'
+              },
+              {
+                  title: '区县',
+                  width: '100'
+              },
+              {
+                  title: '街道',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: '社区名称',
+                  title: '状态',
+                  width:'100'
+              },
+              {
+                  title: '社区别名',
+                  width: '100'
+              },
+              {
+                  title: '小区名称',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: '小区别名',
+                  title: '状态',
+                  width:'100'
+              },
+              {
+                  title: '小区别名2',
+                  width: '100'
+              },
+              {
+                  title: '小区座落',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: '小区东至',
+                  title: '状态',
+                  width:'100'
+              },
+              {
+                  title: '小区南至',
+                  width: '100'
+              },
+              {
+                  title: '小区西至',
+                  width: '150',
+                  source: ['Apples','Bananas','Carrots','Oranges','Cheese']
+              },
+              {
+                  type: '小区北至',
+                  title: '状态',
+                  width:'100'
+              },
+              {
+                  title: '区域位置',
+                  width: '100',
+                  source: ['城区中心','城东区域','城南区域','城西区域','城北区域','近郊组团及乡镇','远郊组团及乡镇']
+              },
+              {
+                  title: '楼盘状态',
+                  width: '150',
+                  source: ['存量','在建','在售','灭失']
+              },
+              {
+                  title: '小区类型',
+                  width:'100',
+                  source: ['普通商品房','老式住宅区','经济适用房','中档商品房','高档商品房','自建房','零星住宅区','农村拆迁房','城市拆迁房','人才专项房']
+              },
+              {
+                  title: '建筑类型',
+                  width: '100',
+                  source:['住宅(电梯房)','住宅(楼梯房)','住宅(洋房)','单身公寓(住宅)','单身公寓(非住宅)','办公写字楼','别墅(独栋)','别墅(联排)','别墅(双拼)','叠墅','自建民房','其它类型']
+              },
+              {
+                  title: '房屋性质',
+                  width: '150',
+                  source: ['商品房','房改房','经济适用房','集资房','私房','非商品房','公租房','安置房']
+              },
+              {
+                  title: '建筑结构',
+                  width:'100',
+                  source: ['钢混结构','混合结构','钢及钢混结构','砖混结构','砖木结构','钢结构','木结构','简易结构']
+              },
+              {
+                  title: '住宅幢数',
+                  width: '100'
+              },
+              {
+                  title: '非住宅幢数',
+                  width: '150',
+              },
+              {
+                  title: '幢数描述',
+                  width:'100'
+              },
+              {
+                  title: '建成年份',
+                  width: '100'
+              },
+              {
+                  title: '设定年份',
+                  width: '150',
+              },
+              {
+                  title: '土地性质',
+                  width:'100',
+                  source: ['国有土地','集体土地']
+
+              },
+              {
+                  title: '使_用_权',
+                  width: '100',
+                  source: ['出让','划拨','集体']
+
+              },
+              {
+                  title: '土地等级',
+                  width: '150',
+                  source: ['一级','二级','三级','四级','五级','六级','七级','八级','九级','十级','十一级']
+              },
+              {
+                  title: '询价记录',
+                  width:'100'
+              },
+          ],
+          nestedHeaders:[
+              [
+                  {
+                      title: '表一',
+                      colspan: '30',
+                  },
+              ],
+          ],
+          columnDrag:true,
+      });
+    });
+
+  </script>
+  <script>
+    $(document).ready(function() {
+      $().ready(function() {
+        $sidebar = $('.sidebar');
+
+        $sidebar_img_container = $sidebar.find('.sidebar-background');
+
+        $full_page = $('.full-page');
+
+        $sidebar_responsive = $('body > .navbar-collapse');
+
+        window_width = $(window).width();
+
+        fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
+
+        if (window_width > 767 && fixed_plugin_open == 'Dashboard') {
+          if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+            $('.fixed-plugin .dropdown').addClass('open');
+          }
+
+        }
+
+        $('.fixed-plugin a').click(function(event) {
+          // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
+          if ($(this).hasClass('switch-trigger')) {
+            if (event.stopPropagation) {
+              event.stopPropagation();
+            } else if (window.event) {
+              window.event.cancelBubble = true;
+            }
+          }
+        });
+
+        $('.fixed-plugin .active-color span').click(function() {
+          $full_page_background = $('.full-page-background');
+
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data-color', new_color);
+          }
+
+          if ($full_page.length != 0) {
+            $full_page.attr('filter-color', new_color);
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.attr('data-color', new_color);
+          }
+        });
+
+        $('.fixed-plugin .background-color .badge').click(function() {
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('background-color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data-background-color', new_color);
+          }
+        });
+
+        $('.fixed-plugin .img-holder').click(function() {
+          $full_page_background = $('.full-page-background');
+
+          $(this).parent('li').siblings().removeClass('active');
+          $(this).parent('li').addClass('active');
+
+
+          var new_image = $(this).find("img").attr('src');
+
+          if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            $sidebar_img_container.fadeOut('fast', function() {
+              $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+              $sidebar_img_container.fadeIn('fast');
+            });
+          }
+
+          if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            $full_page_background.fadeOut('fast', function() {
+              $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+              $full_page_background.fadeIn('fast');
+            });
+          }
+
+          if ($('.switch-sidebar-image input:checked').length == 0) {
+            var new_image = $('.fixed-plugin li.active .img-holder').find("img").attr('src');
+            var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+            $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.css('background-image', 'url("' + new_image + '")');
+          }
+        });
+
+        $('.switch-sidebar-image input').change(function() {
+          $full_page_background = $('.full-page-background');
+
+          $input = $(this);
+
+          if ($input.is(':checked')) {
+            if ($sidebar_img_container.length != 0) {
+              $sidebar_img_container.fadeIn('fast');
+              $sidebar.attr('data-image', '#');
+            }
+
+            if ($full_page_background.length != 0) {
+              $full_page_background.fadeIn('fast');
+              $full_page.attr('data-image', '#');
+            }
+
+            background_image = true;
+          } else {
+            if ($sidebar_img_container.length != 0) {
+              $sidebar.removeAttr('data-image');
+              $sidebar_img_container.fadeOut('fast');
+            }
+
+            if ($full_page_background.length != 0) {
+              $full_page.removeAttr('data-image', '#');
+              $full_page_background.fadeOut('fast');
+            }
+
+            background_image = false;
+          }
+        });
+
+        $('.switch-sidebar-mini input').change(function() {
+          $body = $('body');
+
+          $input = $(this);
+
+          if (md.misc.sidebar_mini_active == true) {
+            $('body').removeClass('sidebar-mini');
+            md.misc.sidebar_mini_active = false;
+
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+
+          } else {
+
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+
+            setTimeout(function() {
+              $('body').addClass('sidebar-mini');
+
+              md.misc.sidebar_mini_active = true;
+            }, 300);
+          }
+
+          // we simulate the window Resize so the charts will get updated in realtime.
+          var simulateWindowResize = setInterval(function() {
+            window.dispatchEvent(new Event('resize'));
+          }, 180);
+
+          // we stop the simulation of Window Resize after the animations are completed
+          setTimeout(function() {
+            clearInterval(simulateWindowResize);
+          }, 1000);
+
+        });
+      });
+    });
+  </script>
+  <!-- <script src="../assets/js/jquery.cxselect.js"></script> -->
+<!--   <script>
+  (function() {
+    var urlChina = '../assets/js/data.min.js';
+    var urlGlobal = 'js/globalData.min.json';
+
+
+    $.cxSelect.defaults.url = urlChina;
+
+    // 默认
+    $('#city_china').cxSelect({
+      selects: ['province', 'city', 'area', 'street', 'community']
+    });
+
+    // 设置默认值及选项标题
+    $('#city_china_val').cxSelect({
+      selects: ['province', 'city', 'area', 'street', 'community'],
+      emptyStyle: 'none'
+    });
+
+    // 全球主要国家城市联动
+    $('#global_location').cxSelect({
+      url: urlGlobal,
+      selects: ['country', 'state', 'city', 'region'],
+      emptyStyle: 'none'
+    });
+
+    // API 接口
+    var apiBox = $('#api_data');
+    var cxSelectApi;
+
+    apiBox.cxSelect({
+      selects: ['province', 'city', 'area']
+    }, function(api) {
+      cxSelectApi = api;
+    });
+
+    // cxSelectApi = $.cxSelect(apiBox, {
+    //   selects: ['province', 'city', 'area']
+    // });
+
+    $('body').on('click', 'button', function() {
+      var _name = this.name;
+      var _value = this.value;
+
+      switch (_name) {
+        case 'attach':
+          cxSelectApi.attach();
+          break;
+
+        case 'detach':
+          cxSelectApi.detach();
+          break;
+
+        case 'clear':
+          cxSelectApi.clear();
+          break;
+
+        case 'required':
+          cxSelectApi.setOptions({
+            required: _value == 1 ? false : true
+          });
+          this.value = _value == 1 ? 0 : 1;
+          break;
+
+        case 'emptyStyle':
+          if (_value === 'none') {
+            _value = 'hidden';
+          } else if (_value === 'hidden') {
+            _value = '';
+          } else {
+            _value = 'none';
+          };
+          cxSelectApi.setOptions({
+            emptyStyle: _value
+          });
+          this.value = _value;
+          break;
+
+        case 'firstTitle':
+          _value = _value === '请选择' ? '选择吧' : '请选择';
+          cxSelectApi.setOptions({
+            firstTitle: _value
+          });
+          this.value = _value;
+          break;
+
+        case 'setSelect':
+          cxSelectApi.setOptions({
+            selects: _value === 'a' ? ['province', 'city', 'area', 'street', 'community'] : ['first', 'second', 'third', 'fourth', 'fifth']
+          });
+          this.value = _value === 'a' ? 'b' : 'a';
+          break;
+
+        case 'setData':
+          if (_value === 'china' || _value === 'global') {
+            // $.ajax({
+            //   url: this.value === 'china' ? urlChina : urlGlobal,
+            //   type: 'GET',
+            //   dataType: 'json'
+            // }).done(function(data, textStatus, jqXHR) {
+              cxSelectApi.setOptions({
+                url: this.value === 'china' ? urlChina : urlGlobal,
+                // data: data
+              });
+            // }).fail(function(jqXHR, textStatus, errorThrown) {
+            // });
+
+          } else if (this.value === 'custom') {
+            cxSelectApi.setOptions({
+              data: dataCustom
+            });
+          };
+          break;
+
+        // not default
+      };
+    });
+  })();
+  </script> -->
+</body>
+
+</html>
