@@ -39,7 +39,7 @@ import static java.lang.String.valueOf;
  */
 public class UploadImgUtil{
 
-    public int N;
+    public static int N;
     public int n = 0;
 
     public Context context;
@@ -98,17 +98,10 @@ public class UploadImgUtil{
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String str = response.body().string();
-                    // 设置数据库中的上传控制项
-                    // collectTime唯一
-                    ArrayList<Users> updateUser = mainDB.query(new QueryBuilder<Users>(Users.class)
-                            .whereEquals(Users.COLLECTTIOME_COL , map.get(Users.COLLECTTIOME_COL)));
-                    updateUser.get(0).setIsuploaded(true);
-                    ColumnsValue cv = new ColumnsValue(new String[]{Users.ISUPLOADED_COL});
-                    long c = mainDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
-                    OrmLog.i(this, "update boss ：" + c);
 
+                    setUploadedByCollecttime(map.get(Users.COLLECTTIOME_COL));
                     n++;
-                    if(n>=N){
+                    if(n >= N){
                         funToastMakeText("数据上传完毕");
                         n = 0;
                     }
@@ -179,5 +172,15 @@ public class UploadImgUtil{
         map.put("gardenId",gardenId);
         map.put("image", jpeg);
         postFile(v1.uploadBuildingPictureApi,map, jpeg);
+    }
+
+    public void setUploadedByCollecttime(String collectTime){
+        // 设置数据库中的上传控制项
+        // collectTime唯一
+        ArrayList<Users> updateUser = mainDB.query(new QueryBuilder<Users>(Users.class)
+                .whereEquals(Users.COLLECTTIOME_COL , collectTime));
+        updateUser.get(0).setIsuploaded(true);
+        ColumnsValue cv = new ColumnsValue(new String[]{Users.ISUPLOADED_COL});
+        long c = mainDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
     }
 }
