@@ -101,7 +101,7 @@ public class MainActivity extends TakePhotoActivity{
     /**
      * 数据库引用对象
      */
-    static DataBase mainDB;
+    public static DataBase mainDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -426,6 +426,7 @@ public class MainActivity extends TakePhotoActivity{
         super.takeSuccess(result);
         showImg(result.getImage());
         Users musers;
+        // 采集时间精确到毫秒
         if(getBuildingId() == null)
             musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Long.toString(System.currentTimeMillis()), jpegName);
         else

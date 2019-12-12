@@ -48,7 +48,6 @@ dependencies {
     implementation 'com.tencent.map:tencent-map-vector-sdk:4.2.8'
     implementation 'com.tencent.map.geolocation:TencentLocationSdk-openplatform:7.2.4'
     //    添加高德地图的
-    implementation files('libs/AMap3DMap_7.0.0_AMapNavi_7.0.0_AMapSearch_6.9.2_AMapTrack_1.1.0_AMapLocation_4.7.2_20191008.jar')
     implementation files('libs/BaiduLBS_Android.jar')
     implementation 'org.devio.takephoto:takephoto_library:4.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'

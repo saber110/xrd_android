@@ -2,6 +2,7 @@ package com.example.collectdata_01;
 
 import com.example.collectdata_01.BaseModel;
 import com.litesuits.orm.db.annotation.Check;
+import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Default;
 import com.litesuits.orm.db.annotation.NotNull;
 import com.litesuits.orm.db.annotation.Table;
@@ -19,10 +20,13 @@ import java.io.File;
 @Table("user_table")
 public class Users extends BaseModel {
     private static final long serialVersionUID = 1L;
+    public static final String COLLECTTIOME_COL = "collectTime";
     // 非空约束 形同于@Check("userName NOT NULL")
     @NotNull
     private String gardenId, buildingName;
     private String pictureKind;
+
+    @Column(COLLECTTIOME_COL)
     private String collectTime;
     private String token;
     private String image;

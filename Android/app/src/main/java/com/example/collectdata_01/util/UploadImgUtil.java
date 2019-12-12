@@ -6,11 +6,14 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.collectdata_01.Users;
 import com.example.interfaceNet.v1;
 import com.example.login.login;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +27,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.example.collectdata_01.MainActivity.mainDB;
 import static com.litesuits.orm.db.impl.CascadeSQLiteImpl.TAG;
 import static java.lang.String.valueOf;
 
@@ -53,7 +57,7 @@ public class UploadImgUtil{
     }
 
 
-    private void postFile(final String url, Map<String, String> map, String jpeg) {
+    private void postFile(final String url, final Map<String, String> map, final String jpeg) {
         OkHttpClient client = new OkHttpClient();
         // form 表单形式上传
         MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -91,6 +95,11 @@ public class UploadImgUtil{
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String str = response.body().string();
+                    // 设置数据库中的上传控制项
+                    // collectTime唯一
+//                    ArrayList<Users> updateUser = mainDB.query(new QueryBuilder<Users>(Users.class)
+//                        .where(Users.COLLECTTIOME_COL + "= ?", new String[]{map.get(Users.COLLECTTIOME_COL)}));
+//                    updateUser.get(i).setToken();
                     n++;
                     if(n>=N){
                         funToastMakeText("数据上传完毕");
