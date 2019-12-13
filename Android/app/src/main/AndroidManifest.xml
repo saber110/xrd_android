@@ -38,6 +38,8 @@
             android:enabled="true"
             android:process=":remote" />
 
+        <activity android:name="com.example.BuildingMessage.BuildingActivity"/>
+        <activity android:name="com.example.test.GardenMessage"/>
         <activity android:name="com.example.map.baidu_map.BaiduMapActivity" />
         <activity android:name="com.example.map.tecent_map.TecentActivity" />
         <activity android:name="com.example.map.aMap.AmapActivity" />

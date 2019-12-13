@@ -246,7 +246,7 @@ public class MainActivity extends TakePhotoActivity{
         dataCollectLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                IntentTools.activitySwich(MainActivity.this, DataActivity.class, false);
+                IntentTools.activitySwich(MainActivity.this, DataActivity.class, false);
             }
         });
 
