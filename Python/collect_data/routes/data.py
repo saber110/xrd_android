@@ -11,6 +11,7 @@ from flask import request, Blueprint
 from sqlalchemy.exc import SQLAlchemyError
 
 from . import generate_result, generate_validator, image_upload
+from .administration import add_community
 from .. import config
 from ..models.base_model import db
 from ..models.building import Building
@@ -41,16 +42,25 @@ def garden(*args, **kwargs):
     """
     data = request.get_json()
     schema = {
-        'provinceId': {'type': 'integer', 'min': 1},
-        'cityId': {'type': 'integer', 'min': 1},
-        'districtId': {'type': 'integer', 'min': 1},
-        "streetId": {'type': 'integer', 'min': 1},
-        "communityId": {'type': 'integer', 'min': 1},
         "gardenName": {'type': 'string', 'maxlength': 85}
     }
     v = generate_validator(schema)
     if not v(data):
         return generate_result(1, data=v.errors)
+    is_virtual = False
+    for item in ['provinceId', 'cityId', 'districtId', "streetId", "communityId"]:
+        if item not in data:
+            is_virtual = True
+            break
+    # 判断是否是虚拟社区
+    if is_virtual:
+        result = add_community('不清楚', '不清楚', '不清楚', '不清楚', '不清楚')
+        data['provinceId'] = result['province'].id
+        data['cityId'] = result['city'].id
+        data['districtId'] = result['district'].id
+        data['streetId'] = result['street'].id
+        data['communityId'] = result['community'].id
+
     data['name'] = data.pop('gardenName')
     garden = Garden(**data)
     communityGardens = Garden.query.filter_by(communityId=data['communityId']).all()
