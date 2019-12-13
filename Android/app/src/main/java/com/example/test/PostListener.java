@@ -19,11 +19,13 @@ public class PostListener implements View.OnClickListener {
     private List<CommonItemBean> list;
     private RequestListener listener;
     private String mode;
+    private int GardenId;
     private Context context;
     private Map<String, Object> map2;
 
-    public PostListener(Context context, Map<String, String> map, List<CommonItemBean> list, String mode, Map<String, Object> map2, RequestListener listener) {
+    public PostListener(Context context,int GardenId, Map<String, String> map, List<CommonItemBean> list, String mode, Map<String, Object> map2, RequestListener listener) {
         this.map = map;
+        this.GardenId = GardenId;
         this.list = list;
         this.listener = listener;
         this.mode = mode;
@@ -96,7 +98,7 @@ public class PostListener implements View.OnClickListener {
 
         submit_map.put("token", login.token);
         submit_map.put("collectTime", System.currentTimeMillis());
-        submit_map.put("id", 2);
+        submit_map.put("id", GardenId);
 
         if (mode.equals("base")) {
             String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "garden_base_info";
