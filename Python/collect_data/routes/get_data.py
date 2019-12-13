@@ -1709,13 +1709,21 @@ def garden_picture(*args, **kwargs):
     if not v(data):
         return generate_result(1)
     try:
-        garden_pictures = GardenPicture.query.filter_by(gardenId=data['id']).all()
+        garden = Garden.query.get(data['id'])
+        if garden is None:
+            return generate_result(2, '小区不存在')
+        garden_pictures = [i.to_dict for i in
+                           GardenPicture.query.filter_by(gardenId=data['id']).order_by(GardenPicture.collectTime).all()]
     except SQLAlchemyError as e:
         print(str(e))
         return generate_result(2)
     if len(garden_pictures) == 0:
         return generate_result(2, '该小区暂未上传图片')
-    return generate_result(0, '获取小区图片成功', data={"gardenPictures": [i.to_dict for i in garden_pictures]})
+    for index, picture in enumerate(garden_pictures):
+        number = f"{index + 1:03d}"
+        picture['pictureName'] = f"2_{garden.name}_{picture['pictureKind']}_{number}.jpg"
+
+    return generate_result(0, '获取小区图片成功', data={"gardenPictures": garden_pictures})
 
 
 @get_data_bp.route('/other_picture', methods=['POST'])
@@ -1733,13 +1741,20 @@ def other_picture(*args, **kwargs):
     if not v(data):
         return generate_result(1)
     try:
-        other_pictures = OtherPicture.query.filter_by(gardenId=data['id']).all()
+        garden = Garden.query.get(data['id'])
+        if garden is None:
+            return generate_result(2, '该小区不存在')
+        other_pictures = [i.to_dict for i in OtherPicture.query.filter_by(gardenId=data['id']).all()]
     except SQLAlchemyError as e:
         print(str(e))
         return generate_result(2)
     if len(other_pictures) == 0:
         return generate_result(2, '该小区暂未上传图片')
-    return generate_result(0, '获取小区图片成功', data={'otherPictures': [i.to_dict for i in other_pictures]})
+    for index, picture in enumerate(other_pictures):
+        number = f"{index + 1:03d}"
+        picture['pictureName'] = f'4_{garden.name}_{number}.jpg'
+
+    return generate_result(0, '获取小区图片成功', data={'otherPictures': other_pictures})
 
 
 @get_data_bp.route('/building_picture', methods=['POST'])
@@ -1757,13 +1772,21 @@ def building_picture(*args, **kwargs):
     if not v(data):
         return generate_result(1)
     try:
-        building_pictures = BuildingPicture.query.filter_by(buildingId=data['id']).all()
+        building = BuildingInfo.query.get(data['id'])
+        if building is None:
+            return generate_result(2, '楼栋不存在')
+        building_pictures = [i.to_dict for i in BuildingPicture.query.filter_by(buildingId=data['id']).order_by(
+            BuildingPicture.collectTime).all()]
+        garden = Garden.query.get(building.gardenId)
     except SQLAlchemyError as e:
         print(str(e))
         return generate_result(2)
     if len(building_pictures) == 0:
         return generate_result(2, '该楼幢暂无数据')
-    return generate_result(0, '获取楼幢图片成功', data={'buildingPictures': [i.to_dict for i in building_pictures]})
+    for index, picture in enumerate(building_pictures):
+        number = f"{index + 1:03d}"
+        picture['pictureName'] = f"3_{garden.name} {building.buildingName}_{picture['pictureKind']}_{number}.jpg"
+    return generate_result(0, '获取楼幢图片成功', data={'buildingPictures': building_pictures})
 
 
 @get_data_bp.route('/garden_building_base_info', methods=['POST'])
@@ -2440,7 +2463,7 @@ def export_zip(*args, **kwargs):
     os.makedirs(zip_dir, exist_ok=True)
     community = Community.query.get(garden.communityId)
     # 查询小区所拥有的图片
-    garden_pictures = GardenPicture.query.filter_by(gardenId=garden_id).all()
+    garden_pictures = GardenPicture.query.filter_by(gardenId=garden_id).order_by(GardenPicture.collectTime).all()
     # 根据图片种类对小区图片进行划分
     garden_picture_dict = {}
     for picture in garden_pictures:
@@ -2464,7 +2487,7 @@ def export_zip(*args, **kwargs):
                 building_picture_in_id[picture.pictureKind] = [picture]
         else:
             building_picture_dict[picture.buildingId] = {picture.pictureKind: [picture]}
-    other_pictures = OtherPicture.query.filter_by(gardenId=garden_id).all()
+    other_pictures = OtherPicture.query.filter_by(gardenId=garden_id).order_by(OtherPicture.collectTime).all()
     # 根据图片种类对小区图片进行划分
     # 设置时间戳文件，压缩zip文件，结果zip文件路径
     timestamp_file = os.path.join(zip_dir, 'timestamp.txt')
