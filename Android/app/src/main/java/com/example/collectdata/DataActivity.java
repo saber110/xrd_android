@@ -50,9 +50,10 @@ public class DataActivity extends AppCompatActivity {
         //添加监听器
         xiaoqugaikuang.setOnClickListener(new DataListener(this, ConstTools.XIAOQUGAIKUANG, DataActivity.this));
         xiaoquxinxi.setOnClickListener(new DataListener(this, ConstTools.XIAOQUXINXI, DataActivity.this));
+
         louzhuanxinxi.setOnClickListener(new DataListener(this, ConstTools.LOUZHUANGXINXI, DataActivity.this));
-//        louzhuangdiaocha.setOnClickListener(new DataListener(this, ConstTools.LOUZHUANGDIAOCHA, DataActivity.this));
-        louzhuangdiaocha.setOnClickListener(louzhuangdiaochaListener);
+        louzhuangdiaocha.setOnClickListener(new DataListener(this, ConstTools.LOUZHUANGDIAOCHA, DataActivity.this));
+//        louzhuangdiaocha.setOnClickListener(louzhuangdiaochaListener);
     }
 
     private void initDialog(){
@@ -74,7 +75,7 @@ public class DataActivity extends AppCompatActivity {
     View.OnClickListener subminListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(DataActivity.this,"提交测试成功",Toast.LENGTH_SHORT).show();
+            Toast.makeText(DataActivity.this,"提交测试成功", Toast.LENGTH_SHORT).show();
             String buildingNum = editBuildingNum.getText().toString();
             try {
                 //在这做网络请求，
@@ -82,7 +83,7 @@ public class DataActivity extends AppCompatActivity {
                 int num = Integer.parseInt(buildingNum);
                 interfaceForGetData.getBuildingBaseInfoAPI(1);
             }catch (Exception e){
-                Toast.makeText(DataActivity.this,"请输入数字",Toast.LENGTH_SHORT).show();
+                Toast.makeText(DataActivity.this,"请输入数字", Toast.LENGTH_SHORT).show();
                 return;
             }
             buildingNumDialog.dismiss();
@@ -91,7 +92,7 @@ public class DataActivity extends AppCompatActivity {
      View.OnClickListener cancelListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(DataActivity.this,"取消测试成功",Toast.LENGTH_SHORT).show();
+            Toast.makeText(DataActivity.this,"取消测试成功", Toast.LENGTH_SHORT).show();
             buildingNumDialog.dismiss();
         }
     };

@@ -6,10 +6,17 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.collectdata_01.Users;
+import com.example.interfaceNet.v1;
 import com.example.login.login;
+import com.litesuits.orm.db.assit.QueryBuilder;
+import com.litesuits.orm.db.model.ColumnsValue;
+import com.litesuits.orm.db.model.ConflictAlgorithm;
+import com.litesuits.orm.log.OrmLog;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +30,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.example.collectdata_01.MainActivity.mainDB;
 import static com.litesuits.orm.db.impl.CascadeSQLiteImpl.TAG;
 import static java.lang.String.valueOf;
 
@@ -31,7 +39,7 @@ import static java.lang.String.valueOf;
  */
 public class UploadImgUtil{
 
-    public int N;
+    public static int N;
     public int n = 0;
 
     public Context context;
@@ -52,9 +60,7 @@ public class UploadImgUtil{
     }
 
 
-
-
-    private void postFile(final String url, Map<String, String> map, String jpeg) {
+    private void postFile(final String url, final Map<String, String> map, final String jpeg) {
         OkHttpClient client = new OkHttpClient();
         // form 表单形式上传
         MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -75,9 +81,16 @@ public class UploadImgUtil{
         }
         Request request = new Request.Builder().url(url).post(requestBody.build()).build();
         // readTimeout("请求超时时间" , 时间单位);
-        client.newBuilder().readTimeout(5000, TimeUnit.MILLISECONDS).build().newCall(request).enqueue(new Callback() {
+        client.newBuilder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .build()
+                .newCall(request)
+                .enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
                 Log.d(">>>>>>", "onFailure: 上传图片失败");
             }
 
@@ -85,8 +98,10 @@ public class UploadImgUtil{
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String str = response.body().string();
+
+                    setUploadedByCollecttime(map.get(Users.COLLECTTIOME_COL));
                     n++;
-                    if(n>=N){
+                    if(n >= N){
                         funToastMakeText("数据上传完毕");
                         n = 0;
                     }
@@ -114,9 +129,9 @@ public class UploadImgUtil{
         map.put("gardenId",gardenId);
         map.put("pictureKind",pictureKind);
         map.put("collectTime",collectTime);
-        map.put("token", token);
+        map.put("token", login.token);
         map.put("image", jpeg);
-        postFile("http://rap2api.taobao.org/app/mock/234350/api/v1/data/garden_picture",map,jpeg);
+        postFile(v1.uploadGardenPictureApi,map,jpeg);
     }
 
     /**
@@ -132,9 +147,9 @@ public class UploadImgUtil{
         Map<String,String> map = new HashMap(4);
         map.put("gardenId",gardenId);
         map.put("collectTime",collectTime);
-        map.put("token", token);
+        map.put("token", login.token);
         map.put("image", jpeg);
-        postFile("http://rap2api.taobao.org/app/mock/234350/api/v1/data/other_picture",map, jpeg);
+        postFile(v1.uploadOtherPictureApi, map, jpeg);
     }
 
     /**
@@ -148,14 +163,24 @@ public class UploadImgUtil{
      *   "pictureKind": ""
      * }
      */
-    public void uploadBuildImg(String buildingId,String collectTime,String gardenId,String pictureKind,String jpeg){
+    public void uploadBuildImg(String buildingName,String collectTime,String gardenId,String pictureKind,String jpeg){
         Map<String,String> map = new HashMap(8);
-        map.put("buildingId",buildingId);
+        map.put("buildingName",buildingName);
         map.put("pictureKind",pictureKind);
         map.put("collectTime",collectTime);
         map.put("token", login.token);
         map.put("gardenId",gardenId);
         map.put("image", jpeg);
-        postFile("http://rap2api.taobao.org/app/mock/234350/api/v1/data/building_picture",map, jpeg);
+        postFile(v1.uploadBuildingPictureApi,map, jpeg);
+    }
+
+    public void setUploadedByCollecttime(String collectTime){
+        // 设置数据库中的上传控制项
+        // collectTime唯一
+        ArrayList<Users> updateUser = mainDB.query(new QueryBuilder<Users>(Users.class)
+                .whereEquals(Users.COLLECTTIOME_COL , collectTime));
+        updateUser.get(0).setIsuploaded(true);
+        ColumnsValue cv = new ColumnsValue(new String[]{Users.ISUPLOADED_COL});
+        mainDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
     }
 }

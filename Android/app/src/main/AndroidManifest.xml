@@ -20,14 +20,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.collectdata.BuweiActivity"
-            android:screenOrientation="landscape">
-        </activity>
+        <activity android:name=".Datalist"></activity>
+        <activity
+            android:name="com.example.collectdata.BuweiActivity"
+            android:screenOrientation="landscape"></activity>
         <activity android:name=".DrawActivity" />
         <activity
             android:name="com.example.collectdata.MessageActivity"
             android:windowSoftInputMode="adjustPan" />
-
         <activity
             android:name="com.example.collectdata.BuildingMessageActivity"
             android:windowSoftInputMode="adjustPan" />
@@ -38,6 +38,8 @@
             android:enabled="true"
             android:process=":remote" />
 
+        <activity android:name="com.example.BuildingMessage.BuildingActivity"/>
+        <activity android:name="com.example.test.GardenMessage"/>
         <activity android:name="com.example.map.baidu_map.BaiduMapActivity" />
         <activity android:name="com.example.map.tecent_map.TecentActivity" />
         <activity android:name="com.example.map.aMap.AmapActivity" />
@@ -46,6 +48,7 @@
         <activity android:name=".CollectActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name="com.example.login.updatePassword" />
+        <activity android:name="com.example.collectdata.NearByActivity"/>
         <activity android:name="com.example.login.login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

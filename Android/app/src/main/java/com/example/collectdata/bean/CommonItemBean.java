@@ -6,9 +6,18 @@ import com.example.collectdata.tools.ConstTools;
  * 信息详情页普通行
  */
 public class CommonItemBean {
-     public final int type;
+    public int type;
     //标题
     private String title;
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
+    }
+
     //text内容
     private String content;
     private String key;

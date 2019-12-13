@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/card_style"
+    android:orientation="vertical"
+    android:padding="1dp">
+
+        <Button
+            android:id="@+id/add_tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#00EEE6E6"
+            android:text="addtab" />
+
+        <Button
+            android:id="@+id/del_tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#00EEE6E6"
+            android:text="deltab" />
+<!--    <Button-->
+<!--            android:id="@+id/modify_text"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="#00EEE6E6"-->
+<!--            android:text="modify_text" />-->
+
+</LinearLayout>

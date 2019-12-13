@@ -86,7 +86,22 @@ public class MainActivity extends TakePhotoActivity{
     public static LocationAllDao locationAllDao = new LocationAllDao();
     private String gardenName;
     private static Integer gardenId;
+    private static String buildingId;
 
+    //定义了一些参数
+    private int yourChoice;
+    private String item;
+    private Intent intent;
+    private String pictureKind;
+
+    public String locationString;
+    public String jpegName;
+    private String loudong;
+
+    /**
+     * 数据库引用对象
+     */
+    public static DataBase mainDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +131,7 @@ public class MainActivity extends TakePhotoActivity{
 
         searchKey = selectGardenView.findViewById(R.id.search_garden_key);
         addGardenBtn = selectGardenView.findViewById(R.id.add_garden);
+        setBuildingId(null);
 
         mapLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,20 +234,7 @@ public class MainActivity extends TakePhotoActivity{
             @Override
             public void onClick(View v) {
                 if (gardenName != null && !gardenName.isEmpty()) {
-                    dividedData();
-                    UploadImgUtil uploadImgUtil = new UploadImgUtil(MainActivity.this);
-                    for (int i = 0; i < gardenlist.size(); i++) {
-                        uploadImgUtil.uploadGardenImg(gardenlist.get(i).getGardenId(), gardenlist.get(i).getpictureKind(), gardenlist.get(i).getCollectTime(), gardenlist.get(i).getToken(), gardenlist.get(i).getImage());
-                        mainDB.delete(gardenlist.get(i));
-                    }
-                    for (int i = 0; i < buildinglist.size(); i++) {
-                        uploadImgUtil.uploadBuildImg(Integer.toString(1), buildinglist.get(i).getCollectTime(), buildinglist.get(i).getGardenId(), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
-                        mainDB.delete(buildinglist.get(i));
-                    }
-                    for (int i = 0; i < qitalist.size(); i++) {
-                        uploadImgUtil.uploadOtherImg(qitalist.get(i).getGardenId(), qitalist.get(i).getCollectTime(), qitalist.get(i).getToken(), qitalist.get(i).getImage());
-                        mainDB.delete(qitalist.get(i));
-                    }
+                    startActivity(new Intent(MainActivity.this, Datalist.class));
                 } else {
                     Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
                 }
@@ -243,7 +246,11 @@ public class MainActivity extends TakePhotoActivity{
         dataCollectLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                IntentTools.activitySwich(MainActivity.this, DataActivity.class, false);
+                if (gardenName != null && !gardenName.isEmpty()) {
+                    IntentTools.activitySwich(MainActivity.this, DataActivity.class, false);
+                } else {
+                    Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -259,7 +266,6 @@ public class MainActivity extends TakePhotoActivity{
         if (mainDB == null) {
             // 创建数据库,传入当前上下文对象和数据库名称
             mainDB = LiteOrm.newSingleInstance(this, "imageData.db");
-            System.out.println("数据库创建成功");
         }
         Intent intent11 = getIntent();
         String flagMessage = intent11.getStringExtra("flag");
@@ -403,50 +409,10 @@ public class MainActivity extends TakePhotoActivity{
         }
     }
 
-    ArrayList<Users> gardenlist = new ArrayList<>();
-    ArrayList<Users> buildinglist = new ArrayList<>();
-    ArrayList<Users> qitalist = new ArrayList<>();
-
-    private void dividedData() {
-        gardenlist.clear();
-        buildinglist.clear();
-        qitalist.clear();
-        ArrayList<Users> list = mainDB.query(Users.class);
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getpictureKind().equals("平面图")
-                    || list.get(i).getpictureKind().equals("小区入口")
-                    || list.get(i).getpictureKind().equals("外景图")
-                    || list.get(i).getpictureKind().equals("内景图")) {
-                gardenlist.add(list.get(i));
-            }
-            if (list.get(i).getpictureKind().equals("建筑立面") ||
-                    list.get(i).getpictureKind().equals("楼牌号")) {
-                buildinglist.add(list.get(i));
-            }
-            if (list.get(i).getpictureKind().equals("其他")) {
-                qitalist.add(list.get(i));
-            }
-//            Toast.makeText(MainActivity.this, "图片上传完毕", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
     }
-
-    //定义了一些参数
-    private int yourChoice;
-    private String item;
-    private Intent intent;
-    private String pictureKind;
-
-    public String locationString;
-    public String jpegName;
-    /**
-     * 数据库引用对象
-     */
-    static DataBase mainDB;
 
     //以下是重写了方法
     @Override
@@ -463,10 +429,13 @@ public class MainActivity extends TakePhotoActivity{
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);
         showImg(result.getImage());
-        Users musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Integer.toString((int) System.currentTimeMillis()), login.token, jpegName);
-        System.out.println("用户创建成功");
+        Users musers;
+        // 采集时间精确到毫秒
+        if(getBuildingId() == null)
+            musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Long.toString(System.currentTimeMillis()), jpegName);
+        else
+            musers = new Users(getBuildingId(), locationString, Long.toString(System.currentTimeMillis()), jpegName, Integer.toString(MainActivity.getGardenId()));
         mainDB.save(musers);
-        System.out.println("保存数据成功");
     }
 
     String n;
@@ -489,12 +458,11 @@ public class MainActivity extends TakePhotoActivity{
 
         QueryBuilder<Users> qb = new QueryBuilder<Users>(Users.class)
                 .columns(new String[]{"pictureKind"})
-                .appendOrderAscBy("pictureKind")
-                .appendOrderDescBy("pictureKind")
                 .distinct(true)
-                .where("pictureKind" + "=?", new String[]{locationString});
+                .whereEquals(Users.PICTUREKIND_COL, locationString)
+                .whereAppendAnd()
+                .whereEquals(Users.GARDENID_COL, Integer.toString(getGardenId()));
         count = mainDB.queryCount(qb);
-        System.out.println(count);
 
         //保存的文件名，先格式化000字符
         formatString((int) (count++));
@@ -515,12 +483,12 @@ public class MainActivity extends TakePhotoActivity{
             pictureKind = Integer.toString(2);
         }
         if(locationString.equals("幢牌号")){
-            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "栋_幢牌号_" + n + ".jpg";
+            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_幢牌号_" + n + ".jpg";
             pictureKind = Integer.toString(3);
         }
         if(locationString.equals("建筑立面")){
             pictureKind = Integer.toString(3);
-            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "栋_建筑立面_" + n +".jpg";
+            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_建筑立面_" + n +".jpg";
         }
         if(locationString.equals("其他")){
             pictureKind = Integer.toString(3);
@@ -575,7 +543,6 @@ public class MainActivity extends TakePhotoActivity{
     /**
      * 图片种类选择对话框
      */
-    private String loudong;
     private void showSingleChoiceDialog(){
         final String[] items = {"平面图","小区入口","外景图","内景图","建筑立面","幢牌号","其他"};
         yourChoice = -1;
@@ -606,6 +573,7 @@ public class MainActivity extends TakePhotoActivity{
                         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                setBuildingId(edit.getText().toString());
                                 Toast.makeText(context, "你确立的楼栋是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
                                 //把输入的地点赋给 fu.locationString
                                 loudong = edit.getText().toString();
@@ -636,6 +604,7 @@ public class MainActivity extends TakePhotoActivity{
                                 dialoga.show();
                             }
                             else {
+                                setBuildingId(null);
                                 picture();
                             }
                         }
@@ -646,6 +615,8 @@ public class MainActivity extends TakePhotoActivity{
                                     Toast.LENGTH_SHORT).show();
                             locationString = "平面图";
                             picture();
+                            setBuildingId(null);
+
                         }
                     }
                 });
@@ -707,6 +678,13 @@ public class MainActivity extends TakePhotoActivity{
 
     public static int getGardenId(){
         return MainActivity.gardenId;
+    }
+
+    public void  setBuildingId(String buildingId) {
+        MainActivity.buildingId = buildingId;
+    }
+    public static String getBuildingId(){
+        return MainActivity.buildingId;
     }
 
     private void setGardenId(int gardenId) {
