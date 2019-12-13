@@ -35,6 +35,7 @@ public class GardenMessage extends BaseActivity {
     private ArrayList<Integer> radius = new ArrayList<>();
     private Handler handler = new MyHandler(this);
     private String mode;
+    private int GardenId;
     private final static int REQUEST_CODE = 1; // 返回的结果码
     private Map<String, Object> map2 = new HashMap<>();
 
@@ -45,10 +46,10 @@ public class GardenMessage extends BaseActivity {
 
     protected void initData() {
         final Intent i = getIntent();
-        int gardenId = i.getIntExtra("gardenId",0);
+        GardenId = i.getIntExtra("gardenId",0);
         String url = i.getStringExtra("url");
         mode = i.getStringExtra("mode");
-        new RequestTools(url, gardenId, new RequestListener() {
+        new RequestTools(url, GardenId, new RequestListener() {
             @Override
             public void onSuccess(Response response) {
 
@@ -78,7 +79,7 @@ public class GardenMessage extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter2);
         map2 = new HashMap<String, Object>() ;
-        button.setOnClickListener(new PostListener(GardenMessage.this,adapter2.getResultMap(),list,mode,map2,new RequestListener() {
+        button.setOnClickListener(new PostListener(GardenMessage.this,GardenId,adapter2.getResultMap(),list,mode,map2,new RequestListener() {
                 @Override
                 public void onSuccess(Response response) {
                     int code = -1;
@@ -120,8 +121,18 @@ public class GardenMessage extends BaseActivity {
         adapter2.setData(list);
         for (CommonItemBean commonItemBean : list){
             if (commonItemBean instanceof SelectorItemBean){
-                SelectorItemBean bean = (SelectorItemBean) commonItemBean;
-                adapter2.getResultMap().put(bean.getTitle(),bean.getCurrentSelect());
+                if (commonItemBean.getType() == 1) {
+                    SelectorItemBean bean = (SelectorItemBean) commonItemBean;
+                    adapter2.getResultMap().put(bean.getTitle(), bean.getCurrentSelect());
+                }else {
+                    SelectorItemBean bean = (SelectorItemBean) commonItemBean;
+                    String content = "";
+                    for (String s : bean.getCurrentSelects()) {
+                        content += s;
+                        content += "&";
+                    }
+                    adapter2.getResultMap().put(bean.getTitle(),content);
+                }
             }else {
                 adapter2.getResultMap().put(commonItemBean.getTitle(),commonItemBean.getContent());
             }

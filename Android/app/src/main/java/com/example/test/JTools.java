@@ -41,23 +41,28 @@ public class JTools {
                 //文字输入框
                 commonItemBean = jsonParasForCommonItem(title,lineJson);
                 commonItemBean.setType(0);
-            } else if (type.equals("radio") || type.equals("multiple") ) {
-                //单选，多选框
+            } else if (type.equals("radio")) {
+                //单选框
                 Log.i("JsonTools","初始化选择: " + i + title + lineJson.toString());
                 commonItemBean = jsonParasForSelectItem(type,title,lineJson);
                 commonItemBean.setType(1);
+            } else if (type.equals("multiple")) {
+                //多选框
+                Log.i("JsonTools","初始化选择: " + i + title + lineJson.toString());
+                commonItemBean = jsonParasForSelectItem(type,title,lineJson);
+                commonItemBean.setType(2);
             } else if (type.equals("list")) {
-                Log.i("JsonTools","初始化一级列表:" + i);
-                ListItemBean listItemBean = jsonParasForLineTitleItem(i,formList,title,lineJson);
+                Log.i("JsonTools", "初始化一级列表:" + i);
+                ListItemBean listItemBean = jsonParasForLineTitleItem(i, formList, title, lineJson);
                 i += listItemBean.getLength();
                 commonItemBean = listItemBean;
                 commonItemBean.setType(0);
-            } else if(type.equals("number")){
+            } else if (type.equals("number")) {
                 //数字输入框
-                commonItemBean = jsonParasForCommonItem(title,lineJson);
+                commonItemBean = jsonParasForCommonItem(title, lineJson);
                 commonItemBean.setType(0);
-            }else if (type.equals("map")){
-                commonItemBean = jsonParasForCommonItem(title,lineJson);
+            } else if (type.equals("map")) {
+                commonItemBean = jsonParasForCommonItem(title, lineJson);
                 commonItemBean.setType(0);
                 radius.add(lineJson.getInt("radius"));
             }
