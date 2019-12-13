@@ -119,24 +119,6 @@ public class BuildingActivity extends BaseActivity {
             });
         } else
             buwei.setVisibility(View.GONE);
-
-//        if (mode.equals("base")){
-//            int pos = tabLayout.getSelectedTabPosition();
-//            TabLayout.Tab selectTab = tabLayout.getTabAt(pos);
-//            try {
-//                Class c = selectTab.getClass();
-//                Field field = c.getDeclaredField("view");
-//                field.setAccessible(true);
-//                final View view = (View) field.get(selectTab);
-//                if (view == null) return;
-//                int i = (int) view.getTag();
-//                submit.setOnClickListener(new PostListener(this, adapter2.getResultMap(), tabMap.get(i), mode, requestListener));
-//            }catch (Exception e){
-//                e.printStackTrace();
-//            }
-//        }else {
-//            submit.setOnClickListener(new PostListener(this, adapter2.getResultMap(), list, mode, requestListener));
-//        }
     }
 
     private void initDialog() {
@@ -160,20 +142,20 @@ public class BuildingActivity extends BaseActivity {
             }
             tabLayout.addTab(tab);
         }
-
-        int pos = tabLayout.getSelectedTabPosition();
-        TabLayout.Tab selectTab = tabLayout.getTabAt(pos);
-        assert selectTab != null;
-        int i = tab_getTag(selectTab);
-        if (i >= 0){
-            submit.setOnClickListener(new PostListener(this, gardenId, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
-        }
+// 这段代码已经证明重复执行
+//        int pos = tabLayout.getSelectedTabPosition();
+//        TabLayout.Tab selectTab = tabLayout.getTabAt(pos);
+//        assert selectTab != null;
+//        int i = tab_getTag(selectTab);
+//        if (i >= 0) {
+//            submit.setOnClickListener(new PostListener(this, gardenId, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
+//        }
         adapter2.notifyDataSetChanged();
     }
 
     private void showToast() {
         Toast.makeText(BuildingActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
-        finish();
+//        finish();
     }
 
     // 给tab添加OnLongClickListener，使用反射获取到tab的类，将对应楼栋的id设置为view的tag
@@ -200,7 +182,7 @@ public class BuildingActivity extends BaseActivity {
                                         newtabMap.put(i, tabMap.get((int) view.getTag()));
                                     else
                                         newtabMap.put(i, newtabMap.get((int) view.getTag()));
-                                    tab_setTag(tab1,i);
+                                    tab_setTag(tab1, i);
                                     addTabListener(tabLayout, tab1, i);
                                     tabLayout.addTab(tab1);
                                     buildingNumDialog.dismiss();
@@ -301,9 +283,17 @@ public class BuildingActivity extends BaseActivity {
                     adapter2.setResultMap(copy(map));
                 if (tabMap.keySet().contains(i)) {
                     adapter2.setData(tabMap.get(i));
+                    if (map != null)
+                        adapter2.setResultMap(copy(map));
+                    else
+                        adapter2.setResultMap(manageResultMap(Objects.requireNonNull(tabMap.get(i))));
                     submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
                 } else {
                     adapter2.setData(newtabMap.get(i));
+                    if (map != null)
+                        adapter2.setResultMap(copy(map));
+                    else
+                        adapter2.setResultMap(manageResultMap(Objects.requireNonNull(newtabMap.get(i))));
                     submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
                 }
                 adapter2.notifyDataSetChanged();
@@ -351,6 +341,32 @@ public class BuildingActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private HashMap<String, String> manageResultMap(List<CommonItemBean> list){
+        HashMap<String,String> resultMap = new HashMap<>();
+        for (CommonItemBean commonItemBean : list){
+            if (commonItemBean instanceof SelectorItemBean) {
+                SelectorItemBean selectorItemBean = (SelectorItemBean) commonItemBean;
+                resultMap.put(selectorItemBean.getTitle(),selectorItemBean.getCurrentSelect());
+            }else if (commonItemBean instanceof ListItemBean){
+                ListItemBean listItemBean = (ListItemBean) commonItemBean;
+                for (CommonItemBean commonItemBean1 : listItemBean.getInnerItemList()){
+                    if (commonItemBean1 instanceof SelectorItemBean){
+                        SelectorItemBean selectorItemBean = (SelectorItemBean) commonItemBean1;
+                        resultMap.put(selectorItemBean.getTitle(),selectorItemBean.getCurrentSelect());
+                    }else {
+                        resultMap.put(listItemBean.getTitle() + commonItemBean1.getTitle() ,commonItemBean1.getContent());
+                    }
+                }
+            }else {
+                resultMap.put(commonItemBean.getTitle(),commonItemBean.getContent());
+            }
+        }
+        for (String s : resultMap.keySet()){
+            Log.i("manageMap",s + ":" + resultMap.get(s));
+        }
+        return resultMap;
     }
 
 }

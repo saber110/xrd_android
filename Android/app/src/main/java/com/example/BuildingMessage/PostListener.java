@@ -115,7 +115,7 @@ public class PostListener implements View.OnClickListener {
         }
 
         for (String s : submit_map.keySet()) {
-            Log.i("map",   "submitMap : " + s + ":" + submit_map.get(s));
+            Log.i("submit_map",   "submitMap : " + s + ":" + submit_map.get(s));
         }
 
         submit_map.put("token", login.token);

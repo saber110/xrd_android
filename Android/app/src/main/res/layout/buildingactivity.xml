@@ -41,7 +41,7 @@
         android:layout_weight="1"
         android:textColor="#ffffff"
         android:id="@+id/building_submit_test"
-        android:text="@string/message_submit"
+        android:text="@string/building_submit"
         android:background="@drawable/login_button"
         android:layout_margin="10dp"
         />
