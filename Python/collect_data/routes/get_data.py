@@ -45,7 +45,7 @@ def set_form_value(form, value):
             if item['key'] != '' and item['key'] in value:
                 item['value'] = value[item['key']]
                 if item['type'] == 'multiple':
-                    item['value'] = item['value'].split(',')
+                    item['value'] = item['value'].strip('&').split('&')
     return form
 
 
