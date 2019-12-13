@@ -246,7 +246,11 @@ public class MainActivity extends TakePhotoActivity{
         dataCollectLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IntentTools.activitySwich(MainActivity.this, DataActivity.class, false);
+                if (gardenName != null && !gardenName.isEmpty()) {
+                    IntentTools.activitySwich(MainActivity.this, DataActivity.class, false);
+                } else {
+                    Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
+                }
             }
         });
 

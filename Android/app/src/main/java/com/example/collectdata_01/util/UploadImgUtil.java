@@ -181,6 +181,6 @@ public class UploadImgUtil{
                 .whereEquals(Users.COLLECTTIOME_COL , collectTime));
         updateUser.get(0).setIsuploaded(true);
         ColumnsValue cv = new ColumnsValue(new String[]{Users.ISUPLOADED_COL});
-        long c = mainDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
+        mainDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
     }
 }
