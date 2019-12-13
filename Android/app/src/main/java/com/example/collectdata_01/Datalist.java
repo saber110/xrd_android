@@ -2,8 +2,14 @@ package com.example.collectdata_01;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -66,7 +72,7 @@ public class Datalist extends AppCompatActivity {
             public void onItemClick(int position) {
                 if (adapter.getResultMap().keySet().contains(list.get(position))) {
                     alert_edit(position, list);
-                    Toast.makeText(Datalist.this, "点击" + list.get(position), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(Datalist.this, "点击" + list.get(position), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -158,6 +164,7 @@ public class Datalist extends AppCompatActivity {
         File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + oldName);
         File to = new File(Environment.getExternalStorageDirectory(), "/temp/" + newName);
         file.renameTo(to);
+        saveToSystemAlbum(to);
     }
 
 
@@ -171,5 +178,38 @@ public class Datalist extends AppCompatActivity {
         mainDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
     }
 
+    /**
+     * 将拍照的图片加入系统相册中
+     *
+     * @param path
+     */
+    private void saveToSystemAlbum(File file) {
+        //其次把文件插入到系统图库
+        try {
+            Log.i("update album1", "picture: " + file.getAbsolutePath());
+
+            MediaStore.Images.Media.insertImage(this.getContentResolver(),
+                    file.getAbsolutePath(), file.getName(), null);
+            Log.i("update album", "picture: " + file.getAbsolutePath());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // 通知图库更新
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        @Override
+                        public void onScanCompleted(String path, Uri uri) {
+                            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
+                            sendBroadcast(mediaScanIntent);
+                        }
+                    });
+        } else {
+            String relationDir = file.getParent();
+            File file1 = new File(relationDir);
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.fromFile(file1.getAbsoluteFile())));
+        }
+    }
 }
 
