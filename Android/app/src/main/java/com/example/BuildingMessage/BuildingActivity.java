@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.collectdata.BuweiActivity;
 import com.example.collectdata.bean.CommonItemBean;
+import com.example.collectdata.bean.ListItemBean;
+import com.example.collectdata.bean.SelectorItemBean;
 import com.example.collectdata_01.R;
 import com.example.dialog.CreatDialog;
 import com.example.login.login;
@@ -48,8 +50,10 @@ public class BuildingActivity extends BaseActivity {
     private Button add;
     private Button del;
     //    private Button modify;
+
     private Map<String, String> map2 = new HashMap<>();
-    private String mode, locationDescription = "";
+    private String mode;
+    private int gardenId;
     // resultList用来保存不同tab中填写的数据
     private HashMap<Integer, HashMap<String, String>> resultList = new HashMap();
 
@@ -68,7 +72,7 @@ public class BuildingActivity extends BaseActivity {
     protected void initData() {
         final Intent i = getIntent();
         mode = i.getStringExtra("mode");
-        int gardenId = i.getIntExtra("gardenId", 0);
+        gardenId = i.getIntExtra("gardenId", 0);
         String url = i.getStringExtra("url");
         HashMap<String, Object> map = new HashMap<>();
         map.put("token", login.token);
@@ -112,7 +116,6 @@ public class BuildingActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(BuildingActivity.this, BuweiActivity.class);
-                    i.putExtra("locationDescription", locationDescription);
                     startActivityForResult(i, REQUEST_CODE);
                 }
             });
@@ -136,18 +139,6 @@ public class BuildingActivity extends BaseActivity {
 //        }else {
 //            submit.setOnClickListener(new PostListener(this, adapter2.getResultMap(), list, mode, requestListener));
 //        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_CODE) {
-                locationDescription = data.getExtras().getString("locationDescription");
-                map2.put("locationDescription", locationDescription);
-                System.out.println("getExtra=" + locationDescription);
-            }
-        }
     }
 
     private void initDialog() {
@@ -182,7 +173,7 @@ public class BuildingActivity extends BaseActivity {
             final View view = (View) field.get(selectTab);
             if (view == null) return;
             int i = (int) view.getTag();
-            submit.setOnClickListener(new PostListener(this, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
+            submit.setOnClickListener(new PostListener(this,gardenId, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -212,11 +203,13 @@ public class BuildingActivity extends BaseActivity {
                         @Override
                         public void onClick(View v) {
                             for (int i = 0; ; i++) {
-                                if (!tabMap.keySet().contains(i)) {
+                                if (!tabMap.keySet().contains(i) && !newtabMap.keySet().contains(i)) {
                                     TabLayout.Tab tab1 = tabLayout.newTab().setText("新楼栋");
-                                    newtabMap.put(i, tabMap.get((int) view.getTag()));
+                                    if (tabMap.keySet().contains((int)view.getTag()))
+                                        newtabMap.put(i, tabMap.get((int) view.getTag()));
+                                    else
+                                        newtabMap.put(i, newtabMap.get((int) view.getTag()));
                                     try {
-
                                         Class c = tab1.getClass();
                                         Field field = c.getDeclaredField("view");
                                         field.setAccessible(true);
@@ -225,7 +218,7 @@ public class BuildingActivity extends BaseActivity {
                                     }catch (Exception e){
                                         e.printStackTrace();
                                     }
-//                                    addTabListener(tabLayout, tab1, i);
+                                    addTabListener(tabLayout, tab1, i);
                                     tabLayout.addTab(tab1);
                                     buildingNumDialog.dismiss();
                                     break;
@@ -330,10 +323,10 @@ public class BuildingActivity extends BaseActivity {
                     adapter2.setResultMap(copy(map));
                 if (tabMap.keySet().contains(i)) {
                     adapter2.setData(tabMap.get(i));
-                    submit.setOnClickListener(new PostListener(BuildingActivity.this, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
+                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId,adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
                 } else {
                     adapter2.setData(newtabMap.get(i));
-                    submit.setOnClickListener(new PostListener(BuildingActivity.this, adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
+                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId,adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
                 }
                 adapter2.notifyDataSetChanged();
             } catch (Exception e) {

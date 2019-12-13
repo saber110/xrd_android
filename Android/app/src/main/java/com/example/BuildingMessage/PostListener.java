@@ -24,14 +24,16 @@ public class PostListener implements View.OnClickListener {
     private String mode;
     private Context context;
     private int id;
+    private int gardenId;
 
-    public PostListener(Context context, Map<String, String> map, List<CommonItemBean> list, String mode, int id, Map<String, String> map2, RequestListener listener) {
+    public PostListener(Context context,int gardenId, Map<String, String> map, List<CommonItemBean> list, String mode, int id, Map<String, String> map2, RequestListener listener) {
         this.map = map;
         this.list = list;
         this.listener = listener;
         this.mode = mode;
         this.context = context;
         this.id = id;
+        this.gardenId = gardenId;
         this.map2 = map2;
     }
 
@@ -122,7 +124,7 @@ public class PostListener implements View.OnClickListener {
             ;
         else
             submit_map.put("id",id);
-        submit_map.put("gardenId",1);
+        submit_map.put("gardenId",gardenId);
 
         if (mode.equals("base")) {
             submit_map.put("locationDescription", BuweiActivity.retString);

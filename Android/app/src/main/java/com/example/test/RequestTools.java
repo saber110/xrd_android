@@ -24,10 +24,10 @@ public class RequestTools implements Runnable {
         static OkHttpClient client = new OkHttpClient();
         Map map = new HashMap<String, String>(5);
 
-        public RequestTools(String url, int buildingId, RequestListener listener){
+        public RequestTools(String url, int gardenId, RequestListener listener){
             map.put("token", login.token);
 //            map.put("buildingId", buildingId);
-            map.put("gardenId", 1);
+            map.put("gardenId", gardenId);
             this.url = url;
             this.listener = listener;
         }
