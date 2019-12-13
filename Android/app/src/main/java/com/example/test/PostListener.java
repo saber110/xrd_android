@@ -86,13 +86,11 @@ public class PostListener implements View.OnClickListener {
         }
 
 
-        for (
-                String s : NearByActivity.map.keySet()) {
+        for (String s : NearByActivity.map.keySet()) {
             submit_map.put(s, String.valueOf(NearByActivity.map.get(s)));
         }
 
-        for (
-                String s : submit_map.keySet()) {
+        for (String s : submit_map.keySet()) {
             Log.i("submitmap", s + ":" + submit_map.get(s));
         }
 

@@ -56,52 +56,41 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         //创建viewHolder
         if (viewType == 0) {
             View view = layoutInflater.inflate(R.layout.message_item, parent, false);
-            return new MyViewHolder(view);
+            return new TextViewHoldert(view);
 //        }else if (viewType == 1){
-        } else {
+        } else if (viewType == 1){
             View view = LayoutInflater.from(context).inflate(R.layout.message_selector_item, parent, false);
-            return new MyViewHolder2(view);
+            return new ButtonViewHolder(view);
+        }else {
+            View view = LayoutInflater.from(context).inflate(R.layout.message_selector_item, parent, false);
+            return new MulButtonViewHolder(view);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof MyViewHolder) {
-            ((MyViewHolder) holder).textInputLayout.setHint(data.get(position).getTitle());
-            TextWatcher watcher = (TextWatcher) ((MyViewHolder) holder).textInputEditText.getTag(((MyViewHolder) holder).textInputEditText.getId());
+        if (holder instanceof TextViewHoldert) {
+            ((TextViewHoldert) holder).textInputLayout.setHint(data.get(position).getTitle());
+            TextWatcher watcher = (TextWatcher) ((TextViewHoldert) holder).textInputEditText.getTag(((TextViewHoldert) holder).textInputEditText.getId());
             if (watcher != null) {
-                ((MyViewHolder) holder).textInputEditText.removeTextChangedListener(watcher);
+                ((TextViewHoldert) holder).textInputEditText.removeTextChangedListener(watcher);
             }
             if (resultMap.keySet().contains(data.get(position).getTitle())) {
-                ((MyViewHolder) holder).textInputEditText.setText(resultMap.get(data.get(position).getTitle()));
+                ((TextViewHoldert) holder).textInputEditText.setText(resultMap.get(data.get(position).getTitle()));
             }
-            ((MyViewHolder) holder).textInputEditText.addTextChangedListener(watcher);
-            ((MyViewHolder) holder).textInputEditText.setTag(((MyViewHolder) holder).textInputEditText.getId(), watcher);
+            ((TextViewHoldert) holder).textInputEditText.addTextChangedListener(watcher);
+            ((TextViewHoldert) holder).textInputEditText.setTag(((TextViewHoldert) holder).textInputEditText.getId(), watcher);
             holder.setIsRecyclable(false);
-        } else {
-            MyViewHolder2 buttonHolder = ((MyViewHolder2) holder);
+        } else if (holder instanceof ButtonViewHolder){
+            ButtonViewHolder buttonHolder = ((ButtonViewHolder) holder);
             SelectorItemBean currentItemBean = (SelectorItemBean) data.get(position);
 
             buttonHolder.titleView2.setText(currentItemBean.getTitle());
             // 判断单选按钮是否选中，防止发生错乱
             buttonHolder.buttonToggleGroup.removeOnButtonCheckedListener(listener);
-
-            // 多选框
-            if (!currentItemBean.isSingle()) {
-                List<String> select = currentItemBean.getCurrentSelects();
-                for (String content : select) {
-                    for (int i = 0; i < buttonHolder.buttonToggleGroup.getChildCount(); i++) {
-                        MaterialButton button = (MaterialButton) ((MyViewHolder2) holder).buttonToggleGroup.getChildAt(i);
-                        if (button.getText().equals(content)) {
-                            button.setBackgroundColor(Color.RED);
-                        } else {
-                            button.setBackgroundColor(Color.WHITE);
-                        }
-                    }
-                }
-            } else if (resultMap.keySet().contains(currentItemBean.getTitle())) {
+            if (resultMap.keySet().contains(currentItemBean.getTitle())) {
                 for (int i = 0; i < buttonHolder.buttonToggleGroup.getChildCount(); i++) {
-                    MaterialButton button = (MaterialButton) ((MyViewHolder2) holder).buttonToggleGroup.getChildAt(i);
+                    MaterialButton button = (MaterialButton) ((ButtonViewHolder) holder).buttonToggleGroup.getChildAt(i);
                     if (button.getText().equals(resultMap.get(currentItemBean.getTitle()))) {
                         button.setBackgroundColor(Color.RED);
                     } else {
@@ -114,6 +103,30 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             buttonHolder.buttonToggleGroup.addOnButtonCheckedListener(listener);
 
             holder.setIsRecyclable(false);
+        }else if (holder instanceof MulButtonViewHolder) {
+            MulButtonViewHolder mulbuttonHolder = ((MulButtonViewHolder) holder);
+            SelectorItemBean currentItemBean = (SelectorItemBean) data.get(position);
+
+            mulbuttonHolder.titleView2.setText(currentItemBean.getTitle());
+            mulbuttonHolder.buttonToggleGroup.removeOnButtonCheckedListener(mullistener);
+
+            for (int i = 0; i < mulbuttonHolder.buttonToggleGroup.getChildCount(); i++) {
+
+                MaterialButton button = (MaterialButton) mulbuttonHolder.buttonToggleGroup.getChildAt(i);
+                String s = button.getText().toString();
+                String content = resultMap.get((String) mulbuttonHolder.buttonToggleGroup.getTag());
+
+                String c[] = content.split("&");
+                for (int j = 0; j < c.length; j++) {
+                    if (c[j].equals(s)) {
+                        button.setBackgroundColor(Color.RED);
+                        break;
+                    }
+                    button.setBackgroundColor(Color.WHITE);
+                }
+            }
+            mulbuttonHolder.buttonToggleGroup.addOnButtonCheckedListener(mullistener);
+            mulbuttonHolder.setIsRecyclable(false);
         }
     }
 
@@ -122,11 +135,11 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return data.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    class TextViewHoldert extends RecyclerView.ViewHolder {
         TextInputLayout textInputLayout;
         TextInputEditText textInputEditText;
 
-        public MyViewHolder(@NonNull View itemView) {
+        public TextViewHoldert(@NonNull View itemView) {
             super(itemView);
             textInputLayout = itemView.findViewById(R.id.message_item_title);
             textInputEditText = itemView.findViewById(R.id.message_content);
@@ -166,11 +179,11 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return resultMap;
     }
 
-    class MyViewHolder2 extends RecyclerView.ViewHolder {
+    class ButtonViewHolder extends RecyclerView.ViewHolder {
         TextView titleView2;
         MaterialButtonToggleGroup buttonToggleGroup;
 
-        public MyViewHolder2(@NonNull View itemView) {
+        public ButtonViewHolder(@NonNull View itemView) {
             super(itemView);
             titleView2 = itemView.findViewById(R.id.message_selector_item_title);
             buttonToggleGroup = itemView.findViewById(R.id.message_selector_item_togglebutton);
@@ -181,10 +194,38 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 MaterialButton button = new MaterialButton(context);
                 String buttonContent = selectorMessage.get(i);
                 button.setText(buttonContent);
+                button.setTextColor(Color.BLACK);
+                buttonToggleGroup.addView(button);
+            }
+            //设置tag防止数据错乱，主要是title的错乱
+            buttonToggleGroup.setTag(commonItemBean.getTitle());
+            //设置监听函数
+            buttonToggleGroup.addOnButtonCheckedListener(listener);
+        }
+    }
+
+    class MulButtonViewHolder extends RecyclerView.ViewHolder {
+        TextView titleView2;
+        MaterialButtonToggleGroup buttonToggleGroup;
+
+        public MulButtonViewHolder(@NonNull View itemView) {
+            super(itemView);
+            titleView2 = itemView.findViewById(R.id.message_selector_item_title);
+            buttonToggleGroup = itemView.findViewById(R.id.message_selector_item_togglebutton);
+            buttonToggleGroup.setSingleSelection(true);
+            List<String> selectorMessage = ((SelectorItemBean) commonItemBean).getData();
+            //初始化所有的按钮
+            for (int i = 0; i < selectorMessage.size(); i++) {
+                MaterialButton button = new MaterialButton(context);
+                String buttonContent = selectorMessage.get(i);
+                button.setText(buttonContent);
                 if (!((SelectorItemBean) commonItemBean).isSingle()) {
                     for (String content : ((SelectorItemBean) commonItemBean).getCurrentSelects()) {
-                        if (buttonContent.equals(content))
+                        if (buttonContent.equals(content)) {
                             button.setBackgroundColor(Color.RED);
+                            break;
+                        }
+                        button.setBackgroundColor(Color.WHITE);
                     }
                 } else
                     button.setBackgroundColor(Color.WHITE);
@@ -194,7 +235,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //设置tag防止数据错乱，主要是title的错乱
             buttonToggleGroup.setTag(commonItemBean.getTitle());
             //设置监听函数
-            buttonToggleGroup.addOnButtonCheckedListener(listener);
+            buttonToggleGroup.addOnButtonCheckedListener(mullistener);
         }
     }
 
@@ -213,6 +254,49 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     Toast.makeText(context, button.getText().toString(), Toast.LENGTH_SHORT).show();
                 } else {
                     button.setBackgroundColor(Color.WHITE);
+                }
+            }
+
+        }
+    };
+
+     private MaterialButtonToggleGroup.OnButtonCheckedListener mullistener = new MaterialButtonToggleGroup.OnButtonCheckedListener() {
+        @Override
+        public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+            if (!isChecked)
+                return;
+
+            for (int i = 0; i < group.getChildCount(); i++) {
+                boolean iscontain = false;
+                MaterialButton button = (MaterialButton) group.getChildAt(i);
+                if (button.getId() == checkedId) {
+                    String s = button.getText().toString();
+                    String content = resultMap.get((String) group.getTag());
+                    // 多选按钮一个都没被选中
+                    if (content == null || content.equals("")) {
+                        button.setBackgroundColor(Color.RED);
+                        resultMap.put((String) group.getTag(), s);
+                        return;
+                    }
+                    String c[] = content.split("&");
+                    content = "";
+                    // 点击的按钮已经被选中
+                    for (int j = 0; j < c.length; j++) {
+                        if (c[j].equals(s)) {
+                            iscontain = true;
+                            button.setBackgroundColor(Color.WHITE);
+                        } else {
+                            content += c[j];
+                            content += "&";
+                        }
+                    }
+                    // 点击的按钮未被选中
+                    if (!iscontain) {
+                        content += s;
+                        button.setBackgroundColor(Color.RED);
+                    }
+                    resultMap.put((String) group.getTag(), content);
+//                    Toast.makeText(context,content,Toast.LENGTH_SHORT).show();
                 }
             }
 

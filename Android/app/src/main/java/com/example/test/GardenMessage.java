@@ -120,8 +120,18 @@ public class GardenMessage extends BaseActivity {
         adapter2.setData(list);
         for (CommonItemBean commonItemBean : list){
             if (commonItemBean instanceof SelectorItemBean){
-                SelectorItemBean bean = (SelectorItemBean) commonItemBean;
-                adapter2.getResultMap().put(bean.getTitle(),bean.getCurrentSelect());
+                if (commonItemBean.getType() == 1) {
+                    SelectorItemBean bean = (SelectorItemBean) commonItemBean;
+                    adapter2.getResultMap().put(bean.getTitle(), bean.getCurrentSelect());
+                }else {
+                    SelectorItemBean bean = (SelectorItemBean) commonItemBean;
+                    String content = "";
+                    for (String s : bean.getCurrentSelects()) {
+                        content += s;
+                        content += "&";
+                    }
+                    adapter2.getResultMap().put(bean.getTitle(),content);
+                }
             }else {
                 adapter2.getResultMap().put(commonItemBean.getTitle(),commonItemBean.getContent());
             }

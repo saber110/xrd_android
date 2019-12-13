@@ -39,7 +39,7 @@ import static com.google.android.material.tabs.TabLayout.MODE_SCROLLABLE;
 
 public class BuildingActivity extends BaseActivity {
     private RecyclerView recyclerView;
-    private Button submit,buwei;
+    private Button submit, buwei;
     private TabLayout tabLayout;
     private MyAdapter adapter2;
 
@@ -47,9 +47,9 @@ public class BuildingActivity extends BaseActivity {
     private View BuildNumView;
     private Button add;
     private Button del;
-//    private Button modify;
+    //    private Button modify;
     private Map<String, String> map2 = new HashMap<>();
-    private String mode,locationDescription = "";
+    private String mode, locationDescription = "";
     // resultList用来保存不同tab中填写的数据
     private HashMap<Integer, HashMap<String, String>> resultList = new HashMap();
 
@@ -58,6 +58,7 @@ public class BuildingActivity extends BaseActivity {
     private HashMap<Integer, List<CommonItemBean>> newtabMap = new HashMap<>();
     private MyHandler handler = new MyHandler(this);
     private final static int REQUEST_CODE = 1; // 返回的结果码
+
     @Override
     protected int initLayout() {
         return R.layout.buildingactivity;
@@ -106,17 +107,16 @@ public class BuildingActivity extends BaseActivity {
         adapter2 = new MyAdapter(this, list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter2);
-        if(mode.equals("base")){
+        if (mode.equals("base")) {
             buwei.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(BuildingActivity.this, BuweiActivity.class);
                     i.putExtra("locationDescription", locationDescription);
-                    startActivityForResult(i,REQUEST_CODE);
+                    startActivityForResult(i, REQUEST_CODE);
                 }
             });
-        }
-        else
+        } else
             buwei.setVisibility(View.GONE);
 
 //        if (mode.equals("base")){
@@ -144,8 +144,8 @@ public class BuildingActivity extends BaseActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CODE) {
                 locationDescription = data.getExtras().getString("locationDescription");
-                map2.put("locationDescription",locationDescription);
-                System.out.println("getExtra="+locationDescription);
+                map2.put("locationDescription", locationDescription);
+                System.out.println("getExtra=" + locationDescription);
             }
         }
     }
@@ -182,7 +182,7 @@ public class BuildingActivity extends BaseActivity {
             final View view = (View) field.get(selectTab);
             if (view == null) return;
             int i = (int) view.getTag();
-            submit.setOnClickListener(new PostListener(this, adapter2.getResultMap(), tabMap.get(i), mode,i,map2, requestListener));
+            submit.setOnClickListener(new PostListener(this, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -213,8 +213,18 @@ public class BuildingActivity extends BaseActivity {
                         public void onClick(View v) {
                             for (int i = 0; ; i++) {
                                 if (!tabMap.keySet().contains(i)) {
-                                    TabLayout.Tab tab1 = tabLayout.newTab().setText("新楼栋" + i);
+                                    TabLayout.Tab tab1 = tabLayout.newTab().setText("新楼栋");
                                     newtabMap.put(i, tabMap.get((int) view.getTag()));
+                                    try {
+
+                                        Class c = tab1.getClass();
+                                        Field field = c.getDeclaredField("view");
+                                        field.setAccessible(true);
+                                        final View view = (View) field.get(tab1);
+                                        view.setTag(i);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
 //                                    addTabListener(tabLayout, tab1, i);
                                     tabLayout.addTab(tab1);
                                     buildingNumDialog.dismiss();
@@ -320,11 +330,10 @@ public class BuildingActivity extends BaseActivity {
                     adapter2.setResultMap(copy(map));
                 if (tabMap.keySet().contains(i)) {
                     adapter2.setData(tabMap.get(i));
-                    submit.setOnClickListener(new PostListener(BuildingActivity.this, adapter2.getResultMap(), tabMap.get(i), mode,i,map2, requestListener));
-                }
-                else {
+                    submit.setOnClickListener(new PostListener(BuildingActivity.this, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
+                } else {
                     adapter2.setData(newtabMap.get(i));
-                    submit.setOnClickListener(new PostListener(BuildingActivity.this, adapter2.getResultMap(), newtabMap.get(i), mode,-1,map2, requestListener));
+                    submit.setOnClickListener(new PostListener(BuildingActivity.this, adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
                 }
                 adapter2.notifyDataSetChanged();
             } catch (Exception e) {
