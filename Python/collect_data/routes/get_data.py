@@ -1767,7 +1767,7 @@ def building_picture(*args, **kwargs):
 
 
 @get_data_bp.route('/garden_building_base_info', methods=['POST'])
-# @token_check
+@token_check
 def garden_building_base_info(*args, **kwargs):
     """
     获取小区的楼幢基本信息
@@ -2532,3 +2532,21 @@ def export_zip(*args, **kwargs):
         file.write(str(datetime.now().timestamp()))
     dir_path, filename = os.path.split(zip_path)
     return my_send_file(zip_path, 'application/x-zip-compressed', filename)
+
+
+@get_data_bp.route('/garden_building', methods=['POST'])
+@token_check
+def garden_building(*args, **kwargs):
+    """
+    根据小区id获取对应的建筑id
+    """
+    data = request.get_json()
+    schema = {
+        'gardenId': {'type': 'integer', 'min': 1},
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    building_ids = db.session.query(BuildingInfo.id).filter_by(gardenId=data['gardenId']).all()
+    building_ids = [i[0] for i in building_ids]
+    return generate_result(0, '获取楼栋id成功', {'buildingIds': building_ids})
