@@ -46,10 +46,8 @@ public class BuildingActivity extends BaseActivity {
     private MyAdapter adapter2;
 
     private Dialog buildingNumDialog;
-    private View BuildNumView;
     private Button add;
     private Button del;
-    //    private Button modify;
 
     private Map<String, String> map2 = new HashMap<>();
     private String mode;
@@ -142,10 +140,10 @@ public class BuildingActivity extends BaseActivity {
     }
 
     private void initDialog() {
-        BuildNumView = getLayoutInflater().inflate(R.layout.buildingtab, null);
-        buildingNumDialog = CreatDialog.createChangeMarkDialog(BuildingActivity.this, BuildNumView);
-        add = BuildNumView.findViewById(R.id.add_tab);
-        del = BuildNumView.findViewById(R.id.del_tab);
+        View buildNumView = getLayoutInflater().inflate(R.layout.buildingtab, null);
+        buildingNumDialog = CreatDialog.createChangeMarkDialog(BuildingActivity.this, buildNumView);
+        add = buildNumView.findViewById(R.id.add_tab);
+        del = buildNumView.findViewById(R.id.del_tab);
 //        modify = BuildNumView.findViewById(R.id.modify_text);
     }
 
@@ -165,17 +163,10 @@ public class BuildingActivity extends BaseActivity {
 
         int pos = tabLayout.getSelectedTabPosition();
         TabLayout.Tab selectTab = tabLayout.getTabAt(pos);
-        try {
-            assert selectTab != null;
-            Class c = selectTab.getClass();
-            Field field = c.getDeclaredField("view");
-            field.setAccessible(true);
-            final View view = (View) field.get(selectTab);
-            if (view == null) return;
-            int i = (int) view.getTag();
-            submit.setOnClickListener(new PostListener(this,gardenId, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
-        } catch (Exception e) {
-            e.printStackTrace();
+        assert selectTab != null;
+        int i = tab_getTag(selectTab);
+        if (i >= 0){
+            submit.setOnClickListener(new PostListener(this, gardenId, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
         }
         adapter2.notifyDataSetChanged();
     }
@@ -205,19 +196,11 @@ public class BuildingActivity extends BaseActivity {
                             for (int i = 0; ; i++) {
                                 if (!tabMap.keySet().contains(i) && !newtabMap.keySet().contains(i)) {
                                     TabLayout.Tab tab1 = tabLayout.newTab().setText("新楼栋");
-                                    if (tabMap.keySet().contains((int)view.getTag()))
+                                    if (tabMap.keySet().contains((int) view.getTag()))
                                         newtabMap.put(i, tabMap.get((int) view.getTag()));
                                     else
                                         newtabMap.put(i, newtabMap.get((int) view.getTag()));
-                                    try {
-                                        Class c = tab1.getClass();
-                                        Field field = c.getDeclaredField("view");
-                                        field.setAccessible(true);
-                                        final View view = (View) field.get(tab1);
-                                        view.setTag(i);
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
+                                    tab_setTag(tab1,i);
                                     addTabListener(tabLayout, tab1, i);
                                     tabLayout.addTab(tab1);
                                     buildingNumDialog.dismiss();
@@ -281,6 +264,7 @@ public class BuildingActivity extends BaseActivity {
         return copy;
     }
 
+    // 用来回调上传数据是否成功
     private RequestListener requestListener = new RequestListener() {
         @Override
         public void onSuccess(Response response) {
@@ -306,50 +290,33 @@ public class BuildingActivity extends BaseActivity {
         }
     };
 
+    // 切换tab时，根据tab的tag（也就是楼栋的id），给adapter设置不同的dataList和resultMap
     private TabLayout.OnTabSelectedListener tabSelectListener = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
-
-            Class c = tab.getClass();
-            try {
-                Field field = c.getDeclaredField("view");
-                field.setAccessible(true);
-                final View view = (View) field.get(tab);
-                if (view == null) return;
-                // Toast.makeText(BuildingActivity.this,"第" +(int) view.getTag() + "个tab selected",Toast.LENGTH_SHORT).show();
-                int i = (int) view.getTag();
+            int i = tab_getTag(tab);
+            if (i >= 0) {
                 HashMap<String, String> map = resultList.get(i);
                 if (map != null)
                     adapter2.setResultMap(copy(map));
                 if (tabMap.keySet().contains(i)) {
                     adapter2.setData(tabMap.get(i));
-                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId,adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
+                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
                 } else {
                     adapter2.setData(newtabMap.get(i));
-                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId,adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
+                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
                 }
                 adapter2.notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
 
         @Override
         public void onTabUnselected(TabLayout.Tab tab) {
             // 切换tab时，先保存当前tab的数据，存放在resultList，再根据新tab的tag从resultList中获取新的数据，设置给adapter
-            Class c = tab.getClass();
-            try {
-                Field field = c.getDeclaredField("view");
-                field.setAccessible(true);
-                final View view = (View) field.get(tab);
-                if (view == null) return;
-                // Toast.makeText(BuildingActivity.this,"第" +(int) view.getTag() + "个tab Unselected",Toast.LENGTH_SHORT).show();
-                int i = (int) view.getTag();
-                // adapter2.getResultMap()获得的是一个hashMap，需要深复制
+            int i = tab_getTag(tab);
+            if (i >= 0) {
                 resultList.put(i, copy(adapter2.getResultMap()));
                 adapter2.clearResultMap();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
 
@@ -359,31 +326,31 @@ public class BuildingActivity extends BaseActivity {
         }
     };
 
-//    public void alert_edit(final View view, final TabLayout.Tab tab) {
-//        final EditText et = new EditText(this);
-//        new AlertDialog.Builder(this).setTitle("请输入楼栋id")
-//                .setView(et)
-//                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        //按下确定键后的事件
-//                        try {
-//                            String s = et.getText().toString();
-//                            int id = Integer.parseInt(s);
-//                            if (tabMap.keySet().contains(id)) {
-//                                Toast.makeText(BuildingActivity.this, "该ID已存在", Toast.LENGTH_SHORT).show();
-//                                return;
-//                            }
-//                            tab.setText("楼栋" + id);
-//                            tabMap.put(id, tabMap.get((int) view.getTag()));
-//                            tabMap.remove((int) view.getTag());
-//                            resultList.put(id, resultList.get((int) view.getTag()));
-//                            resultList.remove((int) view.getTag());
-//                        } catch (Exception e) {
-//                            Toast.makeText(BuildingActivity.this, "请输入数字类型", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                }).setNegativeButton("取消", null).show();
-//    }
+    private int tab_getTag(TabLayout.Tab tab) {
+        Class c = tab.getClass();
+        try {
+            Field field = c.getDeclaredField("view");
+            field.setAccessible(true);
+            final View view = (View) field.get(tab);
+            if (view == null) return -1;
+            // Toast.makeText(BuildingActivity.this,"第" +(int) view.getTag() + "个tab Unselected",Toast.LENGTH_SHORT).show();
+            return (int) view.getTag();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private void tab_setTag(TabLayout.Tab tab, int tag) {
+        try {
+            Class c = tab.getClass();
+            Field field = c.getDeclaredField("view");
+            field.setAccessible(true);
+            final View view = (View) field.get(tab);
+            view.setTag(tag);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
