@@ -74,25 +74,30 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:orientation="horizontal"
         >
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="若无当前小区"
-        android:textSize="@dimen/text_size"
-        android:textColor="#000000"/>
 
-        <TextView
-            android:id="@+id/add_garden"
+        <com.google.android.material.button.MaterialButton
+            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/add_garden"
             android:text="新建"
+            android:background="#00EEE6E6"
+            android:layout_gravity="left"
+            android:layout_weight="1"
             android:textSize="@dimen/text_size"
-            android:layout_marginLeft="20dp"
-            android:textColor="#1E71E5"
-            android:layout_marginTop="7dp"
-            android:layout_marginBottom="7dp"
+            />
+        <com.google.android.material.button.MaterialButton
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/add_fake_garden"
+            android:text="虚拟栋"
+            android:background="#00EEE6E6"
+            android:layout_gravity="fill_horizontal"
+            android:layout_weight="1"
+            android:textSize="@dimen/text_size"
             />
 
     </LinearLayout>
