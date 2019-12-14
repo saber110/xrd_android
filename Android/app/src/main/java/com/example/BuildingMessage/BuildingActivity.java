@@ -121,17 +121,14 @@ public class BuildingActivity extends BaseActivity {
             buwei.setVisibility(View.GONE);
     }
 
-    private void initDialog() {
-        View buildNumView = getLayoutInflater().inflate(R.layout.buildingtab, null);
-        buildingNumDialog = CreatDialog.createChangeMarkDialog(BuildingActivity.this, buildNumView);
-        add = buildNumView.findViewById(R.id.add_tab);
-        del = buildNumView.findViewById(R.id.del_tab);
-//        modify = BuildNumView.findViewById(R.id.modify_text);
-    }
 
     private void updateUI() {
-        adapter2.setData(tabMap.get(2));
 
+        // 若小区没有楼栋，不初始化tab
+        if (tabMap == null || tabMap.size() == 0){
+            Toast.makeText(BuildingActivity.this,"该小区暂无楼栋信息",Toast.LENGTH_SHORT).show();
+            return;
+        }
         // 此段代码之前是在initView()中，后因为根据从服务器请求的数据建立tab，故放在此处
         for (int i : tabMap.keySet()) {
             final TabLayout.Tab tab = tabLayout.newTab().setText("楼栋" + i);
@@ -142,6 +139,7 @@ public class BuildingActivity extends BaseActivity {
             }
             tabLayout.addTab(tab);
         }
+
 // 这段代码已经证明重复执行
 //        int pos = tabLayout.getSelectedTabPosition();
 //        TabLayout.Tab selectTab = tabLayout.getTabAt(pos);
@@ -272,6 +270,14 @@ public class BuildingActivity extends BaseActivity {
         }
     };
 
+    private void initDialog() {
+        View buildNumView = getLayoutInflater().inflate(R.layout.buildingtab, null);
+        buildingNumDialog = CreatDialog.createChangeMarkDialog(BuildingActivity.this, buildNumView);
+        add = buildNumView.findViewById(R.id.add_tab);
+        del = buildNumView.findViewById(R.id.del_tab);
+//        modify = BuildNumView.findViewById(R.id.modify_text);
+    }
+
     // 切换tab时，根据tab的tag（也就是楼栋的id），给adapter设置不同的dataList和resultMap
     private TabLayout.OnTabSelectedListener tabSelectListener = new TabLayout.OnTabSelectedListener() {
         @Override
@@ -343,30 +349,31 @@ public class BuildingActivity extends BaseActivity {
         }
     }
 
-    private HashMap<String, String> manageResultMap(List<CommonItemBean> list){
-        HashMap<String,String> resultMap = new HashMap<>();
-        for (CommonItemBean commonItemBean : list){
+    private HashMap<String, String> manageResultMap(List<CommonItemBean> list) {
+        HashMap<String, String> resultMap = new HashMap<>();
+        for (CommonItemBean commonItemBean : list) {
             if (commonItemBean instanceof SelectorItemBean) {
                 SelectorItemBean selectorItemBean = (SelectorItemBean) commonItemBean;
-                resultMap.put(selectorItemBean.getTitle(),selectorItemBean.getCurrentSelect());
-            }else if (commonItemBean instanceof ListItemBean){
+                resultMap.put(selectorItemBean.getTitle(), selectorItemBean.getCurrentSelect());
+            } else if (commonItemBean instanceof ListItemBean) {
                 ListItemBean listItemBean = (ListItemBean) commonItemBean;
-                for (CommonItemBean commonItemBean1 : listItemBean.getInnerItemList()){
-                    if (commonItemBean1 instanceof SelectorItemBean){
+                for (CommonItemBean commonItemBean1 : listItemBean.getInnerItemList()) {
+                    if (commonItemBean1 instanceof SelectorItemBean) {
                         SelectorItemBean selectorItemBean = (SelectorItemBean) commonItemBean1;
-                        resultMap.put(selectorItemBean.getTitle(),selectorItemBean.getCurrentSelect());
-                    }else {
-                        resultMap.put(listItemBean.getTitle() + commonItemBean1.getTitle() ,commonItemBean1.getContent());
+                        resultMap.put(selectorItemBean.getTitle(), selectorItemBean.getCurrentSelect());
+                    } else {
+                        resultMap.put(listItemBean.getTitle() + commonItemBean1.getTitle(), commonItemBean1.getContent());
                     }
                 }
-            }else {
-                resultMap.put(commonItemBean.getTitle(),commonItemBean.getContent());
+            } else {
+                resultMap.put(commonItemBean.getTitle(), commonItemBean.getContent());
             }
         }
-        for (String s : resultMap.keySet()){
-            Log.i("manageMap",s + ":" + resultMap.get(s));
+        for (String s : resultMap.keySet()) {
+            Log.i("manageMap", s + ":" + resultMap.get(s));
         }
         return resultMap;
     }
+
 
 }
