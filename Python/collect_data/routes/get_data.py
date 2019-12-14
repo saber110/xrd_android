@@ -1440,6 +1440,8 @@ def garden_base_table(*args, **kwargs):
         street = Street.query.get(garden.streetId)
         community = Community.query.get(garden.communityId)
         garden_info = GardenBaseInfo.query.get(garden_id)
+        if garden_info is None:
+            return generate_result(2, '暂时不存在小区信息')
         user = User.query.get(garden_info.userId)
     except SQLAlchemyError:
         return generate_result(2, '导出数据失败')
