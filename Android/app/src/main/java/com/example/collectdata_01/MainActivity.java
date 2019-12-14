@@ -82,6 +82,7 @@ public class MainActivity extends TakePhotoActivity{
     private EditText searchKey;
     private TextView neighbourWorking;
     private TextView addGardenBtn;
+    private TextView manage_fake_garden;
     private RelativeLayout dataCollectLayout;
     public static LocationAllDao locationAllDao = new LocationAllDao();
     private String gardenName;
@@ -115,7 +116,7 @@ public class MainActivity extends TakePhotoActivity{
         updataLayout = (RelativeLayout) findViewById(R.id.shangchuan);
 
         //设置dialog的样式
-        selectGardenView = getLayoutInflater().inflate(R.layout.map_enter_dialog_layout, null);
+        selectGardenView = getLayoutInflater().inflate(R.layout.garden_dialog_layout, null);
         selectLocationView = getLayoutInflater().inflate(R.layout.select_city_dialog, null);
 
         gardenDataRecyclerView = selectGardenView.findViewById(R.id.garden_list);
@@ -131,6 +132,7 @@ public class MainActivity extends TakePhotoActivity{
 
         searchKey = selectGardenView.findViewById(R.id.search_garden_key);
         addGardenBtn = selectGardenView.findViewById(R.id.add_garden);
+        manage_fake_garden = selectGardenView.findViewById(R.id.manage_fake_garden);
         setBuildingId(null);
 
         mapLayout.setOnClickListener(new View.OnClickListener() {
@@ -141,7 +143,7 @@ public class MainActivity extends TakePhotoActivity{
                     intent.putExtra("gardenId", MainActivity.getGardenId());
                     startActivity(intent);
                 } else {
-                    Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.selectWorkingGarden, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -162,7 +164,7 @@ public class MainActivity extends TakePhotoActivity{
 
                         String key = searchKey.getText().toString();
                         if (key.trim().length() == 0) {
-                            Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this,  R.string.add_garden_message, Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -206,12 +208,20 @@ public class MainActivity extends TakePhotoActivity{
                         String key = searchKey.getText().toString();
                         gardenName = key;
                         if (key.trim().length() == 0) {
-                            Toast.makeText(MainActivity.this, "请输入小区名字", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, R.string.add_garden_message, Toast.LENGTH_SHORT).show();
                         } else {
                             neighbourWorking.setText(gardenName);
                             gardenDialog.dismiss();
                             showProvinceDialog();
                         }
+                    }
+                });
+
+                // 管理虚拟小区
+                manage_fake_garden.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(MainActivity.this, ManageFakeGarden.class));
                     }
                 });
             }
@@ -225,7 +235,7 @@ public class MainActivity extends TakePhotoActivity{
                 if (gardenName != null && !gardenName.isEmpty()) {
                     showSingleChoiceDialog();
                 } else {
-                    Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.selectWorkingGarden, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -236,7 +246,7 @@ public class MainActivity extends TakePhotoActivity{
                 if (gardenName != null && !gardenName.isEmpty()) {
                     startActivity(new Intent(MainActivity.this, Datalist.class));
                 } else {
-                    Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.selectWorkingGarden, Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -249,7 +259,7 @@ public class MainActivity extends TakePhotoActivity{
                 if (gardenName != null && !gardenName.isEmpty()) {
                     IntentTools.activitySwich(MainActivity.this, DataActivity.class, false);
                 } else {
-                    Toast.makeText(getApplicationContext(), "请选择小区", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.selectWorkingGarden, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -379,7 +389,7 @@ public class MainActivity extends TakePhotoActivity{
                 public void onItemClick(View view, int position) {
                     Log.d(">>>>", "onItemClick: " + position);
                     MainActivity.locationAllDao.setCommunityId(communityDao.getData().getCommunities().get(position).getId());
-                    showGarden();
+                    addGarden();
                 }
             });
             selectLocationRecycleView.setAdapter(adapter);
@@ -393,9 +403,27 @@ public class MainActivity extends TakePhotoActivity{
     /**
      * 添加小区数据
      */
-    private void showGarden() {
-        AddGarden addGarden = new AddGarden(gardenName, locationAllDao.getProvinceId(), locationAllDao.getCityId(), locationAllDao.getDistrictId()
-                , locationAllDao.getStreetId(), locationAllDao.getCommunityId());
+    private void addGarden() {
+        AddGarden addGarden = new AddGarden(gardenName, locationAllDao.getProvinceId(),
+                locationAllDao.getCityId(), locationAllDao.getDistrictId(),
+                locationAllDao.getStreetId(), locationAllDao.getCommunityId());
+        AsyncTask asyncTask = new AsyncRequest().execute(addGarden);
+        try {
+            AddGradenResult addGradenResult = (AddGradenResult) asyncTask.get();
+            gardenId = addGradenResult.getData().getGardenId();
+            this.setGardenId(gardenId);
+            locationDialog.dismiss();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addFakeGarden() {
+        AddGarden addGarden = new AddGarden(gardenName, locationAllDao.getProvinceId(),
+                locationAllDao.getCityId(), locationAllDao.getDistrictId(),
+                locationAllDao.getStreetId(), locationAllDao.getCommunityId());
         AsyncTask asyncTask = new AsyncRequest().execute(addGarden);
         try {
             AddGradenResult addGradenResult = (AddGradenResult) asyncTask.get();
