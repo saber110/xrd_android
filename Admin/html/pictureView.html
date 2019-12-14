@@ -113,13 +113,13 @@
   <script src="../assets/js/plugins/jquery.validate.min.js"></script>
   <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
   <script src="../assets/js/plugins/jquery.bootstrap-wizard.js"></script>
-  <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
+  <!--  Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
   <script src="../assets/js/plugins/bootstrap-selectpicker.js"></script>
   <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
   <script src="../assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
   <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  -->
   <script src="../assets/js/plugins/jquery.dataTables.min.js"></script>
-  <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
+  <!--  Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
   <script src="../assets/js/plugins/bootstrap-tagsinput.js"></script>
   <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
   <script src="../assets/js/plugins/jasny-bootstrap.min.js"></script>
@@ -165,12 +165,12 @@
       for(var p in gardens){
         var li = document.createElement("li");
         li.className = "nav-item";
-        $(li).html("<a class='nav-link' id = 'gardenId" + gardens[p].id + "' onclick = getGardenPictures(" + gardens[p].id + ")>" + gardens[p].name + "</a>");
+        $(li).html("<a class='nav-link' id = 'gardenId" + gardens[p].id + "' onclick = getPictures(" + gardens[p].id + ")>" + gardens[p].name + "</a>");
         neighboutLists.appendChild(li);
       }
     };
 
-    function getGardenPictures(gardenId) {
+    function getPictures(gardenId) {
       var pictureLists = document.getElementById("pictureListss");
       pictureLists.innerHTML = "";
       var pictures = getGardenPictureFun(gardenId);
@@ -182,7 +182,16 @@
           pictures[p].compressedFilePath + "</p>");
           pictureLists.appendChild(li);
       }
-      console.log(pictures);
+      
+      var pictures = getOtherPictureFun(gardenId);
+      for(var p in pictures){
+        var li = document.createElement("li");
+        li.className = "col-xl-3 col-lg-2 col-md-4 col-sm-4 bspHasModal";
+        var url = '"' + pictures[p].compressedFilePath + '"';
+        $(li).html("<div class='bspImgWrapper' style='background:url(" + url + "');'></div><p class='bspText'>" + 
+          pictures[p].compressedFilePath + "</p>");
+          pictureLists.appendChild(li);
+      }
     }
   </script>
   <script>

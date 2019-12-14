@@ -34,6 +34,8 @@ const fileUpload = admin + "import_data";
 
 const getData = preFix + "get_data/";
 const getGardenPicture = getData + "garden_picture";
+const getBuildingPicture = getData + "building_picture";
+const getOtherPicture = getData + "other_picture";
 
 const data = preFix + "data/";
 // 图片相关接口
@@ -95,6 +97,32 @@ function getGardenPictureFun(gardenId) {
     xhrPost(getGardenPicture, JSON.stringify(json), false)
         .done(function (res) {
             result = res.data.gardenPictures;
+        });
+    return result;
+}
+
+function getBuildingPictureFun(buildingId) {
+    var result;
+    var json = {
+            "token": getCookie("token"),
+            "id": buildingId
+        };
+    xhrPost(getBuildingPicture, JSON.stringify(json), false)
+        .done(function (res) {
+            result = res.data.buildingPictures;
+        });
+    return result;
+}
+
+function getOtherPictureFun(gardenId) {
+    var result;
+    var json = {
+            "token": getCookie("token"),
+            "id": gardenId
+        };
+    xhrPost(getOtherPicture, JSON.stringify(json), false)
+        .done(function (res) {
+            result = res.data.otherPictures;
         });
     return result;
 }
@@ -260,6 +288,7 @@ function getExcelData(tableId, idName, communityId) {
     return gardenLists;
 }
 
+// 获取该社区下面的小区列表
 function getGardenListOfCommunity(communityId) {
     var result;
     xhrPost(garden, conJson(conSplit("token", getCookie("token")),
@@ -270,6 +299,7 @@ function getGardenListOfCommunity(communityId) {
     return result;
 }
 
+// 获取该小区的excel
 function getSingleGardenExcelData(tableId, idName, gardenId) {
     var result;
     xhrPost(table[tableId - 1], conJson(conSplit("token", getCookie("token")),
