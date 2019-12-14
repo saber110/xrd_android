@@ -59,9 +59,9 @@ public class PostListener implements View.OnClickListener {
                     if (content == null)
                         continue;
                     if (commonItemBean.getRequireType().equals("number")){
-                        int num = 0;
+                        double num = 0;
                         try {
-                            num = Integer.parseInt(content);
+                            num = Double.parseDouble(content);
                         } catch (Exception e) {
                             Toast.makeText(context, bean.getTitle() + commonItemBean.getTitle() + "项必须为数字", Toast.LENGTH_SHORT).show();
                             return;
@@ -83,9 +83,9 @@ public class PostListener implements View.OnClickListener {
                         return;
                     }
                     if (require_type.equals("number")) {
-                        int num = 0;
+                        double num = 0;
                         try {
-                            num = Integer.parseInt(content);
+                            num = Double.parseDouble(content);
                         } catch (Exception e) {
                             Toast.makeText(context, title + "项必须为数字", Toast.LENGTH_SHORT).show();
                             return;
@@ -98,9 +98,9 @@ public class PostListener implements View.OnClickListener {
                     String content = map.get(title);
                     if (content != null) {
                         if (require_type.equals("number")) {
-                            int num = 0;
+                            double num = 0.0;
                             try {
-                                num = Integer.parseInt(content);
+                                num = Double.parseDouble(content);
                             } catch (Exception e) {
                                 Toast.makeText(context, title + "项必须为数字", Toast.LENGTH_SHORT).show();
                                 return;
