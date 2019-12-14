@@ -62,8 +62,14 @@ def garden(*args, **kwargs):
         data['communityId'] = result['community'].id
 
     data['name'] = data.pop('gardenName')
-    garden = Garden(**data)
-    communityGardens = Garden.query.filter_by(communityId=data['communityId']).all()
+    if 'gardenId' in data:
+        garden = Garden.query.get(data['gardenId'])
+        if garden is None:
+            return generate_result(2, '小区不存在')
+        garden.update(**data)
+    else:
+        garden = Garden(**data)
+    communityGardens = Garden.query.filter_by(communityId=garden.communityId).all()
     for existGarden in communityGardens:
         if garden.name == existGarden.name:
             return generate_result(2, '请勿添加重名的小区')
@@ -72,8 +78,8 @@ def garden(*args, **kwargs):
         db.session.commit()
     except SQLAlchemyError:
         db.session.rollback()
-        return generate_result(2, '添加小区失败')
-    return generate_result(0, '添加小区成功', {'gardenId': garden.id})
+        return generate_result(2, '修改小区失败')
+    return generate_result(0, '修改小区成功', {'gardenId': garden.id})
 
 
 @data_bp.route('/init_building', methods=['POST'])
