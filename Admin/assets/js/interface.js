@@ -70,7 +70,10 @@ const tableColumn = "column";
 const tableData = "data";
 const table = [excelData + "garden_base_info", excelData + "building_base_info",
     "", ""];
-const excelTable = [excelData + "garden_base_table", excelData + "building_base_table", excelData + "garden_table", excelData + "building_table"];
+const excelTable = [excelData + "garden_base_table", 
+                    excelData + "building_base_table", 
+                    excelData + "garden_table", 
+                    excelData + "building_table"];
 var token;
 var userLists;
 
@@ -348,12 +351,12 @@ function uploadFun(id) {
         processData: false,
         contentType: false
     })
-        .done(function (res) {
-            md.showNotification("bottom", "right", res.message);
-        })
-        .fail(function (res) {
-            md.showNotification("bottom", "right", res.message, "danger");
-        });
+    .done(function (res) {
+        md.showNotification("bottom", "right", res.message);
+    })
+    .fail(function (res) {
+        md.showNotification("bottom", "right", res.message, "danger");
+    });
 }
 
 function setCookie(cname, cvalue, exdays = 1) {
@@ -398,11 +401,43 @@ function debugOutput(arg) {
     console.log(arg);
 }
 
-function downloadExcel(url, gardenId) {
+
+function getExcel(url, gardenId) {
     // var item = $(this);
     // var gardenId = item.data('gardenId');
     // var tableId = item.data('table-id');
     // var url = excelTable[tableId - 1];
+    // 查询是否存在信息
+    var formData = new FormData();
+    formData.append("token", getCookie("token"));
+    formData.append("gardenId", gardenId);
+    $.ajax({
+        url: url,
+        method: "POST",
+        cache: false,
+        data: formData,
+        processData: false,
+        contentType: false
+    })
+    .done(function (res) {
+        // 存在信息，进行下载
+        // 成功时，返回格式不一致
+        if(typeof(res.code) == 'undefined')
+            downloadExcel(url, gardenId);
+        else 
+            md.showNotification("bottom", "right", res.message, "danger");
+
+    })
+    .fail(function (res) {
+        // 不存在信息，错误提示
+        md.showNotification("bottom", "right", res.message, "danger");
+    });
+
+    //
+    
+}
+
+function downloadExcel(url, gardenId) {
     var $form = $("<form>"); //定义一个form表单
     $form.hide().attr({target: '_blank', method: 'post', 'action': url});
     var $token = $("<input>");

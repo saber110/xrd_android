@@ -90,14 +90,14 @@
                             <div class="ripple-container"></div>
                           </a>
                         </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id = "getTable3" onclick="getExcelDataOfTable(3, 'gardenInfo')">
+                        <li class="nav-item" id = "getTable3" onclick="getExcelDataOfTable(3, 'gardenInfo')">
+                          <a class="nav-link" href="#table3" data-toggle="tab">
                             <i class="material-icons">cloud</i> 小区信息数据导入表
                             <div class="ripple-container"></div>
                           </a>
                         </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id = "getTable4"  onclick="getExcelDataOfTable(4, 'gardenInfo')">
+                        <li class="nav-item" id = "getTable4" onclick="getExcelDataOfTable(4, 'gardenInfo')">
+                          <a class="nav-link" href="#table4" data-toggle="tab">
                             <i class="material-icons">cloud</i> 楼幢信息数据导入表
                             <div class="ripple-container"></div>
                           </a>
@@ -107,7 +107,7 @@
                   </div>
                 </div>
                 
-                <div class="card-body" style="overflow-x:auto">
+                <div class="card-body">
                   <div class="tab-content">
                     <div class="tab-pane active" id="table1" >
                       <div class="row">
@@ -197,8 +197,8 @@
   <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
   <script type="text/javascript" src="../assets/js/interface.js"></script>
   <!-- excel -->
-  <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
-  <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+  <!-- <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script> -->
+  <!-- <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script> -->
 
   <script type="text/javascript" src="../assets/js/plugins/city.js"></script>
   <script type="text/javascript">
@@ -214,7 +214,7 @@
       for(var p in excelData){
         var li = document.createElement("li");
         li.className = "nav-item";
-        $(li).html("<a class='nav-link' id = 'spreadsheet" + tableId + p + "' onclick = downloadExcel('" + excelTable[tableId - 1] + "'," + excelData[p].id + ")>" + excelData[p].name + "</a>");
+        $(li).html("<a class='nav-link' id = 'spreadsheet" + tableId + p + "' onclick = getExcel('" + excelTable[tableId - 1] + "'," + excelData[p].id + ")>" + excelData[p].name + "</a>");
         main.appendChild(li);
 
         // jexcel(document.getElementById('spreadsheet1' + p), {
