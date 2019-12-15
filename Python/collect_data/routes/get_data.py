@@ -394,7 +394,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -420,7 +420,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -428,7 +428,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'busStationDistance',
             'required': False,
             'changed': True,
-            'type': 'number',
+            'type': 'map',
+            'radius': 1000,
             'value': ''
         },
         {
@@ -437,7 +438,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -446,7 +447,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -454,7 +455,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'busLines',
             'required': False,
             'changed': True,
-            'type': 'number',
+            'type': 'map',
+            'radius': 1000,
             'value': ''
         },
         {
@@ -463,7 +465,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -471,7 +473,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'subwayDistance',
             'required': False,
             'changed': True,
-            'type': 'number',
+            'type': 'map',
+            'radius': 1000,
             'value': ''
         },
         {
@@ -479,7 +482,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'subwayLines',
             'required': False,
             'changed': True,
-            'type': 'number',
+            'type': 'map',
+            'radius': 1000,
             'value': ''
         },
         {
@@ -488,7 +492,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -497,7 +501,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -506,7 +510,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -515,7 +519,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -524,7 +528,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -533,7 +537,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -542,7 +546,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -551,7 +555,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -560,7 +564,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -569,7 +573,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -578,7 +582,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -587,7 +591,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
