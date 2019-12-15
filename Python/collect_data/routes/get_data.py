@@ -1533,12 +1533,12 @@ def building_base_table(*args, **kwargs):
     wb = excel.load_workbook(file_path)
     ws = wb.active
 
-    for item in building_infos:
+    for index, item in enumerate(building_infos):
         item = item.to_dict
         for key in item.keys():
             if item[key] is None:
                 item[key] = ''
-        ws.append([item[table_key] for table_key in table_key_list])
+        ws.append([index + 1] + [item[table_key] for table_key in table_key_list])
 
     stream = BytesIO()
     wb.save(stream)
