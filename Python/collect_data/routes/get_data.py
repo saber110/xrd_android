@@ -30,7 +30,7 @@ from ..models.map_data import MapData
 from ..models.other_picture import OtherPicture
 from ..models.street import Street
 from ..models.user import User
-from ..utils import gcj02_to_bd09
+from ..utils import gcj02_to_bd09, get_suffix
 from ..wraps import token_check, admin_required
 
 get_data_bp = Blueprint('get_data', __name__, url_prefix=config.URL_Prefix + '/get_data')
@@ -45,7 +45,7 @@ def set_form_value(form, value):
             if item['key'] != '' and item['key'] in value:
                 item['value'] = value[item['key']]
                 if item['type'] == 'multiple':
-                    item['value'] = item['value'].split(',')
+                    item['value'] = item['value'].strip('&').split('&')
     return form
 
 
@@ -394,7 +394,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -420,7 +420,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -428,7 +428,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'busStationDistance',
             'required': False,
             'changed': True,
-            'type': 'number',
+            'type': 'map',
+            'radius': 1000,
             'value': ''
         },
         {
@@ -437,7 +438,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -446,7 +447,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -454,7 +455,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'busLines',
             'required': False,
             'changed': True,
-            'type': 'number',
+            'type': 'map',
+            'radius': 1000,
             'value': ''
         },
         {
@@ -463,7 +465,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -471,7 +473,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'subwayDistance',
             'required': False,
             'changed': True,
-            'type': 'number',
+            'type': 'map',
+            'radius': 1000,
             'value': ''
         },
         {
@@ -479,7 +482,8 @@ def garden_base_info(*args, **kwargs):
             'key': 'subwayLines',
             'required': False,
             'changed': True,
-            'type': 'number',
+            'type': 'map',
+            'radius': 1000,
             'value': ''
         },
         {
@@ -488,7 +492,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -497,7 +501,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -506,7 +510,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -515,7 +519,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -524,7 +528,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -533,7 +537,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -542,7 +546,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -551,7 +555,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -560,7 +564,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -569,7 +573,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -578,7 +582,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -587,7 +591,7 @@ def garden_base_info(*args, **kwargs):
             'required': False,
             'changed': True,
             'type': 'map',
-            'radius': 100,
+            'radius': 1000,
             'value': ''
         },
         {
@@ -1440,6 +1444,8 @@ def garden_base_table(*args, **kwargs):
         street = Street.query.get(garden.streetId)
         community = Community.query.get(garden.communityId)
         garden_info = GardenBaseInfo.query.get(garden_id)
+        if garden_info is None:
+            return generate_result(2, '暂时不存在小区信息')
         user = User.query.get(garden_info.userId)
     except SQLAlchemyError:
         return generate_result(2, '导出数据失败')
@@ -1527,12 +1533,12 @@ def building_base_table(*args, **kwargs):
     wb = excel.load_workbook(file_path)
     ws = wb.active
 
-    for item in building_infos:
+    for index, item in enumerate(building_infos):
         item = item.to_dict
         for key in item.keys():
             if item[key] is None:
                 item[key] = ''
-        ws.append([item[table_key] for table_key in table_key_list])
+        ws.append([index + 1] + [item[table_key] for table_key in table_key_list])
 
     stream = BytesIO()
     wb.save(stream)
@@ -1709,13 +1715,21 @@ def garden_picture(*args, **kwargs):
     if not v(data):
         return generate_result(1)
     try:
-        garden_pictures = GardenPicture.query.filter_by(gardenId=data['id']).all()
+        garden = Garden.query.get(data['id'])
+        if garden is None:
+            return generate_result(2, '小区不存在')
+        garden_pictures = [i.to_dict for i in
+                           GardenPicture.query.filter_by(gardenId=data['id']).order_by(GardenPicture.collectTime).all()]
     except SQLAlchemyError as e:
         print(str(e))
         return generate_result(2)
     if len(garden_pictures) == 0:
         return generate_result(2, '该小区暂未上传图片')
-    return generate_result(0, '获取小区图片成功', data={"gardenPictures": [i.to_dict for i in garden_pictures]})
+    for index, picture in enumerate(garden_pictures):
+        number = f"{index + 1:03d}"
+        picture['pictureName'] = f"2_{garden.name}_{picture['pictureKind']}_{number}.jpg"
+
+    return generate_result(0, '获取小区图片成功', data={"gardenPictures": garden_pictures})
 
 
 @get_data_bp.route('/other_picture', methods=['POST'])
@@ -1733,13 +1747,20 @@ def other_picture(*args, **kwargs):
     if not v(data):
         return generate_result(1)
     try:
-        other_pictures = OtherPicture.query.filter_by(gardenId=data['id']).all()
+        garden = Garden.query.get(data['id'])
+        if garden is None:
+            return generate_result(2, '该小区不存在')
+        other_pictures = [i.to_dict for i in OtherPicture.query.filter_by(gardenId=data['id']).all()]
     except SQLAlchemyError as e:
         print(str(e))
         return generate_result(2)
     if len(other_pictures) == 0:
         return generate_result(2, '该小区暂未上传图片')
-    return generate_result(0, '获取小区图片成功', data={'otherPictures': [i.to_dict for i in other_pictures]})
+    for index, picture in enumerate(other_pictures):
+        number = f"{index + 1:03d}"
+        picture['pictureName'] = f'4_{garden.name}_{number}.jpg'
+
+    return generate_result(0, '获取小区图片成功', data={'otherPictures': other_pictures})
 
 
 @get_data_bp.route('/building_picture', methods=['POST'])
@@ -1757,17 +1778,25 @@ def building_picture(*args, **kwargs):
     if not v(data):
         return generate_result(1)
     try:
-        building_pictures = BuildingPicture.query.filter_by(buildingId=data['id']).all()
+        building = BuildingInfo.query.get(data['id'])
+        if building is None:
+            return generate_result(2, '楼栋不存在')
+        building_pictures = [i.to_dict for i in BuildingPicture.query.filter_by(buildingId=data['id']).order_by(
+            BuildingPicture.collectTime).all()]
+        garden = Garden.query.get(building.gardenId)
     except SQLAlchemyError as e:
         print(str(e))
         return generate_result(2)
     if len(building_pictures) == 0:
         return generate_result(2, '该楼幢暂无数据')
-    return generate_result(0, '获取楼幢图片成功', data={'buildingPictures': [i.to_dict for i in building_pictures]})
+    for index, picture in enumerate(building_pictures):
+        number = f"{index + 1:03d}"
+        picture['pictureName'] = f"3_{garden.name} {building.buildingName}_{picture['pictureKind']}_{number}.jpg"
+    return generate_result(0, '获取楼幢图片成功', data={'buildingPictures': building_pictures})
 
 
 @get_data_bp.route('/garden_building_base_info', methods=['POST'])
-# @token_check
+@token_check
 def garden_building_base_info(*args, **kwargs):
     """
     获取小区的楼幢基本信息
@@ -2440,7 +2469,7 @@ def export_zip(*args, **kwargs):
     os.makedirs(zip_dir, exist_ok=True)
     community = Community.query.get(garden.communityId)
     # 查询小区所拥有的图片
-    garden_pictures = GardenPicture.query.filter_by(gardenId=garden_id).all()
+    garden_pictures = GardenPicture.query.filter_by(gardenId=garden_id).order_by(GardenPicture.collectTime).all()
     # 根据图片种类对小区图片进行划分
     garden_picture_dict = {}
     for picture in garden_pictures:
@@ -2464,7 +2493,7 @@ def export_zip(*args, **kwargs):
                 building_picture_in_id[picture.pictureKind] = [picture]
         else:
             building_picture_dict[picture.buildingId] = {picture.pictureKind: [picture]}
-    other_pictures = OtherPicture.query.filter_by(gardenId=garden_id).all()
+    other_pictures = OtherPicture.query.filter_by(gardenId=garden_id).order_by(OtherPicture.collectTime).all()
     # 根据图片种类对小区图片进行划分
     # 设置时间戳文件，压缩zip文件，结果zip文件路径
     timestamp_file = os.path.join(zip_dir, 'timestamp.txt')
@@ -2510,31 +2539,43 @@ def export_zip(*args, **kwargs):
                 picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.originFilePath)
                 number = f"{index + 1:03d}"
                 if os.path.exists(picture_path):
-                    # 获取原图后缀名
-                    dir_path, filename = os.path.split(picture_path)
-                    suffix = os.path.splitext(filename)[1]
                     zf.write(picture_path,
-                             os.path.join('原图', f'2_{garden.name}_{picture.pictureKind}_{number}' + suffix))
+                             os.path.join('原图',
+                                          f'2_{garden.name}_{picture.pictureKind}_{number}' + get_suffix(picture_path)))
         for building_picture_in_id in building_picture_dict.values():
             for building_picture_in_kind in building_picture_in_id.values():
                 for index, picture in enumerate(building_picture_in_kind):
                     picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.originFilePath)
                     number = f"{index + 1:03d}"
                     if os.path.exists(picture_path):
-                        # 获取原图后缀名
-                        dir_path, filename = os.path.split(picture_path)
-                        suffix = os.path.splitext(filename)[1]
                         zf.write(picture_path, os.path.join('原图',
-                                                            f'3_{garden.name} {picture.buildingName}_{picture.pictureKind}_{number}' + suffix))
+                                                            f'3_{garden.name} {picture.buildingName}_{picture.pictureKind}_{number}' + get_suffix(
+                                                                picture_path)))
 
         for index, picture in enumerate(other_pictures):
             picture_path = os.path.join(config.UPLOADED_IMAGES_DEST, picture.originFilePath)
             number = f"{index + 1:03d}"
             if os.path.exists(picture_path):
-                dir_path, filename = os.path.split(picture_path)
-                suffix = os.path.splitext(filename)[1]
-                zf.write(picture_path, os.path.join('其他图片', f'4_{garden.name}_{number}' + suffix))
+                zf.write(picture_path, os.path.join('其他图片', f'4_{garden.name}_{number}' + get_suffix(picture_path)))
     with open(timestamp_file, 'w') as file:
         file.write(str(datetime.now().timestamp()))
     dir_path, filename = os.path.split(zip_path)
     return my_send_file(zip_path, 'application/x-zip-compressed', filename)
+
+
+@get_data_bp.route('/garden_building', methods=['POST'])
+@token_check
+def garden_building(*args, **kwargs):
+    """
+    根据小区id获取对应的建筑id
+    """
+    data = request.get_json()
+    schema = {
+        'gardenId': {'type': 'integer', 'min': 1},
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    building_ids = db.session.query(BuildingInfo.id).filter_by(gardenId=data['gardenId']).all()
+    building_ids = [i[0] for i in building_ids]
+    return generate_result(0, '获取楼栋id成功', {'buildingIds': building_ids})
