@@ -27,7 +27,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_marginTop="10dp"
             android:id="@+id/data_xiaoqugaikuang"
             >
 
@@ -73,7 +72,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="5"
+                    android:layout_weight="50"
                     android:gravity="center"
                     >
 
@@ -81,7 +80,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#8d8b8b"
-                        android:layout_marginBottom="10dp"
                         />
 
                 </LinearLayout>
@@ -97,7 +95,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_marginTop="10dp"
             android:id="@+id/data_louzhuangdiaocha"
             >
             <!--      右侧的内容      -->
@@ -142,7 +139,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="5"
+                    android:layout_weight="50"
                     android:gravity="center"
                     >
 
@@ -150,7 +147,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#8d8b8b"
-                        android:layout_marginBottom="10dp"
                         />
 
                 </LinearLayout>
@@ -165,7 +161,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_marginTop="10dp"
             android:gravity="center"
             android:id="@+id/data_xiaoquxinxi"
             >
@@ -212,7 +207,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="5"
+                    android:layout_weight="50"
                     android:gravity="center"
                     >
 
@@ -220,7 +215,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#8d8b8b"
-                        android:layout_marginBottom="10dp"
                         />
 
                 </LinearLayout>
@@ -235,7 +229,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_marginTop="10dp"
             android:id="@+id/data_louzhuangxinxi"
             >
 <!--            &lt;!&ndash; 左边图标 &ndash;&gt;-->
@@ -292,7 +285,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="5"
+                    android:layout_weight="50"
                     android:gravity="center"
                     >
 
@@ -300,7 +293,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#8d8b8b"
-                        android:layout_marginBottom="10dp"
                         />
 
                 </LinearLayout>

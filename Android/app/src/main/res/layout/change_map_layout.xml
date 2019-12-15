@@ -3,22 +3,21 @@
     android:orientation="horizontal"
     android:layout_above="@+id/bottom_navigation_bar"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/baidu_map"
-        android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:text="百度"
-        android:textSize="@dimen/main_text_size" />
-    <TextView
+        android:background="#00EEE6E6"
+        android:layout_weight="1"
+        android:text="百度" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/tecent_map"
-        android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:text="腾讯"
-        android:textSize="@dimen/main_text_size" />
+        android:layout_gravity="center"
+        android:background="#00EEE6E6"
+        android:layout_weight="1"
+        android:text="腾讯" />
 </LinearLayout>

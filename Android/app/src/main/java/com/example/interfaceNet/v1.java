@@ -83,6 +83,7 @@ public class v1{
     public static String uploadGardenPictureApi;
     public static String uploadOtherPictureApi;
     public static String uploadBuildingPictureApi;
+    public static String getFakeGardenListApi;
     private static Resources res;
 
 
@@ -119,6 +120,7 @@ public class v1{
         v1.uploadGardenPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadGardenPictureApi));
         v1.uploadOtherPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadOtherPictureApi));
         v1.uploadBuildingPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadBuildingPictureApi));
+        v1.getFakeGardenListApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.getFakeGardenListApi));
 
         v1.deleteMapDataApi = String.format(pattern,res.getString(R.string.delDataTab), res.getString(R.string.deleteMapDataApi));
     }

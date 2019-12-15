@@ -19,7 +19,7 @@
             android:id ="@+id/textLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/outlineOfUpload"
+            android:text="@string/outlineOfManageFakeGarden"
             android:textSize="20dp" />
 
 
@@ -29,13 +29,6 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="10dp"
             android:layout_weight="1" />
-
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/uploadPictures"
-            android:text="@string/uploadPictures"/>
 
 
     </LinearLayout>

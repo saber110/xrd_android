@@ -51,12 +51,12 @@ public class Datalist extends AppCompatActivity {
     private MaterialButton uploadPictures;
     private DatalistAdapter adapter;
 
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_datalist);
         final TextView textView = (TextView) findViewById(R.id.text);
         uploadPictures = findViewById(R.id.uploadPictures);
+
         RecyclerView listView = findViewById(R.id.list);
         final List<String> list = new ArrayList<String>();
         //要添加的内容直接添加到list 队列里面就可显示出来   如
@@ -181,7 +181,7 @@ public class Datalist extends AppCompatActivity {
     /**
      * 将拍照的图片加入系统相册中
      *
-     * @param path
+     * @param file
      */
     private void saveToSystemAlbum(File file) {
         //其次把文件插入到系统图库

@@ -17,7 +17,7 @@
     <!--    API-->
     <!--    <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/%1$s/%2$s</string>-->
     <string name="preFix">http://kms.yinaoxiong.cn:8888/api/v1/%1$s/%2$s</string>
-<!--    <string name="preFix">http://gjb.hnxrd.com.cn:9998/api/v1/%1$s/%2$s</string>-->
+    <!--    <string name="preFix">http://gjb.hnxrd.com.cn:9998/api/v1/%1$s/%2$s</string>-->
 
     <string name="userTab">user</string>
     <string name="loginApi">login</string>
@@ -45,6 +45,7 @@
     <string name="uploadGardenPictureApi">garden_picture</string>
     <string name="uploadOtherPictureApi">other_picture</string>
     <string name="uploadBuildingPictureApi">building_picture</string>
+    <string name="getFakeGardenListApi">fake_garden</string>
 
 
     <string name="administrationTab">administration</string>
@@ -74,6 +75,9 @@
     <string name="uploadPictures">确认上传</string>
     <string name="outlineOfUpload">照片上传</string>
 
+    <string name="outlineOfManageFakeGarden">修改小区位置</string>
+    <string name="saveFakeGarden">保存</string>
+
 
     <string name="cat_single_select">Single-select</string>
     <string name="cat_multi_select">Multi-select</string>
@@ -89,6 +93,10 @@
 
     <string name="api_error">接口出了点问题....，请联系管理员</string>
     <string name="loading">努力加载中，请稍候...</string>
+    <string name="add_garden_message">请输入小区名</string>
+    <string name="updateFakeGarden">更新虚拟小区</string>
+    <string name="selectWorkingGarden">请选择工作小区</string>
+
     <string name="garden_other_message">获取小区其他信息</string>
 
     <string name="cat_textfield_label" translatable="false">Label</string>
