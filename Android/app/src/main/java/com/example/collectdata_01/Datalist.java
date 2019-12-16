@@ -116,17 +116,17 @@ public class Datalist extends AppCompatActivity {
                 .appendOrderAscBy(Users.PICTUREKIND_COL)
                 .appendOrderAscBy(Users.BUILDINGNAME_COL));
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getpictureKind().equals("平面图")
-                    || list.get(i).getpictureKind().equals("小区入口")
-                    || list.get(i).getpictureKind().equals("外景图")
-                    || list.get(i).getpictureKind().equals("内景图")) {
+            if (list.get(i).getpictureKind().equals(getResources().getString(R.string.pingMianTu))
+                    || list.get(i).getpictureKind().equals(getResources().getString(R.string.xiaoQuRuKou))
+                    || list.get(i).getpictureKind().equals(getResources().getString(R.string.waiJingTu))
+                    || list.get(i).getpictureKind().equals(getResources().getString(R.string.neiJingTu))) {
                 gardenlist.add(list.get(i));
             }
-            if (list.get(i).getpictureKind().equals("建筑立面")
-                    || list.get(i).getpictureKind().equals("幢牌号")) {
+            if (list.get(i).getpictureKind().equals(getResources().getString(R.string.jianZhuLiMian))
+                    || list.get(i).getpictureKind().equals(getResources().getString(R.string.zhuangPaiHao))) {
                 buildinglist.add(list.get(i));
             }
-            if (list.get(i).getpictureKind().equals("其他")) {
+            if (list.get(i).getpictureKind().equals(getResources().getString(R.string.qiTa))) {
                 qitalist.add(list.get(i));
             }
             listView.add(list.get(i).getImage());
