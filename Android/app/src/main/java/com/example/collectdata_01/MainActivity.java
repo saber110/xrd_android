@@ -114,6 +114,7 @@ public class MainActivity extends TakePhotoActivity{
         photoLayout = (RelativeLayout) findViewById(R.id.zhaopian);
         mapLayout = (RelativeLayout) findViewById(R.id.ditu);
         updataLayout = (RelativeLayout) findViewById(R.id.shangchuan);
+        loudong = getResources().getString(R.string.feiloudong);
 
         //设置dialog的样式
         selectGardenView = getLayoutInflater().inflate(R.layout.garden_dialog_layout, null);
@@ -286,6 +287,306 @@ public class MainActivity extends TakePhotoActivity{
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    //以下是重写了方法
+    @Override
+    public void takeCancel() {
+        super.takeCancel();
+    }
+
+    @Override
+    public void takeFail(TResult result, String msg) {
+        super.takeFail(result, msg);
+    }
+
+    @Override
+    public void takeSuccess(TResult result) {
+        super.takeSuccess(result);
+        showImg(result.getImage());
+        Users musers;
+        // 采集时间精确到毫秒
+        if(getBuildingId() == null)
+            musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Long.toString(System.currentTimeMillis()), jpegName);
+        else
+            musers = new Users(getBuildingId(), locationString, Long.toString(System.currentTimeMillis()), jpegName, Integer.toString(MainActivity.getGardenId()));
+        mainDB.save(musers);
+    }
+
+    String n;
+
+    //普通の方法
+    public void formatString(int i) {
+        if (i < 10) {
+            n = "00" + Integer.toString(i + 1);
+        } else if (i >= 100) {
+            n = Integer.toString(i + 1);
+        } else {
+            n = "0" + Integer.toString(i + 1);
+        }
+    }
+
+    long count; //定义里面类型个数
+
+    //拍照方法
+    private void picture() {
+
+        QueryBuilder<Users> qb = new QueryBuilder<Users>(Users.class)
+                .columns(new String[]{"pictureKind"})
+                .distinct(true)
+                .whereEquals(Users.PICTUREKIND_COL, locationString)
+                .whereAppendAnd()
+                .whereEquals(Users.GARDENID_COL, Integer.toString(getGardenId()))
+                .whereAppendAnd()
+                .whereEquals(Users.BUILDINGNAME_COL, loudong);
+        count = mainDB.queryCount(qb);
+
+        //保存的文件名，先格式化000字符
+        formatString((int) (count++));
+        if (locationString.equals("平面图")) {
+            jpegName = "2_" + neighbourWorking.getText() + "_平面图_" + n + ".jpg";
+            pictureKind = Integer.toString(2);
+        }
+        if(locationString.equals("小区入口")){
+            jpegName = "2_"+ neighbourWorking.getText() + "_小区入口_" + n  + ".jpg";
+            pictureKind = Integer.toString(2);
+        }
+        if(locationString.equals("外景图")){
+            jpegName = "2_"+ neighbourWorking.getText() + "_外景图_" + n + ".jpg";
+            pictureKind = Integer.toString(2);
+        }
+        if(locationString.equals("内景图")){
+            jpegName = "3_"+ neighbourWorking.getText() + "_内景图_" + n + ".jpg";
+            pictureKind = Integer.toString(2);
+        }
+        if(locationString.equals("幢牌号")){
+            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_幢牌号_" + n + ".jpg";
+            pictureKind = Integer.toString(3);
+        }
+        if(locationString.equals("建筑立面")){
+            pictureKind = Integer.toString(3);
+            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_建筑立面_" + n +".jpg";
+        }
+        if(locationString.equals("其他")){
+            pictureKind = Integer.toString(3);
+            jpegName = "4_"+ neighbourWorking.getText() + "_其他_" + n +".jpg";
+        }
+
+        File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + jpegName);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+
+        final Uri imageUri = Uri.fromFile(file);
+        getTakePhoto().onPickFromCapture(imageUri);
+        loudong = getResources().getString(R.string.feiloudong);
+    }
+
+    /**
+     * 将拍照的图片加入系统相册中
+     *
+     * @param path
+     */
+    private void saveToSystemAlbum(String path) {
+        //其次把文件插入到系统图库
+        File file = new File(path);
+        try {
+            Log.i("update album1", "picture: " + file.getAbsolutePath());
+
+            MediaStore.Images.Media.insertImage(this.getContentResolver(),
+                    file.getAbsolutePath(), jpegName, null);
+            Log.i("update album", "picture: " + file.getAbsolutePath());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // 通知图库更新
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        @Override
+                        public void onScanCompleted(String path, Uri uri) {
+                            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
+                            sendBroadcast(mediaScanIntent);
+                        }
+                    });
+        } else {
+            String relationDir = file.getParent();
+            File file1 = new File(relationDir);
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.fromFile(file1.getAbsoluteFile())));
+        }
+    }
+
+    /**
+     * 图片种类选择对话框
+     */
+    private void showSingleChoiceDialog(){
+        final String[] items = {"平面图","小区入口","外景图","内景图","建筑立面","幢牌号","其他"};
+        yourChoice = -1;
+        AlertDialog.Builder singleChoiceDialog =
+                new AlertDialog.Builder(MainActivity.this);
+        singleChoiceDialog.setTitle("选择你要拍摄的区域");
+        // 第二个参数是默认选项，此处设置为0
+        singleChoiceDialog.setSingleChoiceItems(items, 0,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        yourChoice = which;
+                        item = items[yourChoice];
+                        locationString = item;
+                    }
+                });
+        singleChoiceDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //自定义对话框
+                        final Context context = MainActivity.this;
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle("请输入楼栋");    //设置对话框标题
+                        builder.setIcon(R.drawable.logo);   //设置对话框标题前的图标
+                        final EditText edit = new EditText(context);
+                        builder.setView(edit);
+                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                setBuildingId(edit.getText().toString());
+                                Toast.makeText(context, "你确立的楼栋是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
+                                //把输入的地点赋给 fu.locationString
+                                loudong = edit.getText().toString();
+                                //调用拍照方法
+                                picture();
+                            }
+                        });
+                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(context, "你取消输入", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        if (yourChoice != -1) {
+                            Toast.makeText(MainActivity.this,"你选择了" + items[yourChoice], Toast.LENGTH_SHORT).show();
+
+                            //若选择了立面则立马跳出来自定义对话框
+                            if(items[yourChoice].equals("建筑立面") || items[yourChoice].equals("幢牌号")){
+                                builder.setCancelable(true);    //设置按钮是否可以按返回键取消,false则不可以取消
+                                AlertDialog dialoga = builder.create();  //创建对话框
+                                dialoga.setCanceledOnTouchOutside(true); //设置弹出框失去焦点是否隐藏,即点击屏蔽其它地方是否隐藏
+                                dialoga.show();
+                            }
+                            else {
+                                setBuildingId(null);
+                                picture();
+                            }
+                        }
+                        //可能没按选择，默认为平面
+                        else {
+                            Toast.makeText(MainActivity.this,
+                                    "你选择了平面图",
+                                    Toast.LENGTH_SHORT).show();
+                            locationString = "平面图";
+                            picture();
+                            setBuildingId(null);
+
+                        }
+                    }
+                });
+        singleChoiceDialog.show();
+    }
+
+    /**
+     * 图片涂鸦单选对话框
+     */
+    private void singleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("是否对您当前的图片进行操作");
+        final String[] items = {"是", "否"};// 创建一个存放选项的数组
+        final boolean[] checkedItems = {true, false};// 存放选中状态，true为选中
+        // ，false为未选中，和setSingleChoiceItems中第二个参数对应
+        // 为对话框添加单选列表项
+        // 第一个参数存放选项的数组，第二个参数存放默认被选中的项，第三个参数点击事件
+        builder.setSingleChoiceItems(items, 1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                for (int i = 0; i < checkedItems.length; i++) {
+                    checkedItems[i] = false;
+                }
+                checkedItems[arg1] = true;
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                String str = "";
+                for (int i = 0; i < checkedItems.length; i++) {
+                    if (checkedItems[i]) {
+                        str = items[i];
+                    }
+                }
+                Toast.makeText(MainActivity.this, "你选择了" + str, Toast.LENGTH_SHORT).show();
+                if (str.equals("是")) {
+                    Intent intent1 = new Intent(MainActivity.this, DrawActivity.class);
+                    //用Bundle携带数据
+                    Bundle bundle = new Bundle();
+                    //传递name参数为tinyphp
+                    bundle.putString("jpeg", jpegName);
+                    intent1.putExtras(bundle);
+                    startActivity(intent1);
+                } else {
+                    picture();
+                }
+            }
+        });
+        builder.create().show();
+    }
+
+    private void showImg(TImage image) {
+        singleDialog();
+        Toast.makeText(MainActivity.this, "已存储", Toast.LENGTH_SHORT).show();
+        saveToSystemAlbum(image.getOriginalPath());
+    }
+
+    public static int getGardenId(){
+        return MainActivity.gardenId;
+    }
+
+    public void  setBuildingId(String buildingId) {
+        MainActivity.buildingId = buildingId;
+    }
+    public static String getBuildingId(){
+        return MainActivity.buildingId;
+    }
+
+    private void setGardenId(int gardenId) {
+        MainActivity.gardenId = gardenId;
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this).setTitle("确认退出吗？")
+                .setIcon(R.drawable.ic_exit_to_app_black_24dp)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 点击“确认”后的操作
+                        finish();
+
+                    }
+                })
+                .setNegativeButton("返回", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 点击“返回”后的操作,这里不设置没有任何操作
+                    }
+                }).show();
+        // super.onBackPressed();
+    }
+
     /**
      * 展示省选择的按钮
      */
@@ -439,309 +740,5 @@ public class MainActivity extends TakePhotoActivity{
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    //以下是重写了方法
-    @Override
-    public void takeCancel() {
-        super.takeCancel();
-    }
-
-    @Override
-    public void takeFail(TResult result, String msg) {
-        super.takeFail(result, msg);
-    }
-
-    @Override
-    public void takeSuccess(TResult result) {
-        super.takeSuccess(result);
-        showImg(result.getImage());
-        Users musers;
-        // 采集时间精确到毫秒
-        if(getBuildingId() == null)
-            musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Long.toString(System.currentTimeMillis()), jpegName);
-        else
-            musers = new Users(getBuildingId(), locationString, Long.toString(System.currentTimeMillis()), jpegName, Integer.toString(MainActivity.getGardenId()));
-        mainDB.save(musers);
-    }
-
-    String n;
-
-    //普通の方法
-    public void formatString(int i) {
-        if (i < 10) {
-            n = "00" + Integer.toString(i + 1);
-        } else if (i >= 100) {
-            n = Integer.toString(i + 1);
-        } else {
-            n = "0" + Integer.toString(i + 1);
-        }
-    }
-
-    long count; //定义里面类型个数
-
-    //拍照方法
-    private void picture() {
-
-        QueryBuilder<Users> qb = new QueryBuilder<Users>(Users.class)
-                .columns(new String[]{"pictureKind"})
-                .distinct(true)
-                .whereEquals(Users.PICTUREKIND_COL, locationString)
-                .whereAppendAnd()
-                .whereEquals(Users.GARDENID_COL, Integer.toString(getGardenId()));
-        count = mainDB.queryCount(qb);
-
-        //保存的文件名，先格式化000字符
-        formatString((int) (count++));
-        if (locationString.equals("平面图")) {
-            jpegName = "2_" + neighbourWorking.getText() + "_平面图_" + n + ".jpg";
-            pictureKind = Integer.toString(2);
-        }
-        if(locationString.equals("小区入口")){
-            jpegName = "2_"+ neighbourWorking.getText() + "_小区入口_" + n  + ".jpg";
-            pictureKind = Integer.toString(2);
-        }
-        if(locationString.equals("外景图")){
-            jpegName = "2_"+ neighbourWorking.getText() + "_外景图_" + n + ".jpg";
-            pictureKind = Integer.toString(2);
-        }
-        if(locationString.equals("内景图")){
-            jpegName = "3_"+ neighbourWorking.getText() + "_内景图_" + n + ".jpg";
-            pictureKind = Integer.toString(2);
-        }
-        if(locationString.equals("幢牌号")){
-            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_幢牌号_" + n + ".jpg";
-            pictureKind = Integer.toString(3);
-        }
-        if(locationString.equals("建筑立面")){
-            pictureKind = Integer.toString(3);
-            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_建筑立面_" + n +".jpg";
-        }
-        if(locationString.equals("其他")){
-            pictureKind = Integer.toString(3);
-            jpegName = "4_"+ neighbourWorking.getText() + "_其他_" + n +".jpg";
-        }
-
-        File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + jpegName);
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
-        }
-
-        final Uri imageUri = Uri.fromFile(file);
-        getTakePhoto().onPickFromCapture(imageUri);
-
-    }
-
-    /**
-     * 将拍照的图片加入系统相册中
-     *
-     * @param path
-     */
-    private void saveToSystemAlbum(String path) {
-        //其次把文件插入到系统图库
-        File file = new File(path);
-        try {
-            Log.i("update album1", "picture: " + file.getAbsolutePath());
-
-            MediaStore.Images.Media.insertImage(this.getContentResolver(),
-                    file.getAbsolutePath(), jpegName, null);
-            Log.i("update album", "picture: " + file.getAbsolutePath());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        // 通知图库更新
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, null,
-                    new MediaScannerConnection.OnScanCompletedListener() {
-                        @Override
-                        public void onScanCompleted(String path, Uri uri) {
-                            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
-                            sendBroadcast(mediaScanIntent);
-                        }
-                    });
-        } else {
-            String relationDir = file.getParent();
-            File file1 = new File(relationDir);
-            sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.fromFile(file1.getAbsoluteFile())));
-        }
-    }
-
-    /**
-     * 图片种类选择对话框
-     */
-    private void showSingleChoiceDialog(){
-        final String[] items = {"平面图","小区入口","外景图","内景图","建筑立面","幢牌号","其他"};
-        yourChoice = -1;
-        AlertDialog.Builder singleChoiceDialog =
-                new AlertDialog.Builder(MainActivity.this);
-        singleChoiceDialog.setTitle("选择你要拍摄的区域");
-        // 第二个参数是默认选项，此处设置为0
-        singleChoiceDialog.setSingleChoiceItems(items, 0,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        yourChoice = which;
-                        item = items[yourChoice];
-                        locationString = item;
-                    }
-                });
-        singleChoiceDialog.setPositiveButton("确定",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //自定义对话框
-                        final Context context = MainActivity.this;
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setTitle("请输入楼栋");    //设置对话框标题
-                        builder.setIcon(R.drawable.logo);   //设置对话框标题前的图标
-                        final EditText edit = new EditText(context);
-                        builder.setView(edit);
-                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                setBuildingId(edit.getText().toString());
-                                Toast.makeText(context, "你确立的楼栋是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
-                                //把输入的地点赋给 fu.locationString
-                                loudong = edit.getText().toString();
-                                //调用拍照方法
-                                picture();
-                            }
-                        });
-//                            builder.setPositiveButton("不清楚", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    Toast.makeText(context, "遗憾，你不知道这个地方: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
-//                                }
-//                            });
-                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(context, "你取消输入", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        if (yourChoice != -1) {
-                            Toast.makeText(MainActivity.this,"你选择了" + items[yourChoice], Toast.LENGTH_SHORT).show();
-
-                            //若选择了立面则立马跳出来自定义对话框
-                            if(items[yourChoice].equals("建筑立面") || items[yourChoice].equals("幢牌号")){
-                                builder.setCancelable(true);    //设置按钮是否可以按返回键取消,false则不可以取消
-                                AlertDialog dialoga = builder.create();  //创建对话框
-                                dialoga.setCanceledOnTouchOutside(true); //设置弹出框失去焦点是否隐藏,即点击屏蔽其它地方是否隐藏
-                                dialoga.show();
-                            }
-                            else {
-                                setBuildingId(null);
-                                picture();
-                            }
-                        }
-                        //可能没按选择，默认为平面
-                        else {
-                            Toast.makeText(MainActivity.this,
-                                    "你选择了平面图",
-                                    Toast.LENGTH_SHORT).show();
-                            locationString = "平面图";
-                            picture();
-                            setBuildingId(null);
-
-                        }
-                    }
-                });
-        singleChoiceDialog.show();
-    }
-
-    /**
-     * 图片涂鸦单选对话框
-     */
-    private void singleDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("是否对您当前的图片进行操作");
-        final String[] items = {"是", "否"};// 创建一个存放选项的数组
-        final boolean[] checkedItems = {true, false};// 存放选中状态，true为选中
-        // ，false为未选中，和setSingleChoiceItems中第二个参数对应
-        // 为对话框添加单选列表项
-        // 第一个参数存放选项的数组，第二个参数存放默认被选中的项，第三个参数点击事件
-        builder.setSingleChoiceItems(items, 1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                for (int i = 0; i < checkedItems.length; i++) {
-                    checkedItems[i] = false;
-                }
-                checkedItems[arg1] = true;
-            }
-        });
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                String str = "";
-                for (int i = 0; i < checkedItems.length; i++) {
-                    if (checkedItems[i]) {
-                        str = items[i];
-                    }
-                }
-                Toast.makeText(MainActivity.this, "你选择了" + str, Toast.LENGTH_SHORT).show();
-                if (str.equals("是")) {
-                    Intent intent1 = new Intent(MainActivity.this, DrawActivity.class);
-                    //用Bundle携带数据
-                    Bundle bundle = new Bundle();
-                    //传递name参数为tinyphp
-                    bundle.putString("jpeg", jpegName);
-                    intent1.putExtras(bundle);
-                    System.out.println("数据发送过去了");
-                    startActivity(intent1);
-                } else {
-                    picture();
-                }
-            }
-        });
-        builder.create().show();
-    }
-
-    private void showImg(TImage image) {
-        singleDialog();
-        Toast.makeText(MainActivity.this, "已存储", Toast.LENGTH_SHORT).show();
-        saveToSystemAlbum(image.getOriginalPath());
-    }
-
-    public static int getGardenId(){
-        return MainActivity.gardenId;
-    }
-
-    public void  setBuildingId(String buildingId) {
-        MainActivity.buildingId = buildingId;
-    }
-    public static String getBuildingId(){
-        return MainActivity.buildingId;
-    }
-
-    private void setGardenId(int gardenId) {
-        MainActivity.gardenId = gardenId;
-    }
-
-    @Override
-    public void onBackPressed() {
-        new AlertDialog.Builder(this).setTitle("确认退出吗？")
-                .setIcon(R.drawable.ic_exit_to_app_black_24dp)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // 点击“确认”后的操作
-                        finish();
-
-                    }
-                })
-                .setNegativeButton("返回", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // 点击“返回”后的操作,这里不设置没有任何操作
-                    }
-                }).show();
-        // super.onBackPressed();
-    }
 }
 

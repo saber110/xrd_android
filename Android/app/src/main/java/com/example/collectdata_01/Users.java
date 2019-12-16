@@ -26,6 +26,7 @@ public class Users extends BaseModel {
     public static final String GARDENID_COL = "gardenId";
     public static final String PICTUREKIND_COL = "pictureKind";
     public static final String IMAGE_COL = "image";
+    public static final String BUILDINGNAME_COL = "buildingName";
 
     // 非空约束 形同于@Check("userName NOT NULL")
     @NotNull
@@ -39,6 +40,7 @@ public class Users extends BaseModel {
     private String token;
     @Column(IMAGE_COL)
     private String image;
+    @Column(BUILDINGNAME_COL)
     private String buildingName;
     // false 为未上传
     // true  为已上传
