@@ -76,6 +76,7 @@ public class Datalist extends AppCompatActivity {
                 }
             }
         });
+
         listView.setAdapter(adapter);
 
         uploadPictures.setOnClickListener(new View.OnClickListener() {
