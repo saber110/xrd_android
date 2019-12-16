@@ -272,6 +272,8 @@ public class MainActivity extends TakePhotoActivity{
 //         */
 //        bottomUtil.setBottomBarStytle();
 
+
+
         //页面被创建时就生成数据库
         if (mainDB == null) {
             // 创建数据库,传入当前上下文对象和数据库名称
@@ -717,6 +719,29 @@ public class MainActivity extends TakePhotoActivity{
 
     private void setGardenId(int gardenId) {
         MainActivity.gardenId = gardenId;
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this).setTitle("确认退出吗？")
+                .setIcon(R.drawable.ic_exit_to_app_black_24dp)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 点击“确认”后的操作
+                        finish();
+
+                    }
+                })
+                .setNegativeButton("返回", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 点击“返回”后的操作,这里不设置没有任何操作
+                    }
+                }).show();
+        // super.onBackPressed();
     }
 }
 
