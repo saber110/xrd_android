@@ -100,4 +100,15 @@
     <string name="garden_other_message">配套信息</string>
     <string name="feiloudong">非楼栋</string>
     <string name="cat_textfield_label" translatable="false">Label</string>
+
+    <!--图片类型-->
+    <string name="pingMianTu">平面图</string>
+    <string name="xiaoQuRuKou">小区入口</string>
+    <string name="waiJingTu">外景图</string>
+    <string name="neiJingTu">内景图</string>
+    <string name="jianZhuLiMian">建筑立面</string>
+    <string name="zhuangPaiHao">幢牌号</string>
+    <string name="qiTa">其他</string>
+
+    <string name="picturePath">temp</string>
 </resources>

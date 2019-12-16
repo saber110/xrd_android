@@ -93,20 +93,16 @@ public class Datalist extends AppCompatActivity {
             if (result.keySet().contains(gardenlist.get(i).getImage()))
                 if (result.get(gardenlist.get(i).getImage()))
                     uploadImgUtil.uploadGardenImg(gardenlist.get(i).getGardenId(), gardenlist.get(i).getpictureKind(), gardenlist.get(i).getCollectTime(), login.token, gardenlist.get(i).getImage());
-//            mainDB.delete(gardenlist.get(i));
         }
         for (int i = 0; i < buildinglist.size(); i++) {
-            // 复用gardenId
             if (result.keySet().contains(buildinglist.get(i).getImage()))
                 if (result.get(buildinglist.get(i).getImage()))
                     uploadImgUtil.uploadBuildImg(buildinglist.get(i).getBuildingName(), buildinglist.get(i).getCollectTime(), Integer.toString(MainActivity.getGardenId()), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
-//            mainDB.delete(buildinglist.get(i));
         }
         for (int i = 0; i < qitalist.size(); i++) {
             if (result.keySet().contains(qitalist.get(i).getImage()))
                 if (result.get(qitalist.get(i).getImage()))
                     uploadImgUtil.uploadOtherImg(qitalist.get(i).getGardenId(), qitalist.get(i).getCollectTime(), login.token, qitalist.get(i).getImage());
-//            mainDB.delete(qitalist.get(i));
         }
     }
 
@@ -115,7 +111,10 @@ public class Datalist extends AppCompatActivity {
         buildinglist.clear();
         qitalist.clear();
         ArrayList<Users> list = mainDB.query(new QueryBuilder<Users>(Users.class)
-                .whereEquals(Users.ISUPLOADED_COL, false));
+                .whereEquals(Users.ISUPLOADED_COL, false)
+                .appendOrderAscBy(Users.GARDENID_COL)
+                .appendOrderAscBy(Users.PICTUREKIND_COL)
+                .appendOrderAscBy(Users.BUILDINGNAME_COL));
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getpictureKind().equals("平面图")
                     || list.get(i).getpictureKind().equals("小区入口")

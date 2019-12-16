@@ -273,8 +273,6 @@ public class MainActivity extends TakePhotoActivity{
 //         */
 //        bottomUtil.setBottomBarStytle();
 
-
-
         //页面被创建时就生成数据库
         if (mainDB == null) {
             // 创建数据库,传入当前上下文对象和数据库名称
@@ -346,36 +344,24 @@ public class MainActivity extends TakePhotoActivity{
 
         //保存的文件名，先格式化000字符
         formatString((int) (count++));
-        if (locationString.equals("平面图")) {
-            jpegName = "2_" + neighbourWorking.getText() + "_平面图_" + n + ".jpg";
+        if (locationString.equals(getResources().getString(R.string.pingMianTu))
+            || locationString.equals(getResources().getString(R.string.xiaoQuRuKou))
+            || locationString.equals(getResources().getString(R.string.waiJingTu))
+            || locationString.equals(getResources().getString(R.string.neiJingTu))) {
+            jpegName = "2_" + neighbourWorking.getText() + "_" + locationString + "_" + n + ".jpg";
             pictureKind = Integer.toString(2);
         }
-        if(locationString.equals("小区入口")){
-            jpegName = "2_"+ neighbourWorking.getText() + "_小区入口_" + n  + ".jpg";
-            pictureKind = Integer.toString(2);
-        }
-        if(locationString.equals("外景图")){
-            jpegName = "2_"+ neighbourWorking.getText() + "_外景图_" + n + ".jpg";
-            pictureKind = Integer.toString(2);
-        }
-        if(locationString.equals("内景图")){
-            jpegName = "3_"+ neighbourWorking.getText() + "_内景图_" + n + ".jpg";
-            pictureKind = Integer.toString(2);
-        }
-        if(locationString.equals("幢牌号")){
-            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_幢牌号_" + n + ".jpg";
+        if(locationString.equals(getResources().getString(R.string.zhuangPaiHao))
+            || locationString.equals(getResources().getString(R.string.jianZhuLiMian))){
+            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_" + locationString + "_" + n + ".jpg";
             pictureKind = Integer.toString(3);
         }
-        if(locationString.equals("建筑立面")){
+        if(locationString.equals(getResources().getString(R.string.qiTa))){
             pictureKind = Integer.toString(3);
-            jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_建筑立面_" + n +".jpg";
-        }
-        if(locationString.equals("其他")){
-            pictureKind = Integer.toString(3);
-            jpegName = "4_"+ neighbourWorking.getText() + "_其他_" + n +".jpg";
+            jpegName = "4_"+ neighbourWorking.getText() + "_" + locationString + "_" + n +".jpg";
         }
 
-        File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + jpegName);
+        File file = new File(Environment.getExternalStorageDirectory(), "/"+ getResources().getString(R.string.picturePath) + "/" + jpegName);
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
