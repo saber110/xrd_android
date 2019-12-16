@@ -662,7 +662,7 @@ public class MainActivity extends TakePhotoActivity{
         // ，false为未选中，和setSingleChoiceItems中第二个参数对应
         // 为对话框添加单选列表项
         // 第一个参数存放选项的数组，第二个参数存放默认被选中的项，第三个参数点击事件
-        builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(items, 1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
                 for (int i = 0; i < checkedItems.length; i++) {

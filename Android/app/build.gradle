@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0-alpha01'
     implementation files('libs/lite-orm-1.9.1.jar')
 
-    implementation("com.squareup.okhttp3:okhttp:4.2.2")
+    implementation("com.squareup.okhttp3:okhttp:4.2.1")
     implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
 //    地图操作工具类，添加标记等
     implementation 'com.google.maps.android:android-maps-utils:0.5+'

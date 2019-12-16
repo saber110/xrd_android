@@ -82,9 +82,9 @@ public class UploadImgUtil{
         Request request = new Request.Builder().url(url).post(requestBody.build()).build();
         // readTimeout("请求超时时间" , 时间单位);
         client.newBuilder()
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .writeTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .writeTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(100, TimeUnit.SECONDS)
                 .build()
                 .newCall(request)
                 .enqueue(new Callback() {
