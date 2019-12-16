@@ -701,9 +701,9 @@ public class MainActivity extends TakePhotoActivity{
     }
 
     private void showImg(TImage image) {
-        saveToSystemAlbum(image.getOriginalPath());
         singleDialog();
         Toast.makeText(MainActivity.this, "已存储", Toast.LENGTH_SHORT).show();
+        saveToSystemAlbum(image.getOriginalPath());
     }
 
     public static int getGardenId(){

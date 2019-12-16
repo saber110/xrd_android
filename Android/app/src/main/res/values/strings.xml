@@ -97,7 +97,7 @@
     <string name="updateFakeGarden">更新虚拟小区</string>
     <string name="selectWorkingGarden">请选择工作小区</string>
 
-    <string name="garden_other_message">获取小区其他信息</string>
+    <string name="garden_other_message">配套信息</string>
 
     <string name="cat_textfield_label" translatable="false">Label</string>
 </resources>
