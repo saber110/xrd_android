@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -21,10 +20,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -34,6 +31,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.example.database.ImageDb;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -302,7 +301,7 @@ public class DrawActivity extends AppCompatActivity {
         }
         // 发送广播，通知刷新图库的显示
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + fileName)));
-        Users musers = new Users(Integer.toString(MainActivity.getGardenId()),
+        ImageDb musers = new ImageDb(Integer.toString(MainActivity.getGardenId()),
                 getResources().getString(R.string.tuYa),
                 Long.toString(System.currentTimeMillis()),
                 bitName);

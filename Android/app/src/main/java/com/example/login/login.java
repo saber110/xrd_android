@@ -18,6 +18,8 @@ import androidx.core.content.ContextCompat;
 import com.alibaba.fastjson.JSON;
 import com.example.collectdata_01.MainActivity;
 import com.example.collectdata_01.R;
+import com.example.database.ImageDb;
+import com.example.database.StatusDb;
 import com.example.interfaceNet.v1;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -25,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +41,15 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import com.example.deviceId.getSN;
+import com.litesuits.orm.LiteOrm;
+import com.litesuits.orm.db.DataBase;
+import com.litesuits.orm.db.assit.QueryBuilder;
+import com.litesuits.orm.db.model.ColumnsValue;
+import com.litesuits.orm.db.model.ConflictAlgorithm;
+
+import static com.example.collectdata_01.MainActivity.mainDB;
 
 public class login extends AppCompatActivity {
-
 
     private EditText etUsername;
     private EditText etPassword;
@@ -56,20 +65,29 @@ public class login extends AppCompatActivity {
             = MediaType.get("application/json; charset=utf-8");
 
     static OkHttpClient client = new OkHttpClient();
+    public static DataBase statusDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_activity_one);
         checkPermissions(needPermissions);
-        initView();
 
+        //页面被创建时就生成数据库
+        if (statusDB == null) {
+            // 创建数据库,传入当前上下文对象和数据库名称
+            statusDB = LiteOrm.newSingleInstance(this, getResources().getString(R.string.userDB));
+        }
+
+        initView();
         setListener();
+
     }
 
     private void initView() {
+
         etUsername = findViewById(R.id.et_username);
-//        etUsername.setText(getSN.getSerialNumber());
+        etUsername.setText(getLastUsername());
 //        etUsername.setFocusable(false);
 //        etUsername.setFocusableInTouchMode(false);
         etPassword = findViewById(R.id.et_password);
@@ -91,6 +109,7 @@ public class login extends AppCompatActivity {
             try {
                 v1 hh = new v1(login.this);
                 hh.loginApi(etUsername.getText().toString(), etPassword.getText().toString());
+                setLastUsername(etUsername.getText().toString());
 //                    login(etUsername.getText().toString(), etPassword.getText().toString());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -98,12 +117,13 @@ public class login extends AppCompatActivity {
 
             }
         });
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startActivity(new Intent(login.this, updatePassword.class));
-//            }
-//        });
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                getLastUsername();
+                startActivity(new Intent(login.this, updatePassword.class));
+            }
+        });
     }
 
     @Override
@@ -128,6 +148,31 @@ public class login extends AppCompatActivity {
         } else {
             loginFailure(map.get("message").toString());
         }
+    }
+
+    public String getLastUsername() {
+        QueryBuilder<StatusDb> qb = new QueryBuilder<StatusDb>(StatusDb.class);
+
+        List<StatusDb> addrList = statusDB.query(qb);
+        if(addrList.size() > 0)
+            return addrList.get(addrList.size() - 1).getUsername();
+        return null;
+    }
+
+
+    // TODO 测试存储的是不是最新的
+    public void setLastUsername(String username) {
+
+        ArrayList<StatusDb> updateUser = statusDB.query(new QueryBuilder<StatusDb>(StatusDb.class));
+        if(updateUser.isEmpty()){
+            StatusDb mstatusDb;
+            mstatusDb = new StatusDb(username);
+            statusDB.save(mstatusDb);
+            return;
+        }
+        updateUser.get(0).setUsername(username);
+        ColumnsValue cv = new ColumnsValue(new String[]{StatusDb.USERNAME_COL});
+        statusDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
     }
 
     /**

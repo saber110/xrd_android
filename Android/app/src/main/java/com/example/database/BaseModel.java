@@ -1,4 +1,4 @@
-package com.example.collectdata_01;
+package com.example.database;
 
 import java.io.Serializable;
 

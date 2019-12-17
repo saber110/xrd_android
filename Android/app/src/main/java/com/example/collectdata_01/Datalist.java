@@ -1,6 +1,5 @@
 package com.example.collectdata_01;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaScannerConnection;
@@ -11,13 +10,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckedTextView;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,18 +20,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.collectdata_01.adapter.DatalistAdapter;
 import com.example.collectdata_01.util.UploadImgUtil;
+import com.example.database.ImageDb;
 import com.example.login.login;
 import com.google.android.material.button.MaterialButton;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.litesuits.orm.db.model.ColumnsValue;
 import com.litesuits.orm.db.model.ConflictAlgorithm;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,9 +36,9 @@ import java.util.List;
 import static com.example.collectdata_01.MainActivity.mainDB;
 
 public class Datalist extends AppCompatActivity {
-    ArrayList<Users> gardenlist = new ArrayList<>();
-    ArrayList<Users> buildinglist = new ArrayList<>();
-    ArrayList<Users> qitalist = new ArrayList<>();
+    ArrayList<ImageDb> gardenlist = new ArrayList<>();
+    ArrayList<ImageDb> buildinglist = new ArrayList<>();
+    ArrayList<ImageDb> qitalist = new ArrayList<>();
     private MaterialButton uploadPictures;
     private DatalistAdapter adapter;
 
@@ -112,11 +103,11 @@ public class Datalist extends AppCompatActivity {
         gardenlist.clear();
         buildinglist.clear();
         qitalist.clear();
-        ArrayList<Users> list = mainDB.query(new QueryBuilder<Users>(Users.class)
-                .whereEquals(Users.ISUPLOADED_COL, false)
-                .appendOrderAscBy(Users.GARDENID_COL)
-                .appendOrderAscBy(Users.PICTUREKIND_COL)
-                .appendOrderAscBy(Users.BUILDINGNAME_COL));
+        ArrayList<ImageDb> list = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
+                .whereEquals(ImageDb.ISUPLOADED_COL, false)
+                .appendOrderAscBy(ImageDb.GARDENID_COL)
+                .appendOrderAscBy(ImageDb.PICTUREKIND_COL)
+                .appendOrderAscBy(ImageDb.BUILDINGNAME_COL));
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getpictureKind().equals(getResources().getString(R.string.pingMianTu))
                     || list.get(i).getpictureKind().equals(getResources().getString(R.string.xiaoQuRuKou))
@@ -175,10 +166,10 @@ public class Datalist extends AppCompatActivity {
     public void setNameByCollecttime(String oldName,String newName){
         // 设置数据库中的上传控制项
         // collectTime唯一
-        ArrayList<Users> updateUser = mainDB.query(new QueryBuilder<Users>(Users.class)
-                .whereEquals(Users.IMAGE_COL , oldName));
+        ArrayList<ImageDb> updateUser = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
+                .whereEquals(ImageDb.IMAGE_COL , oldName));
         updateUser.get(0).setImage(newName);
-        ColumnsValue cv = new ColumnsValue(new String[]{Users.IMAGE_COL});
+        ColumnsValue cv = new ColumnsValue(new String[]{ImageDb.IMAGE_COL});
         mainDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
     }
 

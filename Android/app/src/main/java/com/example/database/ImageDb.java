@@ -1,25 +1,16 @@
-package com.example.collectdata_01;
+package com.example.database;
 
-import com.example.collectdata_01.BaseModel;
-import com.litesuits.orm.db.annotation.Check;
 import com.litesuits.orm.db.annotation.Column;
-import com.litesuits.orm.db.annotation.Default;
 import com.litesuits.orm.db.annotation.NotNull;
 import com.litesuits.orm.db.annotation.Table;
-import com.litesuits.orm.db.annotation.Unique;
-
-import java.io.File;
-import java.security.PublicKey;
 
 /**
- * 用户信息类
- *
  * @author NapoleonBai
  *
  */
 // 创建一个名为user_table的表格
-@Table("user_table")
-public class Users extends BaseModel {
+@Table("image_table")
+public class ImageDb extends BaseModel {
     private static final long serialVersionUID = 1L;
     public static final String COLLECTTIOME_COL = "collectTime";
     public static final String ISUPLOADED_COL = "isUploaded";
@@ -71,7 +62,7 @@ public class Users extends BaseModel {
      */
     // 用作小区数据的持久化
     // 其他和涂鸦数据复用该方法
-    public Users(String gardenId, String pictureKind, String collectTime, String image) {
+    public ImageDb(String gardenId, String pictureKind, String collectTime, String image) {
         this.gardenId = gardenId;
         this.buildingName = "非楼栋";
         this.pictureKind = pictureKind;
@@ -81,7 +72,7 @@ public class Users extends BaseModel {
     }
 
     // 用作楼栋数据的持久化
-    public Users(String buildingName, String pictureKind, String collectTime, String image, String gardenId) {
+    public ImageDb(String buildingName, String pictureKind, String collectTime, String image, String gardenId) {
         this.buildingName = buildingName;
         this.gardenId = gardenId;
         this.pictureKind = pictureKind;
@@ -91,7 +82,7 @@ public class Users extends BaseModel {
     }
 
 
-    public Users() {
+    public ImageDb() {
     }
 
     public String getBuildingName() {

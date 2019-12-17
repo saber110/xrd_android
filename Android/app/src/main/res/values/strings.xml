@@ -111,5 +111,9 @@
     <string name="qiTa">其他</string>
     <string name="tuYa">涂鸦</string>
 
+    <string name="imageDB">imageData.db</string>
+    <!--存储该用户相关数据-->
+    <string name="userDB">userData.db</string>
+
     <string name="picturePath">temp</string>
 </resources>

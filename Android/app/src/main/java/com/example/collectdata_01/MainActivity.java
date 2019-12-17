@@ -22,11 +22,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
-import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.example.collectdata.DataActivity;
 import com.example.collectdata.tools.IntentTools;
 import com.example.collectdata_01.adapter.GardenListAdapter;
@@ -35,10 +30,10 @@ import com.example.collectdata_01.adapter.GetCommunityViewAdapter;
 import com.example.collectdata_01.adapter.GetDistrictViewAdapter;
 import com.example.collectdata_01.adapter.GetProvinceViewAdapter;
 import com.example.collectdata_01.adapter.GetStreetViewAdapter;
-import com.example.collectdata_01.util.BottomUtil;
-import com.example.collectdata_01.util.UploadImgUtil;
+import com.example.database.ImageDb;
+import com.example.database.StatusDb;
+import com.example.database.UsingNeighbourDb;
 import com.example.dialog.CreatDialog;
-import com.example.login.login;
 import com.example.map.baidu_map.BaiduMapActivity;
 import com.example.map.dao.AddGradenResult;
 import com.example.map.dao.CityDao;
@@ -63,8 +58,9 @@ import org.devio.takephoto.model.TResult;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
+import static com.example.login.login.statusDB;
 
 
 public class MainActivity extends TakePhotoActivity{
@@ -85,9 +81,9 @@ public class MainActivity extends TakePhotoActivity{
     private TextView manage_fake_garden;
     private RelativeLayout dataCollectLayout;
     public static LocationAllDao locationAllDao = new LocationAllDao();
-    private String gardenName;
     private static Integer gardenId;
     private static String buildingId;
+    private static String gardenName;
 
     //定义了一些参数
     private int yourChoice;
@@ -139,7 +135,7 @@ public class MainActivity extends TakePhotoActivity{
         mapLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (gardenName != null && !gardenName.isEmpty()) {
+                if (getGardenName() != null && !getGardenName().isEmpty()) {
                     Intent intent = new Intent(MainActivity.this, BaiduMapActivity.class);
                     intent.putExtra("gardenId", MainActivity.getGardenId());
                     startActivity(intent);
@@ -185,8 +181,9 @@ public class MainActivity extends TakePhotoActivity{
                                     public void onItemClick(View view, int position) {
                                         SearchGardenResultDao.DataBean.GardensBean bean = gardenResultDao.getData().getGardens().get(position);
                                         setGardenId(bean.getGardenId());
-                                        gardenName = bean.getGardenName();
-                                        neighbourWorking.setText(gardenName);
+                                        setGardenName(bean.getGardenName());
+                                        neighbourWorking.setText(getGardenName());
+                                        updateNeighbourTable(Integer.toString(bean.getGardenId()), bean.getGardenName());
                                         gardenDialog.dismiss();
                                     }
                                 });
@@ -207,11 +204,11 @@ public class MainActivity extends TakePhotoActivity{
                     @Override
                     public void onClick(View v) {
                         String key = searchKey.getText().toString();
-                        gardenName = key;
+                        setGardenName(key);
                         if (key.trim().length() == 0) {
                             Toast.makeText(MainActivity.this, R.string.add_garden_message, Toast.LENGTH_SHORT).show();
                         } else {
-                            neighbourWorking.setText(gardenName);
+                            neighbourWorking.setText(getGardenName());
                             gardenDialog.dismiss();
                             showProvinceDialog();
                         }
@@ -233,7 +230,7 @@ public class MainActivity extends TakePhotoActivity{
             @Override
             //监听时间，页面跳转
             public void onClick(View v) {
-                if (gardenName != null && !gardenName.isEmpty()) {
+                if (getGardenName() != null && !getGardenName().isEmpty()) {
                     showSingleChoiceDialog();
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.selectWorkingGarden, Toast.LENGTH_LONG).show();
@@ -244,7 +241,7 @@ public class MainActivity extends TakePhotoActivity{
         updataLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (gardenName != null && !gardenName.isEmpty()) {
+                if (getGardenName() != null && !getGardenName().isEmpty()) {
                     startActivity(new Intent(MainActivity.this, Datalist.class));
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.selectWorkingGarden, Toast.LENGTH_LONG).show();
@@ -257,7 +254,7 @@ public class MainActivity extends TakePhotoActivity{
         dataCollectLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (gardenName != null && !gardenName.isEmpty()) {
+                if (getGardenName() != null && !getGardenName().isEmpty()) {
                     IntentTools.activitySwich(MainActivity.this, DataActivity.class, false);
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.selectWorkingGarden, Toast.LENGTH_LONG).show();
@@ -276,7 +273,7 @@ public class MainActivity extends TakePhotoActivity{
         //页面被创建时就生成数据库
         if (mainDB == null) {
             // 创建数据库,传入当前上下文对象和数据库名称
-            mainDB = LiteOrm.newSingleInstance(this, "imageData.db");
+            mainDB = LiteOrm.newSingleInstance(this, getResources().getString(R.string.imageDB));
         }
         Intent intent11 = getIntent();
         String flagMessage = intent11.getStringExtra("flag");
@@ -305,12 +302,12 @@ public class MainActivity extends TakePhotoActivity{
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);
         showImg(result.getImage());
-        Users musers;
+        ImageDb musers;
         // 采集时间精确到毫秒
         if(getBuildingId() == null)
-            musers = new Users(Integer.toString(MainActivity.getGardenId()), locationString, Long.toString(System.currentTimeMillis()), jpegName);
+            musers = new ImageDb(Integer.toString(MainActivity.getGardenId()), locationString, Long.toString(System.currentTimeMillis()), jpegName);
         else
-            musers = new Users(getBuildingId(), locationString, Long.toString(System.currentTimeMillis()), jpegName, Integer.toString(MainActivity.getGardenId()));
+            musers = new ImageDb(getBuildingId(), locationString, Long.toString(System.currentTimeMillis()), jpegName, Integer.toString(MainActivity.getGardenId()));
         mainDB.save(musers);
     }
 
@@ -332,14 +329,14 @@ public class MainActivity extends TakePhotoActivity{
     //拍照方法
     private void picture() {
 
-        QueryBuilder<Users> qb = new QueryBuilder<Users>(Users.class)
+        QueryBuilder<ImageDb> qb = new QueryBuilder<ImageDb>(ImageDb.class)
                 .columns(new String[]{"pictureKind"})
                 .distinct(true)
-                .whereEquals(Users.PICTUREKIND_COL, locationString)
+                .whereEquals(ImageDb.PICTUREKIND_COL, locationString)
                 .whereAppendAnd()
-                .whereEquals(Users.GARDENID_COL, Integer.toString(getGardenId()))
+                .whereEquals(ImageDb.GARDENID_COL, Integer.toString(getGardenId()))
                 .whereAppendAnd()
-                .whereEquals(Users.BUILDINGNAME_COL, loudong);
+                .whereEquals(ImageDb.BUILDINGNAME_COL, loudong);
         count = mainDB.queryCount(qb);
 
         //保存的文件名，先格式化000字符
@@ -535,6 +532,14 @@ public class MainActivity extends TakePhotoActivity{
         saveToSystemAlbum(image.getOriginalPath());
     }
 
+    public static String getGardenName(){
+        return MainActivity.gardenName;
+    }
+
+    public void setGardenName(String gardenName) {
+        MainActivity.gardenName = gardenName;
+    }
+
     public static int getGardenId(){
         return MainActivity.gardenId;
     }
@@ -693,7 +698,7 @@ public class MainActivity extends TakePhotoActivity{
      * 添加小区数据
      */
     private void addGarden() {
-        AddGarden addGarden = new AddGarden(gardenName, locationAllDao.getProvinceId(),
+        AddGarden addGarden = new AddGarden(getGardenName(), locationAllDao.getProvinceId(),
                 locationAllDao.getCityId(), locationAllDao.getDistrictId(),
                 locationAllDao.getStreetId(), locationAllDao.getCommunityId());
         AsyncTask asyncTask = new AsyncRequest().execute(addGarden);
@@ -701,6 +706,7 @@ public class MainActivity extends TakePhotoActivity{
             AddGradenResult addGradenResult = (AddGradenResult) asyncTask.get();
             gardenId = addGradenResult.getData().getGardenId();
             this.setGardenId(gardenId);
+            updateNeighbourTable(Integer.toString(getGardenId()), getGardenName());
             locationDialog.dismiss();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -710,7 +716,7 @@ public class MainActivity extends TakePhotoActivity{
     }
 
     private void addFakeGarden() {
-        AddGarden addGarden = new AddGarden(gardenName, locationAllDao.getProvinceId(),
+        AddGarden addGarden = new AddGarden(getGardenName(), locationAllDao.getProvinceId(),
                 locationAllDao.getCityId(), locationAllDao.getDistrictId(),
                 locationAllDao.getStreetId(), locationAllDao.getCommunityId());
         AsyncTask asyncTask = new AsyncRequest().execute(addGarden);
@@ -726,5 +732,10 @@ public class MainActivity extends TakePhotoActivity{
         }
     }
 
+    public void updateNeighbourTable(String gardenId, String gardenName) {
+        UsingNeighbourDb mstatusDb;
+        mstatusDb = new UsingNeighbourDb(gardenId, gardenName);
+        statusDB.save(mstatusDb);
+    }
 }
 

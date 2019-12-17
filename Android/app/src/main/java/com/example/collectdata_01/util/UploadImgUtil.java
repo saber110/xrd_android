@@ -6,16 +6,13 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.collectdata_01.R;
-import com.example.collectdata_01.Users;
+import com.example.database.ImageDb;
 import com.example.interfaceNet.v1;
 import com.example.login.login;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.litesuits.orm.db.model.ColumnsValue;
 import com.litesuits.orm.db.model.ConflictAlgorithm;
-import com.litesuits.orm.log.OrmLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,7 +99,7 @@ public class UploadImgUtil {
                 if (response.isSuccessful()) {
                     String str = response.body().string();
 
-                    setUploadedByCollecttime(map.get(Users.COLLECTTIOME_COL));
+                    setUploadedByCollecttime(map.get(ImageDb.COLLECTTIOME_COL));
                     n++;
                     if(n >= N){
                         funToastMakeText("数据上传完毕");
@@ -180,10 +177,10 @@ public class UploadImgUtil {
     public void setUploadedByCollecttime(String collectTime){
         // 设置数据库中的上传控制项
         // collectTime唯一
-        ArrayList<Users> updateUser = mainDB.query(new QueryBuilder<Users>(Users.class)
-                .whereEquals(Users.COLLECTTIOME_COL , collectTime));
+        ArrayList<ImageDb> updateUser = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
+                .whereEquals(ImageDb.COLLECTTIOME_COL , collectTime));
         updateUser.get(0).setIsuploaded(true);
-        ColumnsValue cv = new ColumnsValue(new String[]{Users.ISUPLOADED_COL});
+        ColumnsValue cv = new ColumnsValue(new String[]{ImageDb.ISUPLOADED_COL});
         mainDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
     }
 }
