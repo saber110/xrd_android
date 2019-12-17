@@ -6,6 +6,9 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.collectdata_01.R;
 import com.example.collectdata_01.Users;
 import com.example.interfaceNet.v1;
 import com.example.login.login;
@@ -37,7 +40,7 @@ import static java.lang.String.valueOf;
 /**
  * 上传图片的接口工具类
  */
-public class UploadImgUtil{
+public class UploadImgUtil {
 
     public static int N;
     public int n = 0;
@@ -64,7 +67,7 @@ public class UploadImgUtil{
         OkHttpClient client = new OkHttpClient();
         // form 表单形式上传
         MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
-        File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + jpeg);
+        File file = new File(Environment.getExternalStorageDirectory(), "/"+ context.getResources().getString(R.string.picturePath) + "/" + jpeg);
         if(file != null){
             // MediaType.parse() 里面是上传的文件类型。
             RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"), file);

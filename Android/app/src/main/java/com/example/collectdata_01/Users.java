@@ -70,6 +70,7 @@ public class Users extends BaseModel {
      * @param image
      */
     // 用作小区数据的持久化
+    // 其他和涂鸦数据复用该方法
     public Users(String gardenId, String pictureKind, String collectTime, String image) {
         this.gardenId = gardenId;
         this.buildingName = "非楼栋";

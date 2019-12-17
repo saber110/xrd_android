@@ -109,6 +109,7 @@
     <string name="jianZhuLiMian">建筑立面</string>
     <string name="zhuangPaiHao">幢牌号</string>
     <string name="qiTa">其他</string>
+    <string name="tuYa">涂鸦</string>
 
     <string name="picturePath">temp</string>
 </resources>

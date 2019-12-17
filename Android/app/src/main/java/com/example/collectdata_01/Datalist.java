@@ -98,6 +98,7 @@ public class Datalist extends AppCompatActivity {
         for (int i = 0; i < buildinglist.size(); i++) {
             if (result.keySet().contains(buildinglist.get(i).getImage()))
                 if (result.get(buildinglist.get(i).getImage()))
+
                     uploadImgUtil.uploadBuildImg(buildinglist.get(i).getBuildingName(), buildinglist.get(i).getCollectTime(), Integer.toString(MainActivity.getGardenId()), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
         }
         for (int i = 0; i < qitalist.size(); i++) {
@@ -127,7 +128,10 @@ public class Datalist extends AppCompatActivity {
                     || list.get(i).getpictureKind().equals(getResources().getString(R.string.zhuangPaiHao))) {
                 buildinglist.add(list.get(i));
             }
-            if (list.get(i).getpictureKind().equals(getResources().getString(R.string.qiTa))) {
+
+            // 复用上传其他照片的接口上传涂鸦照片
+            if (list.get(i).getpictureKind().equals(getResources().getString(R.string.qiTa))
+                || list.get(i).getpictureKind().equals(getResources().getString(R.string.tuYa))) {
                 qitalist.add(list.get(i));
             }
             listView.add(list.get(i).getImage());
@@ -161,8 +165,8 @@ public class Datalist extends AppCompatActivity {
     }
 
     private void FileRename(String oldName, String newName) {
-        File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + oldName);
-        File to = new File(Environment.getExternalStorageDirectory(), "/temp/" + newName);
+        File file = new File(Environment.getExternalStorageDirectory(), "/"+ getResources().getString(R.string.picturePath) + "/" + oldName);
+        File to = new File(Environment.getExternalStorageDirectory(), "/"+ getResources().getString(R.string.picturePath) + "/" + newName);
         file.renameTo(to);
         saveToSystemAlbum(to);
     }
