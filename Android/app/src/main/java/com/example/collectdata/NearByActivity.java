@@ -363,7 +363,7 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         longitude = locationData.longitude;
         Log.i("location111","latitude:"+locationData.latitude+" , longgitude:"+locationData.longitude);
         MapStatus.Builder builder = new MapStatus.Builder();
-        builder.target(ll).zoom(18.0f);
+        builder.target(ll).zoom(10.0f);
         baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
         drawCircle();
     }

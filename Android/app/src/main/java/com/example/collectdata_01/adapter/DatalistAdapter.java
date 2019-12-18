@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.collectdata_01.Datalist;
 import com.example.collectdata_01.R;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
@@ -25,9 +27,14 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private HashMap<String, Boolean> resultMap = new HashMap<>();
     private LayoutInflater layoutInflater;
     private OnItemClickListener mOnItemClickListener = null;
+    private AdapterView.OnItemLongClickListener mOnItemLongClickListener = null;
 
     public void setmOnItemClickListener(OnItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
+    }
+
+    public void setmOnItemLongClickListener(AdapterView.OnItemLongClickListener mOnItemLongClickListener) {
+        this.mOnItemLongClickListener = mOnItemLongClickListener;
     }
 
     public DatalistAdapter(Context context, int layoutId, List<String> list) {
@@ -68,16 +75,38 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         itemViewHolder.itemView.setTag(position);
         if (mOnItemClickListener != null) {
-            itemViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//            itemViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    if (view.getTag() != null) {
+//                        int pos = (int) view.getTag();
+//                        mOnItemClickListener.onItemClick(pos);
+//                    }
+//                    return false;
+//                }
+//            });
+            // TODO : test runnable
+            itemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View view) {
+                public void onClick(View view) {
                     if (view.getTag() != null) {
                         int pos = (int) view.getTag();
                         mOnItemClickListener.onItemClick(pos);
                     }
-                    return false;
                 }
             });
+            // TODO add longClick event
+//            itemViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    if (view.getTag() != null) {
+//                        int pos = (int) view.getTag();
+//                        mOnItemLongClickListener.onItemLongClick(,view, pos, 1);
+//                    }
+//                    // 不再触发click事件
+//                    return true;
+//                }
+//            });
         }
 
         itemViewHolder.textView.setText(pic_name);
@@ -123,6 +152,10 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public interface OnItemClickListener {
         void onItemClick(int position);
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(int position);
     }
 
 }

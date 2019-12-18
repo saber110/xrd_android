@@ -132,13 +132,13 @@ public class BuweiActivity extends AppCompatActivity {
                 if(checkBox.isChecked()){
                     String[] t = edit.getText().toString().split(" ");
                     for (int i = 0; i < t.length; i++) {
-                        retString += text + "0-" + t[i] + ";";
+                        retString += text + "-0-" + t[i] + ";";
                     }
                 }
                 else {
                     String[] t = edit.getText().toString().split(";");
                     for (int i = 0; i < t.length; i++) {
-                        retString += text + t[i] + ";";
+                        retString += text + "-" + t[i] + ";";
                     }
                 }
                  textView.setText(retString.substring(0,retString.length()-1));

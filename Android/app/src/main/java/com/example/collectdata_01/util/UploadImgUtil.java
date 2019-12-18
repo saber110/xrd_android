@@ -6,13 +6,13 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.collectdata_01.Users;
+import com.example.collectdata_01.R;
+import com.example.database.ImageDb;
 import com.example.interfaceNet.v1;
 import com.example.login.login;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.litesuits.orm.db.model.ColumnsValue;
 import com.litesuits.orm.db.model.ConflictAlgorithm;
-import com.litesuits.orm.log.OrmLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import static java.lang.String.valueOf;
 /**
  * 上传图片的接口工具类
  */
-public class UploadImgUtil{
+public class UploadImgUtil {
 
     public static int N;
     public int n = 0;
@@ -64,7 +64,7 @@ public class UploadImgUtil{
         OkHttpClient client = new OkHttpClient();
         // form 表单形式上传
         MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
-        File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + jpeg);
+        File file = new File(Environment.getExternalStorageDirectory(), "/"+ context.getResources().getString(R.string.picturePath) + "/" + jpeg);
         if(file != null){
             // MediaType.parse() 里面是上传的文件类型。
             RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"), file);
@@ -82,9 +82,9 @@ public class UploadImgUtil{
         Request request = new Request.Builder().url(url).post(requestBody.build()).build();
         // readTimeout("请求超时时间" , 时间单位);
         client.newBuilder()
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .writeTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .writeTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(100, TimeUnit.SECONDS)
                 .build()
                 .newCall(request)
                 .enqueue(new Callback() {
@@ -99,7 +99,7 @@ public class UploadImgUtil{
                 if (response.isSuccessful()) {
                     String str = response.body().string();
 
-                    setUploadedByCollecttime(map.get(Users.COLLECTTIOME_COL));
+                    setUploadedByCollecttime(map.get(ImageDb.COLLECTTIOME_COL));
                     n++;
                     if(n >= N){
                         funToastMakeText("数据上传完毕");
@@ -177,10 +177,10 @@ public class UploadImgUtil{
     public void setUploadedByCollecttime(String collectTime){
         // 设置数据库中的上传控制项
         // collectTime唯一
-        ArrayList<Users> updateUser = mainDB.query(new QueryBuilder<Users>(Users.class)
-                .whereEquals(Users.COLLECTTIOME_COL , collectTime));
+        ArrayList<ImageDb> updateUser = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
+                .whereEquals(ImageDb.COLLECTTIOME_COL , collectTime));
         updateUser.get(0).setIsuploaded(true);
-        ColumnsValue cv = new ColumnsValue(new String[]{Users.ISUPLOADED_COL});
+        ColumnsValue cv = new ColumnsValue(new String[]{ImageDb.ISUPLOADED_COL});
         mainDB.update(updateUser.get(0), cv, ConflictAlgorithm.None);
     }
 }

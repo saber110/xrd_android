@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -21,10 +20,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -34,6 +31,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.example.database.ImageDb;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,7 +52,7 @@ public class DrawActivity extends AppCompatActivity {
 
 
     /**
-     * 单选对话框
+     * 是否继续画图对话框
      */
     private void singleDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(DrawActivity.this);
@@ -126,13 +125,10 @@ public class DrawActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(DrawActivity.this, PERMISSIONS,1);
             }
 
-            if(flag){
-                saveBitmap(bitmap, jpeg);
+            if(!flag){
+                saveBitmap(bitmap2 ,getResources().getString(R.string.tuYa)+ "_" + jpeg);
+
             }
-            else {
-                saveBitmap(bitmap2 ,"涂鸦_"+ jpeg);
-            }
-            System.out.println("save ok...");
             singleDialog();
         }
         if(str.equals("导入")){
@@ -229,9 +225,6 @@ public class DrawActivity extends AppCompatActivity {
         return path;
     }
 
-
-
-
     Bitmap bitmap2;
     int screenWidth,screenHeight;
     private void displayImage(String imagePath) {
@@ -275,21 +268,13 @@ public class DrawActivity extends AppCompatActivity {
         }
     }
 
-
-
-
     //保存
     public void saveBitmap(Bitmap bitmap, String bitName){
         String fileName;
         File file;
-        if(Build.BRAND .equals("Xiaomi")){ // 小米手机
-            fileName = Environment.getExternalStorageDirectory().getPath()+"/DCIM/Camera/"+bitName ;
-        }else{  //Meizu 、Oppo
-            Log.v("qwe","002");
-            fileName = Environment.getExternalStorageDirectory().getPath()+"/DCIM/"+bitName ;
-        }
-        file = new File(fileName);
+        fileName = Environment.getExternalStorageDirectory()+ "/"+ getResources().getString(R.string.picturePath) + "/" + bitName ;
 
+        file = new File(fileName);
         if(file.exists()){
             file.delete();
         }
@@ -316,6 +301,11 @@ public class DrawActivity extends AppCompatActivity {
         }
         // 发送广播，通知刷新图库的显示
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + fileName)));
+        ImageDb musers = new ImageDb(Integer.toString(MainActivity.getGardenId()),
+                getResources().getString(R.string.tuYa),
+                Long.toString(System.currentTimeMillis()),
+                bitName);
+        MainActivity.mainDB.save(musers);
     }
 
 
@@ -330,7 +320,7 @@ public class DrawActivity extends AppCompatActivity {
         Bundle bundle = this.getIntent().getExtras();
         //接收name值
         jpeg = bundle.getString("jpeg");
-        String filepath1 = Environment.getExternalStorageDirectory()+ "/temp/" + jpeg;
+        String filepath1 = Environment.getExternalStorageDirectory()+ "/"+ getResources().getString(R.string.picturePath) + "/" + jpeg;
         displayImage(filepath1);
         imageview.setOnTouchListener(new View.OnTouchListener() {
             float x1,y1,x2,y2;
@@ -358,7 +348,7 @@ public class DrawActivity extends AppCompatActivity {
                     x2 = e.getX();
                     y2 = e.getY();
                     if(str.equals("开始")){
-                        canvas.drawLine(x1-30,y1-300,x2-30,y2-300,paint);
+                        canvas.drawLine(x1,y1,x2,y2,paint);
                         flag = false;
                         x1 = x2;
                         y1 = y2;

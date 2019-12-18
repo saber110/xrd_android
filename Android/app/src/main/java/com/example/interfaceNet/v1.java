@@ -341,6 +341,7 @@ public class v1{
     }
 
     public void loginFailure(String res){
+        desDialog();
         funToastMakeText(res);
     }
 
