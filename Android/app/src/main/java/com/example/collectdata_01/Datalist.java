@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -62,8 +63,17 @@ public class Datalist extends AppCompatActivity {
             @Override
             public void onItemClick(int position) {
                 if (adapter.getResultMap().keySet().contains(list.get(position))) {
+                    Intent i1 = new Intent(getApplicationContext(), ImageActivity.class);
+                    i1.putExtra("image", list.get(position));
+                    startActivity(i1);
+                    Log.i("testForImage", "onItemClick: " + list.get(position));
+                }
+            }
+
+            @Override
+            public void onItemLongClick(int position){
+                if (adapter.getResultMap().keySet().contains(list.get(position))) {
                     alert_edit(position, list);
-//                    Toast.makeText(Datalist.this, "点击" + list.get(position), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -103,29 +113,29 @@ public class Datalist extends AppCompatActivity {
         gardenlist.clear();
         buildinglist.clear();
         qitalist.clear();
-        ArrayList<ImageDb> list = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
+        ArrayList<ImageDb> queryList = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
                 .whereEquals(ImageDb.ISUPLOADED_COL, false)
-                .appendOrderAscBy(ImageDb.GARDENID_COL)
-                .appendOrderAscBy(ImageDb.PICTUREKIND_COL)
-                .appendOrderAscBy(ImageDb.BUILDINGNAME_COL));
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getpictureKind().equals(getResources().getString(R.string.pingMianTu))
-                    || list.get(i).getpictureKind().equals(getResources().getString(R.string.xiaoQuRuKou))
-                    || list.get(i).getpictureKind().equals(getResources().getString(R.string.waiJingTu))
-                    || list.get(i).getpictureKind().equals(getResources().getString(R.string.neiJingTu))) {
-                gardenlist.add(list.get(i));
+                .appendOrderDescBy(ImageDb.GARDENID_COL)
+                .appendOrderDescBy(ImageDb.PICTUREKIND_COL)
+                .appendOrderDescBy(ImageDb.BUILDINGNAME_COL));
+        for (int i = 0; i < queryList.size(); i++) {
+            if (queryList.get(i).getpictureKind().equals(getResources().getString(R.string.pingMianTu))
+                    || queryList.get(i).getpictureKind().equals(getResources().getString(R.string.xiaoQuRuKou))
+                    || queryList.get(i).getpictureKind().equals(getResources().getString(R.string.waiJingTu))
+                    || queryList.get(i).getpictureKind().equals(getResources().getString(R.string.neiJingTu))) {
+                gardenlist.add(queryList.get(i));
             }
-            if (list.get(i).getpictureKind().equals(getResources().getString(R.string.jianZhuLiMian))
-                    || list.get(i).getpictureKind().equals(getResources().getString(R.string.zhuangPaiHao))) {
-                buildinglist.add(list.get(i));
+            if (queryList.get(i).getpictureKind().equals(getResources().getString(R.string.jianZhuLiMian))
+                    || queryList.get(i).getpictureKind().equals(getResources().getString(R.string.zhuangPaiHao))) {
+                buildinglist.add(queryList.get(i));
             }
 
             // 复用上传其他照片的接口上传涂鸦照片
-            if (list.get(i).getpictureKind().equals(getResources().getString(R.string.qiTa))
-                || list.get(i).getpictureKind().equals(getResources().getString(R.string.tuYa))) {
-                qitalist.add(list.get(i));
+            if (queryList.get(i).getpictureKind().equals(getResources().getString(R.string.qiTa))
+                || queryList.get(i).getpictureKind().equals(getResources().getString(R.string.tuYa))) {
+                qitalist.add(queryList.get(i));
             }
-            listView.add(list.get(i).getImage());
+            listView.add(queryList.get(i).getImage());
         }
     }
 
