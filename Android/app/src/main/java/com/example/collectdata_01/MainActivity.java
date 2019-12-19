@@ -750,10 +750,21 @@ public class MainActivity extends TakePhotoActivity{
                 .appendOrderDescBy(UsingNeighbourDb.ID_COL)
                 .limit(0,5);
         list = statusDB.query(qb);
+        ll.removeAllViews();
         for (int i = 0; i < list.size(); i++){
             MaterialButton button1 = new MaterialButton(this);
             button1.setText(list.get(i).getGardenName());
             button1.setId(View.generateViewId());
+            button1.setTag(list.get(i));
+            button1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setGardenName(((UsingNeighbourDb)v.getTag()).getGardenName());
+                    neighbourWorking.setText(getGardenName());
+                    setGardenId(Integer.parseInt(((UsingNeighbourDb)v.getTag()).getGardenId()));
+                    gardenDialog.dismiss();
+                }
+            });
             ll.addView(button1);
         }
     }

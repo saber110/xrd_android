@@ -43,6 +43,7 @@ import com.baidu.mapapi.search.poi.PoiIndoorResult;
 import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
+import com.baidu.mapapi.search.poi.PoiSortType;
 import com.baidu.mapapi.utils.DistanceUtil;
 import com.example.collectdata.tools.JsonTools;
 import com.example.collectdata_01.R;
@@ -288,17 +289,17 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
             @Override
             public void onGetPoiResult(PoiResult result) {
                 if (result != null) {
-                    if (result.getAllPoi()!=null&&result.getAllPoi().size()>0){
-                        for(int i=0;i<result.getAllPoi().size();i++){
+                    if (result.getAllPoi() != null && result.getAllPoi().size() > 0) {
+                        for(int i = 0 ; i < result.getAllPoi().size(); i ++){
                             PoiInfo poiInfo = result.getAllPoi().get(i);
                             System.out.println(poiInfo);
-                            LatLng gp1=new LatLng(latitude,longitude);
-                            LatLng gp2=new LatLng(poiInfo.getLocation().latitude,poiInfo.getLocation().longitude);
+                            LatLng gp1 = new LatLng(latitude,longitude);
+                            LatLng gp2 = new LatLng(poiInfo.getLocation().latitude,poiInfo.getLocation().longitude);
                             int distence = (int)DistanceUtil. getDistance(gp1, gp2);
                             String name = poiInfo.name;
                             sets[index].add(name);
                             if(index<=18) {
-                                linearLayout[index].addView(newCheckBox(name+"（距离："+distence+"m）"));
+                                linearLayout[index].addView(newCheckBox(name + "（距离：" + distence + "m）"));
                                 //公交站距离
                                 if(index==3){
                                     //计算最近的公交站距离
@@ -350,6 +351,7 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         });
         PoiNearbySearchOption poiNearbySearchOption = new PoiNearbySearchOption();
         poiNearbySearchOption.keyword(key);
+        poiNearbySearchOption.sortType(PoiSortType.distance_from_near_to_far);
         poiNearbySearchOption.location(new LatLng(latitude, longitude));
         if(index>2) poiNearbySearchOption.radius(radius.get(index-2));
         else poiNearbySearchOption.radius(radius.get(index-1));  // 检索半径，单位是米
