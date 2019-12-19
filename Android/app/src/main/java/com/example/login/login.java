@@ -159,8 +159,6 @@ public class login extends AppCompatActivity {
         return null;
     }
 
-
-    // TODO 测试存储的是不是最新的
     public void setLastUsername(String username) {
 
         ArrayList<StatusDb> updateUser = statusDB.query(new QueryBuilder<StatusDb>(StatusDb.class));

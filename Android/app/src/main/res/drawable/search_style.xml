@@ -4,13 +4,13 @@
 
     <gradient android:angle="45" />
 
-    <corners android:radius="8dp" />
+    <corners android:radius="5dp" />
 
 
     <!--设置边框粗细和颜色-->
     <stroke
-        android:width="8px"
-        android:color="#0CBD3C" />
+        android:width="3px"
+        android:color="#5F7064" />
 
     <!--<solid android:color="#838B8B" />-->
 

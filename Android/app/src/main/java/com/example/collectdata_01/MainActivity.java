@@ -32,6 +32,7 @@ import com.example.collectdata_01.adapter.GetCommunityViewAdapter;
 import com.example.collectdata_01.adapter.GetDistrictViewAdapter;
 import com.example.collectdata_01.adapter.GetProvinceViewAdapter;
 import com.example.collectdata_01.adapter.GetStreetViewAdapter;
+import com.example.database.BaseModel;
 import com.example.database.ImageDb;
 import com.example.database.StatusDb;
 import com.example.database.UsingNeighbourDb;
@@ -61,6 +62,7 @@ import org.devio.takephoto.model.TResult;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import static com.example.login.login.statusDB;
@@ -114,7 +116,6 @@ public class MainActivity extends TakePhotoActivity{
         photoLayout = (RelativeLayout) findViewById(R.id.zhaopian);
         mapLayout = (RelativeLayout) findViewById(R.id.ditu);
         updataLayout = (RelativeLayout) findViewById(R.id.shangchuan);
-        previousWorkingGarden = (LinearLayout) findViewById(R.id.previous_working_garden);
         loudong = getResources().getString(R.string.feiloudong);
 
         //设置dialog的样式
@@ -135,18 +136,9 @@ public class MainActivity extends TakePhotoActivity{
         searchKey = selectGardenView.findViewById(R.id.search_garden_key);
         addGardenBtn = selectGardenView.findViewById(R.id.add_garden);
         manage_fake_garden = selectGardenView.findViewById(R.id.manage_fake_garden);
-        setBuildingId(null);
+        previousWorkingGarden = selectGardenView.findViewById(R.id.toggle_button_group);
 
-//        Button button1 = new Button(this);
-//        button1.setText("测试");
-////        button1.setId(111111111);
-//        TextView tv1 = new TextView(this);
-//        TextView tv2 = new TextView(this);
-//
-//        tv1.setText("姓名:");
-//        tv2.setText("李四");
-//
-//        previousWorkingGarden.addView(tv1);
+        setBuildingId(null);
 
         mapLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,6 +159,7 @@ public class MainActivity extends TakePhotoActivity{
         neighbourChose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getPreviousNeighbour(previousWorkingGarden);
                 gardenDialog.show();
                 /**
                  * 当用户点击了搜索
@@ -747,6 +740,22 @@ public class MainActivity extends TakePhotoActivity{
         UsingNeighbourDb mstatusDb;
         mstatusDb = new UsingNeighbourDb(gardenId, gardenName);
         statusDB.save(mstatusDb);
+    }
+
+    public void getPreviousNeighbour(LinearLayout ll) {
+        ArrayList<UsingNeighbourDb> list = new ArrayList<>();
+        QueryBuilder<UsingNeighbourDb> qb = new QueryBuilder<UsingNeighbourDb>(UsingNeighbourDb.class)
+                .columns(new String[]{UsingNeighbourDb.GARDENID_COL, UsingNeighbourDb.GARDENNAME_COL})
+                .distinct(true)
+                .appendOrderDescBy(UsingNeighbourDb.ID_COL)
+                .limit(0,5);
+        list = statusDB.query(qb);
+        for (int i = 0; i < list.size(); i++){
+            MaterialButton button1 = new MaterialButton(this);
+            button1.setText(list.get(i).getGardenName());
+            button1.setId(View.generateViewId());
+            ll.addView(button1);
+        }
     }
 }
 

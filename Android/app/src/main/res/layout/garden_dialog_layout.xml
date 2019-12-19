@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/card_style"
     android:orientation="vertical"
     android:padding="10dp"
@@ -9,17 +10,31 @@
     android:layout_margin="20dp"
     android:divider="@drawable/divider"
     android:dividerPadding="3dp"
-    android:showDividers="middle"
-    >
-
-    <LinearLayout
+    android:showDividers="middle">
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/previous_working_garden"
-        >
+        android:scrollbars="none">
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/previous_working_garden"
+
+            >
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/toggle_button_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true">
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
     <RelativeLayout
 
@@ -89,7 +104,6 @@
         <com.google.android.material.button.MaterialButton
             android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_height="wrap_content"
             android:id="@+id/manage_fake_garden"
             android:text="管理"
@@ -103,7 +117,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/add_garden"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:text="新建"
             android:layout_gravity="left"
             android:layout_weight="1"

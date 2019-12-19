@@ -118,7 +118,6 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
         TextView baiduText = findViewById(R.id.baidu_map);
         TextView tecentText = findViewById(R.id.tecent_map);
-        baiduText.setBackgroundColor(0x99EEE6E6);
         tecentText.setBackgroundColor(Color.RED);
 
         /**
