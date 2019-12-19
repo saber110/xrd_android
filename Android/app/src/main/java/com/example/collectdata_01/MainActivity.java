@@ -13,7 +13,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +49,7 @@ import com.example.map.net.AddGarden;
 import com.example.map.net.GetLocationNetUtil;
 import com.example.map.net.SearchGarden;
 import com.example.net.AsyncRequest;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.DataBase;
@@ -74,6 +77,7 @@ public class MainActivity extends TakePhotoActivity{
     private View selectLocationView;
     private RecyclerView selectLocationRecycleView;
     private RecyclerView gardenDataRecyclerView;
+    private LinearLayout previousWorkingGarden;
 
     private EditText searchKey;
     private TextView neighbourWorking;
@@ -110,6 +114,7 @@ public class MainActivity extends TakePhotoActivity{
         photoLayout = (RelativeLayout) findViewById(R.id.zhaopian);
         mapLayout = (RelativeLayout) findViewById(R.id.ditu);
         updataLayout = (RelativeLayout) findViewById(R.id.shangchuan);
+        previousWorkingGarden = (LinearLayout) findViewById(R.id.previous_working_garden);
         loudong = getResources().getString(R.string.feiloudong);
 
         //设置dialog的样式
@@ -131,6 +136,17 @@ public class MainActivity extends TakePhotoActivity{
         addGardenBtn = selectGardenView.findViewById(R.id.add_garden);
         manage_fake_garden = selectGardenView.findViewById(R.id.manage_fake_garden);
         setBuildingId(null);
+
+//        Button button1 = new Button(this);
+//        button1.setText("测试");
+////        button1.setId(111111111);
+//        TextView tv1 = new TextView(this);
+//        TextView tv2 = new TextView(this);
+//
+//        tv1.setText("姓名:");
+//        tv2.setText("李四");
+//
+//        previousWorkingGarden.addView(tv1);
 
         mapLayout.setOnClickListener(new View.OnClickListener() {
             @Override
