@@ -51,21 +51,16 @@
         <activity android:name="com.example.login.updatePassword" />
         <activity android:name="com.example.collectdata.NearByActivity" />
         <activity android:name="com.example.login.login">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name="com.example.collectdata_01.ImageActivity">
 
-            <!-- <activity android:name="com.example.map.baidu_map.BaiduMapActivity"> -->
-
-        </activity> <!-- <activity android:name="MainActivity"> -->
-        <!-- &lt;!&ndash;        <activity android:name="com.example.map.baidu_map.BaiduMapActivity">&ndash;&gt; -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.MAIN" /> -->
-        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-        <!-- </intent-filter> -->
-        <!-- </activity> -->
+        </activity>
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="86ff64a340f6e38517841ceac23fa26c" />

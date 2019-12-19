@@ -62,6 +62,14 @@ public class ManageFakeGarden extends AppCompatActivity {
                     Toast.makeText(ManageFakeGarden.this, "点击" + list.get(position), Toast.LENGTH_SHORT).show();
                 }
             }
+
+            @Override
+            public void onItemLongClick(int position){
+                if (adapter.getResultMap().keySet().contains(list.get(position))) {
+                    Toast.makeText(ManageFakeGarden.this, "长按" + list.get(position), Toast.LENGTH_SHORT).show();
+                }
+            }
+
         });
         listView.setAdapter(adapter);
         

@@ -241,12 +241,7 @@ public class MainActivity extends TakePhotoActivity{
         updataLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getGardenName() != null && !getGardenName().isEmpty()) {
-                    startActivity(new Intent(MainActivity.this, Datalist.class));
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.selectWorkingGarden, Toast.LENGTH_LONG).show();
-                }
-
+                startActivity(new Intent(MainActivity.this, Datalist.class));
             }
         });
 

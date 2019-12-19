@@ -75,17 +75,17 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         itemViewHolder.itemView.setTag(position);
         if (mOnItemClickListener != null) {
-//            itemViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View view) {
-//                    if (view.getTag() != null) {
-//                        int pos = (int) view.getTag();
-//                        mOnItemClickListener.onItemClick(pos);
-//                    }
-//                    return false;
-//                }
-//            });
-            // TODO : test runnable
+            itemViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (view.getTag() != null) {
+                        int pos = (int) view.getTag();
+                        mOnItemClickListener.onItemLongClick(pos);
+                    }
+                    // 屏蔽点击事件
+                    return true;
+                }
+            });
             itemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -94,19 +94,8 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         mOnItemClickListener.onItemClick(pos);
                     }
                 }
+
             });
-            // TODO add longClick event
-//            itemViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View view) {
-//                    if (view.getTag() != null) {
-//                        int pos = (int) view.getTag();
-//                        mOnItemLongClickListener.onItemLongClick(,view, pos, 1);
-//                    }
-//                    // 不再触发click事件
-//                    return true;
-//                }
-//            });
         }
 
         itemViewHolder.textView.setText(pic_name);
@@ -152,6 +141,7 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public interface OnItemClickListener {
         void onItemClick(int position);
+        void onItemLongClick(int position);
     }
 
     public interface OnItemLongClickListener {
