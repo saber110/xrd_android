@@ -141,8 +141,8 @@ public class BuweiActivity extends AppCompatActivity {
                         retString += text + "-" + t[i] + ";";
                     }
                 }
-                 textView.setText(retString.substring(0,retString.length()-1));
-                 Log.i("retString","retString="+retString);
+                retString = retString.substring(0, retString.length() - 1);
+                textView.setText(retString);
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {

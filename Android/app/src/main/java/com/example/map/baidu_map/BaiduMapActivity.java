@@ -95,7 +95,6 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         TextView baiduText = findViewById(R.id.baidu_map);
         TextView tecentText = findViewById(R.id.tecent_map);
         baiduText.setBackgroundColor(Color.RED);
-        tecentText.setBackgroundColor(0x99EEE6E6);
 
         /**
          * 点击百度地图进行跳转

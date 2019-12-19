@@ -18,6 +18,10 @@ public class UsingNeighbourDb extends BaseModel {
         setGardenName(gardenName);
     }
 
+    public UsingNeighbourDb() {
+
+    }
+
     public String getGardenId() {
         return gardenId;
     }

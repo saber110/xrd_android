@@ -17,11 +17,13 @@ import com.litesuits.orm.db.enums.AssignType;
 public class BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    public static final String ID_COL = "_id";
+
 
     // 设置为主键,自增
     @PrimaryKey(AssignType.AUTO_INCREMENT)
     // 取名为“_id”,如果此处不重新命名,就采用属性名称
-    @Column("_id")
+    @Column(ID_COL)
     public int id;
 //    @Column("_kind")
 //    public String pictureKind;

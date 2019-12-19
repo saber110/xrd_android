@@ -13,7 +13,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +32,7 @@ import com.example.collectdata_01.adapter.GetCommunityViewAdapter;
 import com.example.collectdata_01.adapter.GetDistrictViewAdapter;
 import com.example.collectdata_01.adapter.GetProvinceViewAdapter;
 import com.example.collectdata_01.adapter.GetStreetViewAdapter;
+import com.example.database.BaseModel;
 import com.example.database.ImageDb;
 import com.example.database.StatusDb;
 import com.example.database.UsingNeighbourDb;
@@ -47,6 +50,7 @@ import com.example.map.net.AddGarden;
 import com.example.map.net.GetLocationNetUtil;
 import com.example.map.net.SearchGarden;
 import com.example.net.AsyncRequest;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.DataBase;
@@ -58,6 +62,7 @@ import org.devio.takephoto.model.TResult;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import static com.example.login.login.statusDB;
@@ -74,6 +79,7 @@ public class MainActivity extends TakePhotoActivity{
     private View selectLocationView;
     private RecyclerView selectLocationRecycleView;
     private RecyclerView gardenDataRecyclerView;
+    private LinearLayout previousWorkingGarden;
 
     private EditText searchKey;
     private TextView neighbourWorking;
@@ -130,6 +136,8 @@ public class MainActivity extends TakePhotoActivity{
         searchKey = selectGardenView.findViewById(R.id.search_garden_key);
         addGardenBtn = selectGardenView.findViewById(R.id.add_garden);
         manage_fake_garden = selectGardenView.findViewById(R.id.manage_fake_garden);
+        previousWorkingGarden = selectGardenView.findViewById(R.id.toggle_button_group);
+
         setBuildingId(null);
 
         mapLayout.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +159,7 @@ public class MainActivity extends TakePhotoActivity{
         neighbourChose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getPreviousNeighbour(previousWorkingGarden);
                 gardenDialog.show();
                 /**
                  * 当用户点击了搜索
@@ -731,6 +740,33 @@ public class MainActivity extends TakePhotoActivity{
         UsingNeighbourDb mstatusDb;
         mstatusDb = new UsingNeighbourDb(gardenId, gardenName);
         statusDB.save(mstatusDb);
+    }
+
+    public void getPreviousNeighbour(LinearLayout ll) {
+        ArrayList<UsingNeighbourDb> list = new ArrayList<>();
+        QueryBuilder<UsingNeighbourDb> qb = new QueryBuilder<UsingNeighbourDb>(UsingNeighbourDb.class)
+                .columns(new String[]{UsingNeighbourDb.GARDENID_COL, UsingNeighbourDb.GARDENNAME_COL})
+                .distinct(true)
+                .appendOrderDescBy(UsingNeighbourDb.ID_COL)
+                .limit(0,5);
+        list = statusDB.query(qb);
+        ll.removeAllViews();
+        for (int i = 0; i < list.size(); i++){
+            MaterialButton button1 = new MaterialButton(this);
+            button1.setText(list.get(i).getGardenName());
+            button1.setId(View.generateViewId());
+            button1.setTag(list.get(i));
+            button1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setGardenName(((UsingNeighbourDb)v.getTag()).getGardenName());
+                    neighbourWorking.setText(getGardenName());
+                    setGardenId(Integer.parseInt(((UsingNeighbourDb)v.getTag()).getGardenId()));
+                    gardenDialog.dismiss();
+                }
+            });
+            ll.addView(button1);
+        }
     }
 }
 
