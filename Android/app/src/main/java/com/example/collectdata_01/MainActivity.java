@@ -528,13 +528,19 @@ public class MainActivity extends TakePhotoActivity{
                     String filepath1 = Environment.getExternalStorageDirectory()+ "/"+ getResources().getString(R.string.picturePath) + "/" + jpegName;
                     String filepath2 = Environment.getExternalStorageDirectory()+ "/"+ getResources().getString(R.string.picturePath) + "/" + getResources().getString(R.string.tuYa) + "_" + jpegName;
                     DoodleParams params = new DoodleParams(); // 涂鸦参数
-                    DoodleActivity.startActivityForResult(MainActivity.this, filepath1, filepath2, false, DrawActivity.REQ_CODE_DOODLE);
+                    params.mImagePath = filepath1;
+                    params.mSavePath = filepath2;
+                    params.mSavePathIsDir = false;
+                    params.mPaintPixelSize = 5;
+                    params.mPaintUnitSize = 5;
+                    DoodleActivity.startActivityForResult(MainActivity.this, params, DrawActivity.REQ_CODE_DOODLE);
 
                     ImageDb musers = new ImageDb(Integer.toString(MainActivity.getGardenId()),
                             getResources().getString(R.string.tuYa),
                             Long.toString(System.currentTimeMillis()),
                             getResources().getString(R.string.tuYa) + "_" + jpegName);
                     mainDB.save(musers);
+
                 } else {
                     picture();
                 }
@@ -781,5 +787,30 @@ public class MainActivity extends TakePhotoActivity{
             ll.addView(button1);
         }
     }
+
+    /**
+     * 检测文件是否存在
+     * @param strFile
+     * @return false when none
+     */
+    public boolean fileIsExists(String strFile)
+    {
+        try
+        {
+            File f = new File(strFile);
+            if(!f.exists())
+            {
+                return false;
+            }
+
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
 }
 
