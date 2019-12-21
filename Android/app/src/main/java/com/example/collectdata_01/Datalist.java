@@ -119,6 +119,14 @@ public class Datalist extends AppCompatActivity {
                 .appendOrderDescBy(ImageDb.PICTUREKIND_COL)
                 .appendOrderDescBy(ImageDb.BUILDINGNAME_COL));
         for (int i = 0; i < queryList.size(); i++) {
+            // 检查文件是否存在
+            // 若已经被删除，或者不存在
+            // 删除该记录
+            if(! fileIsExists(Environment.getExternalStorageDirectory()+ "/"+ getResources().getString(R.string.picturePath) + "/" + queryList.get(i).getImage()))
+            {
+                mainDB.delete(queryList.get(i));
+                queryList.remove(i);
+            }
             if (queryList.get(i).getpictureKind().equals(getResources().getString(R.string.pingMianTu))
                     || queryList.get(i).getpictureKind().equals(getResources().getString(R.string.xiaoQuRuKou))
                     || queryList.get(i).getpictureKind().equals(getResources().getString(R.string.waiJingTu))
@@ -215,6 +223,30 @@ public class Datalist extends AppCompatActivity {
             File file1 = new File(relationDir);
             sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.fromFile(file1.getAbsoluteFile())));
         }
+    }
+
+    /**
+     * 检测文件是否存在
+     * @param strFile
+     * @return false when none
+     */
+    public boolean fileIsExists(String strFile)
+    {
+        try
+        {
+            File f = new File(strFile);
+            if(!f.exists())
+            {
+                return false;
+            }
+
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+
+        return true;
     }
 }
 

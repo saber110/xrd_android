@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
@@ -39,6 +40,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import cn.hzw.doodle.DoodleActivity;
+import cn.hzw.doodle.DoodleParams;
+
 public class DrawActivity extends AppCompatActivity {
 
     Paint paint = new Paint();
@@ -49,7 +53,7 @@ public class DrawActivity extends AppCompatActivity {
     int count = 0;
     //    Button choose_photo = this.findViewById(R.id.get);
     public static final int PICK_PHOTO = 102;
-
+    public static final int REQ_CODE_DOODLE = 101;
 
     /**
      * 是否继续画图对话框
@@ -131,7 +135,8 @@ public class DrawActivity extends AppCompatActivity {
             }
             singleDialog();
         }
-        if(str.equals("导入")){
+        else if(str.equals("导入")){
+
             if (ContextCompat.checkSelfPermission(DrawActivity.this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(DrawActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
@@ -230,11 +235,14 @@ public class DrawActivity extends AppCompatActivity {
     private void displayImage(String imagePath) {
         if (imagePath != null) {
 
-            screenWidth = getWindowManager().getDefaultDisplay().getWidth();
-            screenHeight = getWindowManager().getDefaultDisplay().getHeight();
+            Point size = new Point();
+            getWindowManager().getDefaultDisplay().getSize(size);
+            screenWidth = size.x;
+            screenHeight = size.y;
 
             BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inJustDecodeBounds = true;// 不去真的解析图片，只是获取图片的头部信息，包含宽高等；
+            // 不去真的解析图片，只是获取图片的头部信息，包含宽高等；
+            opts.inJustDecodeBounds = true;
             bitmap = BitmapFactory.decodeFile(imagePath, opts);
             // 得到图片的宽度、高度；
             int imgWidth = opts.outWidth;
@@ -321,6 +329,8 @@ public class DrawActivity extends AppCompatActivity {
         //接收name值
         jpeg = bundle.getString("jpeg");
         String filepath1 = Environment.getExternalStorageDirectory()+ "/"+ getResources().getString(R.string.picturePath) + "/" + jpeg;
+        String filepath2 = Environment.getExternalStorageDirectory()+ "/"+ getResources().getString(R.string.picturePath) + "/" + getResources().getString(R.string.tuYa) + "_" + jpeg;
+
         displayImage(filepath1);
         imageview.setOnTouchListener(new View.OnTouchListener() {
             float x1,y1,x2,y2;

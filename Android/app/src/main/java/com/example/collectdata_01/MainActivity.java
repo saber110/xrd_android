@@ -65,6 +65,9 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import cn.hzw.doodle.DoodleActivity;
+import cn.hzw.doodle.DoodleParams;
+
 import static com.example.login.login.statusDB;
 
 
@@ -515,13 +518,29 @@ public class MainActivity extends TakePhotoActivity{
                 }
                 Toast.makeText(MainActivity.this, "你选择了" + str, Toast.LENGTH_SHORT).show();
                 if (str.equals("是")) {
-                    Intent intent1 = new Intent(MainActivity.this, DrawActivity.class);
-                    //用Bundle携带数据
-                    Bundle bundle = new Bundle();
-                    //传递name参数为tinyphp
-                    bundle.putString("jpeg", jpegName);
-                    intent1.putExtras(bundle);
-                    startActivity(intent1);
+//                    Intent intent1 = new Intent(MainActivity.this, DrawActivity.class);
+//                    //用Bundle携带数据
+//                    Bundle bundle = new Bundle();
+//                    //传递name参数为tinyphp
+//                    bundle.putString("jpeg", jpegName);
+//                    intent1.putExtras(bundle);
+//                    startActivity(intent1);
+                    String filepath1 = Environment.getExternalStorageDirectory()+ "/"+ getResources().getString(R.string.picturePath) + "/" + jpegName;
+                    String filepath2 = Environment.getExternalStorageDirectory()+ "/"+ getResources().getString(R.string.picturePath) + "/" + getResources().getString(R.string.tuYa) + "_" + jpegName;
+                    DoodleParams params = new DoodleParams(); // 涂鸦参数
+                    params.mImagePath = filepath1;
+                    params.mSavePath = filepath2;
+                    params.mSavePathIsDir = false;
+                    params.mPaintPixelSize = 5;
+                    params.mPaintUnitSize = 5;
+                    DoodleActivity.startActivityForResult(MainActivity.this, params, DrawActivity.REQ_CODE_DOODLE);
+
+                    ImageDb musers = new ImageDb(Integer.toString(MainActivity.getGardenId()),
+                            getResources().getString(R.string.tuYa),
+                            Long.toString(System.currentTimeMillis()),
+                            getResources().getString(R.string.tuYa) + "_" + jpegName);
+                    mainDB.save(musers);
+
                 } else {
                     picture();
                 }
@@ -768,5 +787,30 @@ public class MainActivity extends TakePhotoActivity{
             ll.addView(button1);
         }
     }
+
+    /**
+     * 检测文件是否存在
+     * @param strFile
+     * @return false when none
+     */
+    public boolean fileIsExists(String strFile)
+    {
+        try
+        {
+            File f = new File(strFile);
+            if(!f.exists())
+            {
+                return false;
+            }
+
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
 }
 
