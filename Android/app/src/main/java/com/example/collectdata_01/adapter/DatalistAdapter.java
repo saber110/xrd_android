@@ -1,11 +1,13 @@
 package com.example.collectdata_01.adapter;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private int layoutId;
     private List<String> datalist;
     private HashMap<String, Boolean> resultMap = new HashMap<>();
+    private HashMap<String,String> downloadMap = new HashMap<>();
     private LayoutInflater layoutInflater;
     private OnItemClickListener mOnItemClickListener = null;
     private AdapterView.OnItemLongClickListener mOnItemLongClickListener = null;
@@ -43,7 +46,20 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         datalist = list;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (String s : list) {
+            System.out.print(s+" ");
             resultMap.put(s, true);
+            downloadMap.put(s,"准备上传");
+        }
+        System.out.println("");
+    }
+
+    public void setProcess(String pic_name, String status){
+        for(int i=0;i<datalist.size();i++){
+            if(datalist.get(i).equals(pic_name)){
+                downloadMap.put(pic_name,status);
+                notifyDataSetChanged();
+                break;
+            }
         }
     }
 
@@ -97,8 +113,18 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             });
         }
-
         itemViewHolder.textView.setText(pic_name);
+        //itemViewHolder.textView2.setText(downloadMap.get(pic_name));
+        String status = downloadMap.get(pic_name);
+        if(status.equals("上传中")){
+            itemViewHolder.imageView.setImageResource(R.drawable.process_loading);
+        }
+        else if(status.equals("上传成功")){
+            itemViewHolder.imageView.setImageResource(R.drawable.process_success);
+        }
+        else if(status.equals("上传失败")){
+            itemViewHolder.imageView.setImageResource(R.drawable.process_failure);
+        }
         if (resultMap.keySet().contains(pic_name)) {
             if (resultMap.get(pic_name) != null)
                 itemViewHolder.checkBox.setChecked(resultMap.get(pic_name));
@@ -109,12 +135,15 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
         MaterialCheckBox checkBox;
-        TextView textView;
+        TextView textView,textView2;
+        ImageView imageView;
 
         public ItemViewHolder(@NonNull final View itemView) {
             super(itemView);
             checkBox = itemView.findViewById(R.id.isUpload);
             textView = itemView.findViewById(R.id.pic_name);
+            imageView = itemView.findViewById(R.id.process);
+//            textView2 = itemView.findViewById(R.id.process);
 //            checkBox.setChecked(true);
             checkBox.setOnCheckedChangeListener(checkBox_listener);
 

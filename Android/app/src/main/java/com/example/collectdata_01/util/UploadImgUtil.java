@@ -2,7 +2,9 @@ package com.example.collectdata_01.util;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.example.collectdata_01.Datalist.adapter;
 import static com.example.collectdata_01.MainActivity.mainDB;
 import static com.litesuits.orm.db.impl.CascadeSQLiteImpl.TAG;
 import static java.lang.String.valueOf;
@@ -60,8 +63,22 @@ public class UploadImgUtil {
     }
 
 
+
     private void postFile(final String url, final Map<String, String> map, final String jpeg) {
+        System.out.println(jpeg);
+        adapter.setProcess(jpeg,"上传中");
+        final Handler handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                if(msg.what==0){
+                    adapter.setProcess(jpeg,msg.obj.toString());
+                }
+            }
+        };
         OkHttpClient client = new OkHttpClient();
+        final Message msg = new Message();
+        msg.what=0;
+
         // form 表单形式上传
         MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
         File file = new File(Environment.getExternalStorageDirectory(), "/"+ context.getResources().getString(R.string.picturePath) + "/" + jpeg);
@@ -92,6 +109,8 @@ public class UploadImgUtil {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 Log.d(">>>>>>", "onFailure: 上传图片失败");
+                msg.obj="上传失败";
+                handler.sendMessage(msg);
             }
 
             @Override
@@ -102,12 +121,16 @@ public class UploadImgUtil {
                     setUploadedByCollecttime(map.get(ImageDb.COLLECTTIOME_COL));
                     n++;
                     if(n >= N){
+                        msg.obj="上传成功";
+                        handler.sendMessage(msg);
                         funToastMakeText("数据上传完毕");
                         n = 0;
                     }
                     Log.d(">>>", "onResponse: "+str);
                 } else {
                     Log.i(">>>>" ,response.message() + " error : body " + response.body().string());
+                    msg.obj="上传失败";
+                    handler.sendMessage(msg);
                 }
             }
         });
