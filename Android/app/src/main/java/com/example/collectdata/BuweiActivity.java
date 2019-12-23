@@ -93,7 +93,7 @@ public class BuweiActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent();
-                i.putExtra("locationDescription",retString);
+                i.putExtra("locationDescription",retString.substring(0, retString.length() - 1));
                 setResult(RESULT_OK, i);
                 Toast.makeText(BuweiActivity.this,"保存成功", Toast.LENGTH_SHORT).show();
                 finish();

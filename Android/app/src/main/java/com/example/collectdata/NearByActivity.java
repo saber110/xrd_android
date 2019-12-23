@@ -1,23 +1,19 @@
 package com.example.collectdata;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -34,7 +30,6 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.PoiInfo;
-import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
 import com.baidu.mapapi.search.poi.PoiCitySearchOption;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
@@ -45,16 +40,15 @@ import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
 import com.baidu.mapapi.search.poi.PoiSortType;
 import com.baidu.mapapi.utils.DistanceUtil;
-import com.example.collectdata.tools.JsonTools;
 import com.example.collectdata_01.R;
-import com.example.map.baidu_map.BaiduMapActivity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class NearByActivity extends AppCompatActivity implements TabHost.TabContentFactory,BaiduMap.OnMapLongClickListener,View.OnClickListener {
+public class NearByActivity extends AppCompatActivity implements TabHost.TabContentFactory, BaiduMap.OnMapLongClickListener,View.OnClickListener {
     private BaiduMap baiduMap;
     private MapView mMapView = null;
     private TabHost tabHost;
@@ -70,8 +64,9 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
     private String select_tab = "tab1";
     private HashSet<String>[]sets = new HashSet[set_num+1];
     public static HashMap<String,Object> map = new HashMap<>();
-    private int busStationDistance = 1000000000;
-    private int subwayDistance = 1000000000;
+    private final int MAX = 1000000000;
+    private int busStationDistance = MAX;
+    private int subwayDistance = MAX;
     private ArrayList<Integer> radius;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,9 +173,9 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
                 save("college",sets[16]);
                 save("attractions",sets[17]);
                 save("park",sets[18]);
-                map.put("busStationDistance",busStationDistance);
+                if(busStationDistance!=MAX) map.put("busStationDistance",busStationDistance);
                 map.put("busLines",sets[4].size()+sets[5].size());
-                map.put("subwayDistance",subwayDistance);
+                if(subwayDistance!=MAX) map.put("subwayDistance",subwayDistance);
                 map.put("subwayLines",sets[6].size());
                 for(String s:map.keySet()){
                     System.out.println(s+":"+map.get(s));
@@ -265,10 +260,10 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         }
     }
     //创建CheckBox
-    private CheckBox newCheckBox(String name){
+    private CheckBox newCheckBox(String name,int i){
         final CheckBox checkBox = new CheckBox(getApplicationContext());
         checkBox.setText(name);
-        checkBox.setChecked(true);
+        if(i<3) checkBox.setChecked(true);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -290,16 +285,27 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
             public void onGetPoiResult(PoiResult result) {
                 if (result != null) {
                     if (result.getAllPoi() != null && result.getAllPoi().size() > 0) {
+                        Collections.sort(result.getAllPoi(), new Comparator<PoiInfo>() {
+                            @Override
+                            public int compare(PoiInfo p1, PoiInfo p2) {
+                                LatLng gp = new LatLng(latitude,longitude);
+                                LatLng gp1 = new LatLng(p1.getLocation().latitude,p1.getLocation().longitude);
+                                LatLng gp2 = new LatLng(p2.getLocation().latitude,p2.getLocation().longitude);
+                                int distence1 = (int) DistanceUtil. getDistance(gp, gp1);
+                                int distence2 = (int) DistanceUtil. getDistance(gp, gp2);
+                                return Integer.compare(distence1, distence2);
+                            }
+                        });
                         for(int i = 0 ; i < result.getAllPoi().size(); i ++){
                             PoiInfo poiInfo = result.getAllPoi().get(i);
                             System.out.println(poiInfo);
                             LatLng gp1 = new LatLng(latitude,longitude);
                             LatLng gp2 = new LatLng(poiInfo.getLocation().latitude,poiInfo.getLocation().longitude);
-                            int distence = (int)DistanceUtil. getDistance(gp1, gp2);
+                            int distence = (int) DistanceUtil. getDistance(gp1, gp2);
                             String name = poiInfo.name;
                             sets[index].add(name);
                             if(index<=18) {
-                                linearLayout[index].addView(newCheckBox(name + "（距离：" + distence + "m）"));
+                                linearLayout[index].addView(newCheckBox(name + "（距离：" + distence + "m）",i));
                                 //公交站距离
                                 if(index==3){
                                     //计算最近的公交站距离
@@ -324,8 +330,10 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
                         if(index==3){
                             System.out.println("busStationDistance:"+busStationDistance);
                             sets[4].remove("");
+                            int i = 0;
                             for(String bus:sets[4]){
-                                linearLayout[4].addView(newCheckBox(bus));
+                                linearLayout[4].addView(newCheckBox(bus,i));
+                                i++;
                             }
                         }
                     }

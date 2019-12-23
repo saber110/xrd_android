@@ -41,7 +41,7 @@ public class Datalist extends AppCompatActivity {
     ArrayList<ImageDb> buildinglist = new ArrayList<>();
     ArrayList<ImageDb> qitalist = new ArrayList<>();
     private MaterialButton uploadPictures;
-    private DatalistAdapter adapter;
+    public static DatalistAdapter adapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +53,6 @@ public class Datalist extends AppCompatActivity {
         final List<String> list = new ArrayList<String>();
         //要添加的内容直接添加到list 队列里面就可显示出来   如
 //        list.add("数据一");
-
         dividedData(list);
 
         ///可以一直添加，在真机运行后可以下拉列表
@@ -77,9 +76,7 @@ public class Datalist extends AppCompatActivity {
                 }
             }
         });
-
         listView.setAdapter(adapter);
-
         uploadPictures.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,7 +96,6 @@ public class Datalist extends AppCompatActivity {
         for (int i = 0; i < buildinglist.size(); i++) {
             if (result.keySet().contains(buildinglist.get(i).getImage()))
                 if (result.get(buildinglist.get(i).getImage()))
-
                     uploadImgUtil.uploadBuildImg(buildinglist.get(i).getBuildingName(), buildinglist.get(i).getCollectTime(), Integer.toString(MainActivity.getGardenId()), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
         }
         for (int i = 0; i < qitalist.size(); i++) {
