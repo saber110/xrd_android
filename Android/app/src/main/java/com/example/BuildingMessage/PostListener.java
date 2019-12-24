@@ -45,18 +45,18 @@ public class PostListener implements View.OnClickListener {
             if (bean instanceof ListItemBean) {
                 for (CommonItemBean commonItemBean : ((ListItemBean) bean).getInnerItemList()) {
                     // 必选项未填
-                    if (commonItemBean.isRequire() &&
-                            (map.get(bean.getTitle() + commonItemBean.getTitle()) == null
-                            || map.get(bean.getTitle() + commonItemBean.getTitle()).equals(""))) {
-                        Toast.makeText(context, "请输入必填项", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+//                    if (commonItemBean.isRequire() &&
+//                            (map.get(bean.getTitle() + commonItemBean.getTitle()) == null
+//                            || map.get(bean.getTitle() + commonItemBean.getTitle()).equals(""))) {
+//                        Toast.makeText(context, "请输入必填项", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
                     String content;
                     if (commonItemBean instanceof SelectorItemBean)
                         content = map.get(commonItemBean.getTitle());
                     else
                         content = map.get(bean.getTitle() + commonItemBean.getTitle());
-                    if (content == null)
+                    if (content == null || content.equals(""))
                         continue;
                     if (commonItemBean.getRequireType().equals("number")){
                         double num = 0;
@@ -78,10 +78,10 @@ public class PostListener implements View.OnClickListener {
                 String key = bean.getKey();
                 if (isRequire) {
                     String content = map.get(title);
-                    if (content == null) {
-                        Toast.makeText(context, "请输入必填项:"+title, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+//                    if (content == null || content.equals("")) {
+//                        Toast.makeText(context, "请输入必填项:"+title, Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
                     if (require_type.equals("number")) {
                         double num = 0;
                         try {
