@@ -12,7 +12,7 @@ class Garden(BaseModel):
     小区表
     """
     id = db.Column(db.Integer, primary_key=True, comment='小区id')
-
+    userId = db.Column(db.Integer, db.ForeignKey('user.id'), comment='提交小区信息的用户')
     communityId = db.Column(db.Integer, db.ForeignKey('community.id'), nullable=False, comment='小区对应的社区id')
     streetId = db.Column(db.Integer, db.ForeignKey('street.id'), nullable=False, comment='小区对应的街道id')
     districtId = db.Column(db.Integer, db.ForeignKey('district.id'), nullable=False, comment='小区对应的行政区id')

@@ -35,12 +35,13 @@ data_bp = Blueprint('data', __name__, url_prefix=config.URL_Prefix + '/data')
 
 @data_bp.route('/garden', methods=['POST'])
 @token_check
-def garden(*args, **kwargs):
+def garden(user_id, *args, **kwargs):
     """
     添加新的小区
     :return:
     """
     data = request.get_json()
+    data['userId'] = user_id
     schema = {
         "gardenName": {'type': 'string', 'maxlength': 85}
     }
