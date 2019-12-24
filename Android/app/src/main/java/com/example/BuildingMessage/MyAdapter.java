@@ -2,6 +2,7 @@ package com.example.BuildingMessage;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -76,11 +77,12 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
+        boolean isRequire = data.get(position).isRequire();
         // 文字输入框复用
         if (holder instanceof TextViewHolder) {
             TextViewHolder textHolder = (TextViewHolder) holder;
 
+            setViewBorder(isRequire,textHolder.itemView);
             textHolder.textInputLayout.setHint(data.get(position).getTitle());
             // 复用前要移除listener，防止错误的添加数据到resultMap，下边类似
             TextWatcher watcher = (TextWatcher) textHolder.textInputEditText.getTag(textHolder.textInputEditText.getId());
@@ -96,6 +98,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (holder instanceof ButtonViewHolder) {
             ButtonViewHolder radioHolder = (ButtonViewHolder) holder;
 
+            setViewBorder(isRequire,radioHolder.itemView);
             radioHolder.titleView2.setText(data.get(position).getTitle());
             // 判断单选按钮是否选中，防止发生错乱
             radioHolder.buttonToggleGroup.removeOnButtonCheckedListener(listener);
@@ -103,7 +106,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 for (int i = 0; i < radioHolder.buttonToggleGroup.getChildCount(); i++) {
                     MaterialButton button = (MaterialButton) radioHolder.buttonToggleGroup.getChildAt(i);
                     if (button.getText().equals(resultMap.get(data.get(position).getTitle()))) {
-                        button.setBackgroundColor(Color.RED);
+                        button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
                     } else {
                         button.setBackgroundColor(Color.WHITE);
                     }
@@ -148,7 +151,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 MaterialButton button = (MaterialButton) buttonToggleGroup.getChildAt(i);
                                 if (button.getText().equals(resultMap.get(commonItemBean.getTitle()))
                                         && ((String) buttonToggleGroup.getTag()).equals(commonItemBean.getTitle())) {
-                                    button.setBackgroundColor(Color.RED);
+                                    button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
                                     break;
                                 } else {
                                     button.setBackgroundColor(Color.WHITE);
@@ -211,6 +214,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public ButtonViewHolder(@NonNull View itemView) {
             super(itemView);
+            itemView.setPadding(5, 0, 5, 0);
             titleView2 = itemView.findViewById(R.id.message_selector_item_title);
             buttonToggleGroup = itemView.findViewById(R.id.message_selector_item_togglebutton);
             buttonToggleGroup.setSingleSelection(true);
@@ -221,7 +225,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 String buttonContent = selectorMessage.get(i);
                 button.setText(buttonContent);
                 if (buttonContent.equals(((SelectorItemBean) commonItemBean).getCurrentSelect())) {
-                    button.setBackgroundColor(Color.RED);
+                    button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
                 } else {
                     button.setBackgroundColor(Color.WHITE);
                 }
@@ -259,10 +263,12 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 CommonItemBean currentItemBean = listItemBean.getInnerItem(i);
                 int type = currentItemBean.getType();
+                boolean b = currentItemBean.isRequire();
                 Log.i("MessageAdapter", "二级菜单添加了一个条目:" + currentItemBean);
                 View view;
                 if (type == 0) {
                     view = LayoutInflater.from(context).inflate(R.layout.message_item, null);
+                    setViewBorder(false,view);//清除原来的view的边框
                     TextInputLayout textInputLayout = view.findViewById(R.id.message_item_title);
                     final TextInputEditText textInputEditText = view.findViewById(R.id.message_content);
                     textInputEditText.setText(currentItemBean.getContent());
@@ -270,14 +276,12 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     TextWatcher textWatcher = new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            //这个方法被调用，说明在s字符串中，从start位置开始的count个字符即将被长度为after的新文本所取代。
-                            // 在这个方法里面改变s，会报错。
+
                         }
 
                         @Override
                         public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            //这个方法被调用，说明在s字符串中，从start位置开始的count个字符刚刚取代了长度为before的旧文本。
-                            // 在这个方法里面改变s，会报错。
+
                         }
 
                         @Override
@@ -294,6 +298,8 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     list2.add(textInputEditText);
                 } else {
                     view = LayoutInflater.from(context).inflate(R.layout.message_selector_item, null);
+                    view.setPadding(5,0,5,0);
+                    setViewBorder(false,view);//清除原来的view的边框
                     TextView titleView2 = view.findViewById(R.id.message_selector_item_title);
                     titleView2.setText(currentItemBean.getTitle());
                     MaterialButtonToggleGroup buttonToggleGroup = view.findViewById(R.id.message_selector_item_togglebutton);
@@ -305,11 +311,10 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         String buttonContent = selectorMessage.get(j);
                         button.setText(buttonContent);
                         if (buttonContent.equals(((SelectorItemBean) currentItemBean).getCurrentSelect())) {
-                            button.setBackgroundColor(Color.RED);
+                            button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
                         } else {
                             button.setBackgroundColor(Color.WHITE);
                         }
-//                        button.setBackgroundColor(Color.WHITE);
                         button.setTextColor(Color.BLACK);
                         buttonToggleGroup.addView(button);
                     }
@@ -317,6 +322,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     buttonToggleGroup.addOnButtonCheckedListener(listener2);
                     list.add(buttonToggleGroup);
                 }
+                setViewBorder(b,view);
                 linearLayout.addView(view);
             }
             // 将buttonGroup的list设置到linearLayout的tag中，textInputEditText的list设置进textView的tag中
@@ -336,7 +342,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 if (button.getId() == checkedId) {
                     Log.i("Button", "button Id = " + button.getId() + "的按钮" + isChecked);
                     Log.i("Button", "button Id = " + button.getId() + "的按钮" + "被点击，颜色变为红色");
-                    button.setBackgroundColor(Color.RED);
+                    button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
                     resultMap.put((String) group.getTag(), button.getText().toString());
                     Toast.makeText(context, button.getText().toString(), Toast.LENGTH_SHORT).show();
                 } else {
@@ -356,7 +362,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 if (button.getId() == checkedId) {
                     Log.i("Button", "button Id = " + button.getId() + "的按钮" + isChecked);
                     Log.i("Button", "button Id = " + button.getId() + "的按钮" + "被点击，颜色变为红色");
-                    button.setBackgroundColor(Color.RED);
+                    button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
                     resultMap.put((String) group.getTag(), button.getText().toString());
                     result.put((String) group.getTag(), button.getText().toString());
                     Log.i("map", "result Map添加了" + group.getTag() + ":" + button.getText().toString());
@@ -384,4 +390,14 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         resultMap.clear();
     }
 
+    private void setViewBorder(boolean isRequire, View view) {
+        GradientDrawable drawable = (GradientDrawable) view.getBackground();
+        if (isRequire) {
+            drawable.setStroke(5, Color.RED);
+            drawable.setCornerRadius(10);
+        } else {
+            drawable.setStroke(5, context.getResources().getColor(R.color.border_color));
+            drawable.setCornerRadius(10);
+        }
+    }
 }
