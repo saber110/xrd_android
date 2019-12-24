@@ -2589,22 +2589,17 @@ def virtual_garden(user_id, *args, **kwargs):
     """
     gardens = db.session.query(Garden).join(Community).filter(Garden.userId == user_id).filter(
         Community.name == '不清楚').all()
-    result = [
-                 {
-                     "cityName": '不清楚',
-                     "communityName": '不清楚',
-                     "districtName": '不清楚',
-                     "gardenName": None,
-                     "provinceName": '不清楚',
-                     "streetName": '不清楚',
-                     "gardenId": None,
-                     "userId": None
-                 }
-             ] * len(gardens)
-    for index, garden in enumerate(gardens):
-        node = result[index]
-        node['userId'] = garden.userId
-        node['gardenId'] = garden.id
-        node['gardenName'] = garden.name
+    result = []
+    for garden in gardens:
+        result.append({
+            "cityName": '不清楚',
+            "communityName": '不清楚',
+            "districtName": '不清楚',
+            "gardenName": garden.name,
+            "provinceName": '不清楚',
+            "streetName": '不清楚',
+            "gardenId": garden.id,
+            "userId": garden.userId
+        })
 
     return generate_result(0, data={'gardenList': result})
