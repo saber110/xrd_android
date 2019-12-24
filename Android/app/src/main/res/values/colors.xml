@@ -3,8 +3,10 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="white">#FFFFFF</color>
+    <color name="white">#6B4949</color>
     <color name="gray">#ECEBEB</color>
     <color name="lightYellow">#FFFFF0</color>
     <color name="lightCyan">#E1FFFF</color>
+    <color name="border_color">#ACABA7</color>
+    <color name="button_selected">#FD7402</color>
 </resources>
