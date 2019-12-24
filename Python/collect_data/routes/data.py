@@ -70,10 +70,6 @@ def garden(user_id, *args, **kwargs):
         garden.update(**data)
     else:
         garden = Garden(**data)
-    communityGardens = Garden.query.filter_by(communityId=garden.communityId).all()
-    for existGarden in communityGardens:
-        if garden.name == existGarden.name:
-            return generate_result(2, '请勿添加重名的小区')
     try:
         db.session.add(garden)
         db.session.commit()
