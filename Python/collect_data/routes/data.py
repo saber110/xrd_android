@@ -35,12 +35,13 @@ data_bp = Blueprint('data', __name__, url_prefix=config.URL_Prefix + '/data')
 
 @data_bp.route('/garden', methods=['POST'])
 @token_check
-def garden(*args, **kwargs):
+def garden(user_id, *args, **kwargs):
     """
     添加新的小区
     :return:
     """
     data = request.get_json()
+    data['userId'] = user_id
     schema = {
         "gardenName": {'type': 'string', 'maxlength': 85}
     }
@@ -69,10 +70,6 @@ def garden(*args, **kwargs):
         garden.update(**data)
     else:
         garden = Garden(**data)
-    communityGardens = Garden.query.filter_by(communityId=garden.communityId).all()
-    for existGarden in communityGardens:
-        if garden.name == existGarden.name:
-            return generate_result(2, '请勿添加重名的小区')
     try:
         db.session.add(garden)
         db.session.commit()
