@@ -20,23 +20,31 @@ import com.example.collectdata_01.R;
 import com.example.dao.Position;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BuweiActivity extends AppCompatActivity {
     private LinearLayout Linayout;
     private TextView textView;
     private CheckBox checkBox;
     private ArrayList<Position> positions = new ArrayList<>();
-    public static String retString = "";
+    private String retString;
     private Button save;
+    private int id;
+    public static HashMap<Integer,String> buweiMap = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buwei);
+        id = getIntent().getIntExtra("id",0);
+        System.out.println("id="+id);
+        retString = buweiMap.get(id);
+        if(retString==null) retString="";
         Linayout=findViewById(R.id.table);
         textView = (TextView)findViewById(R.id.textView3);
         checkBox = (CheckBox)findViewById(R.id.check);
         save = (Button)findViewById(R.id.save_buwei);
         checkBox.setChecked(true);
+        textView.setText(retString);
 //        Linayout.setGravity(Gravity.CENTER_HORIZONTAL);
         initPositions();
         for (int i=0;i<7;i++){
@@ -61,7 +69,6 @@ public class BuweiActivity extends AppCompatActivity {
                         text.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-
                                 createInputDialog(positions.get(finalJ).getText());
                             }
                         });
@@ -95,6 +102,7 @@ public class BuweiActivity extends AppCompatActivity {
                 Intent i = new Intent();
                 i.putExtra("locationDescription",retString.substring(0, retString.length() - 1));
                 setResult(RESULT_OK, i);
+                buweiMap.put(id,retString);
                 Toast.makeText(BuweiActivity.this,"保存成功", Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -124,6 +132,7 @@ public class BuweiActivity extends AppCompatActivity {
     private void createInputDialog(final String text){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(text);    //设置对话框标题
+        builder.setMessage(retString);
         final EditText edit = new EditText(this);
         builder.setView(edit);
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
@@ -132,16 +141,17 @@ public class BuweiActivity extends AppCompatActivity {
                 if(checkBox.isChecked()){
                     String[] t = edit.getText().toString().split(" ");
                     for (int i = 0; i < t.length; i++) {
-                        retString += text + "-0-" + t[i] + ";";
+                        if(retString!="") retString+=";";
+                        retString += text + "-0-" + t[i] ;
                     }
                 }
                 else {
                     String[] t = edit.getText().toString().split(";");
                     for (int i = 0; i < t.length; i++) {
-                        retString += text + "-" + t[i] + ";";
+                        if(retString!="") retString+=";";
+                        retString += text + "-" + t[i];
                     }
                 }
-                retString = retString.substring(0, retString.length() - 1);
                 textView.setText(retString);
             }
         });

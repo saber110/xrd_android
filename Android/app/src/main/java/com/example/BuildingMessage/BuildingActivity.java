@@ -114,7 +114,8 @@ public class BuildingActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(BuildingActivity.this, BuweiActivity.class);
-                    startActivityForResult(i, REQUEST_CODE);
+                    i.putExtra("id",tab_getTag(tabLayout.getTabAt(tabLayout.getSelectedTabPosition())));
+                    startActivity(i);
                 }
             });
         } else
