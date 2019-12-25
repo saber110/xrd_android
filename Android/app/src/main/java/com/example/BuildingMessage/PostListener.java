@@ -129,11 +129,11 @@ public class PostListener implements View.OnClickListener {
         if (mode.equals("base")) {
             submit_map.put("locationDescription", BuweiActivity.retString);
             System.out.println(submit_map);
-            String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "building_base_info";
+            String s = "http://gjb.hnxrd.com.cn:9998/api/v1/data/" + "building_base_info";
             new RequestTools(s,submit_map,listener).run();
         }
         else if (mode.equals("extra")) {
-            String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "building_import_info";
+            String s = "http://gjb.hnxrd.com.cn:9998/api/v1/data/" + "building_import_info";
             new RequestTools(s,submit_map,listener).run();
         }
     }
