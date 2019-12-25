@@ -135,7 +135,7 @@ public class MainActivity extends TakePhotoActivity{
          */
         gardenDialog = CreatDialog.createChangeMarkDialog(MainActivity.this, selectGardenView);
         locationDialog = CreatDialog.createLocationSelectDialog(MainActivity.this, selectLocationView);
-
+        locationDialog.setCanceledOnTouchOutside(false);
         searchKey = selectGardenView.findViewById(R.id.search_garden_key);
         addGardenBtn = selectGardenView.findViewById(R.id.add_garden);
         manage_fake_garden = selectGardenView.findViewById(R.id.manage_fake_garden);
