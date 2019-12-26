@@ -73,7 +73,8 @@ def garden(user_id, *args, **kwargs):
     try:
         db.session.add(garden)
         db.session.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
+        print(str(e))
         db.session.rollback()
         return generate_result(2, '修改小区失败')
     return generate_result(0, '修改小区成功', {'gardenId': garden.id})
@@ -435,7 +436,7 @@ def building_base_info(user_id: int, *args, **kwargs):
     except SQLAlchemyError:
         db.session.rollback()
         return generate_result(2)
-    return generate_result(0, '提交楼栋信息成功')
+    return generate_result(0, '提交楼栋信息成功', {"buildingId": info.id})
 
 
 @data_bp.route('/garden_import_info', methods=['POST'])
