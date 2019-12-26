@@ -138,6 +138,13 @@ public class BuweiActivity extends AppCompatActivity {
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                // TODO
+                /**
+                 * 方位旁边显示输入内容
+                 * 输入框 显示之前的内容
+                 * 不同楼幢之间的部位说明要独立
+                 * 要能修改
+                 */
                 if(checkBox.isChecked()){
                     String[] t = edit.getText().toString().split(" ");
                     for (int i = 0; i < t.length; i++) {
@@ -152,7 +159,8 @@ public class BuweiActivity extends AppCompatActivity {
                         retString += text + "-" + t[i];
                     }
                 }
-                textView.setText(retString);
+//                retString = retString.substring(0, retString.length() - 1);
+                textView.setText(retString.substring(0, retString.length() - 1));
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {

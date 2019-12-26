@@ -43,10 +43,10 @@ public class PostListener implements View.OnClickListener {
             String key = bean.getKey();
             if (isRequire) {
                 String content = map.get(title);
-                if (content == null) {
-                    Toast.makeText(context, "请输入必填项:"+title, Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                if (content == null) {
+//                    Toast.makeText(context, "请输入必填项:"+title, Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
                 if (require_type.equals("text"))
                     submit_map.put(key, content);
                 else if (require_type.equals("radio"))
@@ -101,10 +101,10 @@ public class PostListener implements View.OnClickListener {
         submit_map.put("id", GardenId);
 
         if (mode.equals("base")) {
-            String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "garden_base_info";
+            String s = "http://gjb.hnxrd.com.cn:9998/api/v1/data/" + "garden_base_info";
             new RequestTools(s, submit_map, listener).run();
         } else if (mode.equals("extra")) {
-            String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "garden_import_info";
+            String s = "http://gjb.hnxrd.com.cn:9998/api/v1/data/" + "garden_import_info";
             new RequestTools(s, submit_map, listener).run();
         }
     }
