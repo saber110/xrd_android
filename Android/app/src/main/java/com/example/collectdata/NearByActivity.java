@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 public class NearByActivity extends AppCompatActivity implements TabHost.TabContentFactory, BaiduMap.OnMapLongClickListener,View.OnClickListener {
     private BaiduMap baiduMap;
@@ -260,10 +261,13 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         }
     }
     //创建CheckBox
-    private CheckBox newCheckBox(String name,int i){
+    private CheckBox newCheckBox(String name,int i,int index){
         final CheckBox checkBox = new CheckBox(getApplicationContext());
         checkBox.setText(name);
-        if(i<3) checkBox.setChecked(true);
+        if(i<3) {
+            checkBox.setChecked(true);
+            sets[index].add(name);
+        }
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -303,9 +307,9 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
                             LatLng gp2 = new LatLng(poiInfo.getLocation().latitude,poiInfo.getLocation().longitude);
                             int distence = (int) DistanceUtil. getDistance(gp1, gp2);
                             String name = poiInfo.name;
-                            sets[index].add(name);
+                            //sets[index].add(name);
                             if(index<=18) {
-                                linearLayout[index].addView(newCheckBox(name + "（距离：" + distence + "m）",i));
+                                linearLayout[index].addView(newCheckBox(name + "（距离：" + distence + "m）",i,index));
                                 //公交站距离
                                 if(index==3){
                                     //计算最近的公交站距离
@@ -332,9 +336,21 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
                             sets[4].remove("");
                             int i = 0;
                             for(String bus:sets[4]){
-                                linearLayout[4].addView(newCheckBox(bus,i));
+                                linearLayout[4].addView(newCheckBox(bus,i,4));
                                 i++;
                             }
+                            i=0;
+                            HashSet<String> rmbus = new HashSet<>();
+                            rmbus.clear();
+                            for(String bus:sets[4]){
+                                if(i>=3) rmbus.add(bus);
+                                i++;
+                            }
+                            for(String bus:rmbus) sets[4].remove(bus);
+//                            sets[4].clear();
+//                            for(String bus:sets[4]){
+//                                linearLayout[4].addView(newCheckBox(bus,i,4));
+//                            }
                         }
                     }
                 }

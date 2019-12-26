@@ -127,7 +127,7 @@ public class PostListener implements View.OnClickListener {
         submit_map.put("gardenId",gardenId);
 
         if (mode.equals("base")) {
-            submit_map.put("locationDescription", BuweiActivity.retString);
+            submit_map.put("locationDescription", BuweiActivity.buweiMap.get(id));
             System.out.println(submit_map);
             String s = "http://gjb.hnxrd.com.cn:9998/api/v1/data/" + "building_base_info";
             new RequestTools(s,submit_map,listener).run();
