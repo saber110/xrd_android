@@ -101,10 +101,10 @@ public class PostListener implements View.OnClickListener {
         submit_map.put("id", GardenId);
 
         if (mode.equals("base")) {
-            String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "garden_base_info";
+            String s = "http://gjb.hnxrd.com.cn:9998/api/v1/data/" + "garden_base_info";
             new RequestTools(s, submit_map, listener).run();
         } else if (mode.equals("extra")) {
-            String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "garden_import_info";
+            String s = "http://gjb.hnxrd.com.cn:9998/api/v1/data/" + "garden_import_info";
             new RequestTools(s, submit_map, listener).run();
         }
     }
