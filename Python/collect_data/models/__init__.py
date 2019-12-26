@@ -37,5 +37,6 @@ def init_app(app: Flask):
     from .province import Province
     from .street import Street
     from .user import User
+    from .radius import Radius
 
     Migrate(app, db)

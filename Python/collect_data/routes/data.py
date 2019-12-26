@@ -27,6 +27,7 @@ from ..models.garden_picture import GardenPicture
 from ..models.garden_picture_kind import GardenPictureKind
 from ..models.map_data import MapData
 from ..models.other_picture import OtherPicture
+from ..models.radius import Radius
 from ..utils import bd09_to_gcj02, compress_image, get_suffix
 from ..wraps import token_check
 
@@ -508,3 +509,29 @@ def building_import_info(user_id: int, *args, **kwargs):
         db.session.rollback()
         return generate_result(2)
     return generate_result(0, '上传楼幢导入数据成功')
+
+
+@data_bp.route('/radius', methods=['POST'])
+# @token_check
+# @admin_required
+def radius(*args, **kwargs):
+    data = request.get_json()
+    schema = {
+        'key': {'type': 'string'},
+        'radius': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    radius = Radius.query.get(data['key'])
+    if radius is None:
+        return generate_result(2, '该字段无法设置半径')
+    radius.radius = data['radius']
+    try:
+        db.session.add(radius)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return generate_result(2, '修改失败')
+    return generate_result(0, '修改成功')
