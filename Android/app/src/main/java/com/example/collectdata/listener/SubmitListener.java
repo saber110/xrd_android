@@ -42,7 +42,7 @@ public class SubmitListener implements View.OnClickListener {
 
     private Activity activity;
     private Map<String,ViewItemBean> viewItemBeanMap;
-    private static final String ROOT_URL = "http://gjb.hnxrd.com.cn:9998/api/v1/data/";
+    private static final String ROOT_URL = "http://kms.yinaoxiong.cn:8888/api/v1/data/";
     public final List<CommonItemBean> list = MessageListBean.list;
     public SubmitListener(Activity activity,Map<String,ViewItemBean> viewItemBeanMap) {
         this.activity = activity;

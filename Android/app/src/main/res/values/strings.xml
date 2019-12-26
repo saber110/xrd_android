@@ -16,8 +16,8 @@
 
     <!--    API-->
     <!--    <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/%1$s/%2$s</string>-->
-<!--    <string name="preFix">http://kms.yinaoxiong.cn:8888/api/v1/%1$s/%2$s</string>-->
-    <string name="preFix">http://gjb.hnxrd.com.cn:9998/api/v1/%1$s/%2$s</string>
+    <string name="preFix">http://kms.yinaoxiong.cn:8888/api/v1/%1$s/%2$s</string>
+<!--    <string name="preFix">http://gjb.hnxrd.com.cn:9998/api/v1/%1$s/%2$s</string>-->
 
     <string name="userTab">user</string>
     <string name="loginApi">login</string>
