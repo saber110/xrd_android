@@ -2537,7 +2537,7 @@ def export_zip(*args, **kwargs):
                     number = f"{index + 1:03d}"
                     if os.path.exists(picture_path):
                         zf.write(picture_path,
-                                 f'3_{garden.name} {picture.buildingName}_{picture.pictureKind}_{number}.jpg')
+                                 f'3_{garden.name}{picture.buildingName}_{picture.pictureKind}_{number}.jpg')
 
     with zipfile.ZipFile(zip_path, 'w') as zf:
         dir_path, compress_filename = os.path.split(compress_zip_path)
@@ -2558,7 +2558,7 @@ def export_zip(*args, **kwargs):
                     number = f"{index + 1:03d}"
                     if os.path.exists(picture_path):
                         zf.write(picture_path, os.path.join('原图',
-                                                            f'3_{garden.name} {picture.buildingName}_{picture.pictureKind}_{number}' + get_suffix(
+                                                            f'3_{garden.name}{picture.buildingName}_{picture.pictureKind}_{number}' + get_suffix(
                                                                 picture_path)))
 
         for index, picture in enumerate(other_pictures):
@@ -2615,7 +2615,8 @@ def virtual_garden(user_id, *args, **kwargs):
 
 
 @get_data_bp.route('/radius', methods=['POST'])
-# @token_check
+@token_check
+@admin_required
 def radius(*args, **kwargs):
     result = [i.to_dict for i in Radius.query.all()]
     return generate_result(0, '获取半径数据成功', data={'radius': result})
