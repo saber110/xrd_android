@@ -30,21 +30,36 @@ public class BuweiActivity extends AppCompatActivity {
     private String retString;
     private Button save;
     private int id;
+    private HashMap<String,String> myBuwei = new HashMap<>();
     public static HashMap<Integer,String> buweiMap = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buwei);
         id = getIntent().getIntExtra("id",0);
-        System.out.println("id="+id);
-        retString = buweiMap.get(id);
+        if(buweiMap.get(id)==""||buweiMap.get(id)==null)
+            retString=getIntent().getStringExtra("buwei");
+        else {
+            retString = buweiMap.get(id);
+        }
         if(retString==null) retString="";
+        if(retString.length()!=0) {
+            for (String s : retString.split(";")) {
+                String key = s.substring(0, 2);
+                System.out.println(key);
+                if (myBuwei.get(key) == null) myBuwei.put(key, s);
+                else myBuwei.put(key, myBuwei.get(key) + ";" + s);
+            }
+        }
+        System.out.println("retString=="+retString);
+        buweiMap.put(id,"");
         Linayout=findViewById(R.id.table);
         textView = (TextView)findViewById(R.id.textView3);
+        textView.setText(retString);
         checkBox = (CheckBox)findViewById(R.id.check);
         save = (Button)findViewById(R.id.save_buwei);
         checkBox.setChecked(true);
-        textView.setText(retString);
+        //textView.setText(retString);
 //        Linayout.setGravity(Gravity.CENTER_HORIZONTAL);
         initPositions();
         for (int i=0;i<7;i++){
@@ -100,9 +115,10 @@ public class BuweiActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent();
-                i.putExtra("locationDescription",retString.substring(0, retString.length() - 1));
+                i.putExtra("buwei",getRetString());
                 setResult(RESULT_OK, i);
-                buweiMap.put(id,retString);
+                System.out.println(getRetString());
+                buweiMap.put(id,getRetString());
                 Toast.makeText(BuweiActivity.this,"保存成功", Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -132,7 +148,7 @@ public class BuweiActivity extends AppCompatActivity {
     private void createInputDialog(final String text){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(text);    //设置对话框标题
-        builder.setMessage(retString);
+        builder.setMessage(myBuwei.get(text));
         final EditText edit = new EditText(this);
         builder.setView(edit);
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
@@ -142,17 +158,23 @@ public class BuweiActivity extends AppCompatActivity {
                 myBuwei.put(text,"");
                 if(checkBox.isChecked()){
                     String[] t = edit.getText().toString().split(" ");
+                    String s = "";
                     for (int i = 0; i < t.length; i++) {
-                        if(retString!="") retString+=";";
-                        retString += text + "-0-" + t[i] ;
+//                        if(retString!="") retString+=";";
+//                        retString += text + "-0-" + t[i] ;
+                        if(s!="") s+=";";
+                        s += text + "-0-" + t[i];
                     }
+                    myBuwei.put(text,s);
                 }
                 else {
                     String[] t = edit.getText().toString().split(";");
+                    String s="";
                     for (int i = 0; i < t.length; i++) {
-                        if(retString!="") retString+=";";
-                        retString += text + "-" + t[i];
+                        if(s!="") s+=";";
+                        s += text + "-" + t[i];
                     }
+                    myBuwei.put(text,s);
                 }
                 textView.setText(getRetString());
             }
@@ -167,5 +189,17 @@ public class BuweiActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();  //创建对话框
         dialog.setCanceledOnTouchOutside(true); //设置弹出框失去焦点是否隐藏,即点击屏蔽其它地方是否隐藏
         dialog.show();
+    }
+
+    //获取部位说明的字符串
+    private String getRetString(){
+        boolean flag=true;
+        String ret = "";
+        for(String s:myBuwei.keySet()){
+            if(flag) flag=false;
+            else ret+=";";
+            ret+=myBuwei.get(s);
+        }
+        return ret;
     }
 }
