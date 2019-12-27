@@ -192,8 +192,6 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         locButton.setOnClickListener(this);
         baiduMap = mMapView.getMap();
         baiduMap.setOnMarkerClickListener(this);
-        // 关闭地图自带信息
-        baiduMap.showMapPoi(false);
         /**
          * 设置为普通3d地图
          */

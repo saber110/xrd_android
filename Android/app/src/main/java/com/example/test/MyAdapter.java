@@ -2,7 +2,6 @@ package com.example.test;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -38,7 +37,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     //保存当前viewHolder数据的item
     private CommonItemBean commonItemBean;
 
-    MyAdapter(Context context, List<CommonItemBean> d) {
+    public MyAdapter(Context context, List<CommonItemBean> d) {
         this.context = context;
         data = d;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -57,12 +56,12 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         //创建viewHolder
         if (viewType == 0) {
             View view = layoutInflater.inflate(R.layout.message_item, parent, false);
-            return new TextViewHolder(view);
+            return new TextViewHoldert(view);
 //        }else if (viewType == 1){
-        } else if (viewType == 1) {
+        } else if (viewType == 1){
             View view = LayoutInflater.from(context).inflate(R.layout.message_selector_item, parent, false);
             return new ButtonViewHolder(view);
-        } else {
+        }else {
             View view = LayoutInflater.from(context).inflate(R.layout.message_selector_item, parent, false);
             return new MulButtonViewHolder(view);
         }
@@ -70,28 +69,22 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        boolean isRequire = data.get(position).isRequire();
-
-        if (holder instanceof TextViewHolder) {
-            TextViewHolder textholder = (TextViewHolder) holder;
-
-            setViewBorder(isRequire,textholder.itemView);
-            textholder.textInputLayout.setHint(data.get(position).getTitle());
-            TextWatcher watcher = (TextWatcher) textholder.textInputEditText.getTag(textholder.textInputEditText.getId());
+        if (holder instanceof TextViewHoldert) {
+            ((TextViewHoldert) holder).textInputLayout.setHint(data.get(position).getTitle());
+            TextWatcher watcher = (TextWatcher) ((TextViewHoldert) holder).textInputEditText.getTag(((TextViewHoldert) holder).textInputEditText.getId());
             if (watcher != null) {
-                textholder.textInputEditText.removeTextChangedListener(watcher);
+                ((TextViewHoldert) holder).textInputEditText.removeTextChangedListener(watcher);
             }
             if (resultMap.keySet().contains(data.get(position).getTitle())) {
-                textholder.textInputEditText.setText(resultMap.get(data.get(position).getTitle()));
+                ((TextViewHoldert) holder).textInputEditText.setText(resultMap.get(data.get(position).getTitle()));
             }
-            textholder.textInputEditText.addTextChangedListener(watcher);
-            textholder.textInputEditText.setTag(textholder.textInputEditText.getId(), watcher);
+            ((TextViewHoldert) holder).textInputEditText.addTextChangedListener(watcher);
+            ((TextViewHoldert) holder).textInputEditText.setTag(((TextViewHoldert) holder).textInputEditText.getId(), watcher);
             holder.setIsRecyclable(false);
-        } else if (holder instanceof ButtonViewHolder) {
+        } else if (holder instanceof ButtonViewHolder){
             ButtonViewHolder buttonHolder = ((ButtonViewHolder) holder);
             SelectorItemBean currentItemBean = (SelectorItemBean) data.get(position);
 
-            setViewBorder(isRequire,buttonHolder.itemView);
             buttonHolder.titleView2.setText(currentItemBean.getTitle());
             // 判断单选按钮是否选中，防止发生错乱
             buttonHolder.buttonToggleGroup.removeOnButtonCheckedListener(listener);
@@ -99,7 +92,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 for (int i = 0; i < buttonHolder.buttonToggleGroup.getChildCount(); i++) {
                     MaterialButton button = (MaterialButton) ((ButtonViewHolder) holder).buttonToggleGroup.getChildAt(i);
                     if (button.getText().equals(resultMap.get(currentItemBean.getTitle()))) {
-                        button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
+                        button.setBackgroundColor(Color.RED);
                     } else {
                         button.setBackgroundColor(Color.WHITE);
                     }
@@ -110,11 +103,10 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             buttonHolder.buttonToggleGroup.addOnButtonCheckedListener(listener);
 
             holder.setIsRecyclable(false);
-        } else if (holder instanceof MulButtonViewHolder) {
+        }else if (holder instanceof MulButtonViewHolder) {
             MulButtonViewHolder mulbuttonHolder = ((MulButtonViewHolder) holder);
             SelectorItemBean currentItemBean = (SelectorItemBean) data.get(position);
 
-            setViewBorder(isRequire,mulbuttonHolder.itemView);
             mulbuttonHolder.titleView2.setText(currentItemBean.getTitle());
             mulbuttonHolder.buttonToggleGroup.removeOnButtonCheckedListener(mullistener);
 
@@ -127,7 +119,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 String c[] = content.split("&");
                 for (int j = 0; j < c.length; j++) {
                     if (c[j].equals(s)) {
-                        button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
+                        button.setBackgroundColor(Color.RED);
                         break;
                     }
                     button.setBackgroundColor(Color.WHITE);
@@ -143,13 +135,12 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return data.size();
     }
 
-    class TextViewHolder extends RecyclerView.ViewHolder {
+    class TextViewHoldert extends RecyclerView.ViewHolder {
         TextInputLayout textInputLayout;
         TextInputEditText textInputEditText;
 
-        public TextViewHolder(@NonNull View itemView) {
+        public TextViewHoldert(@NonNull View itemView) {
             super(itemView);
-            itemView.setPadding(5, 0, 5, 0);
             textInputLayout = itemView.findViewById(R.id.message_item_title);
             textInputEditText = itemView.findViewById(R.id.message_content);
             textInputEditText.setTag(commonItemBean.getTitle());
@@ -180,13 +171,20 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public void setData(List<CommonItemBean> data) {
+        this.data = data;
+    }
+
+    public Map<String, String> getResultMap() {
+        return resultMap;
+    }
+
     class ButtonViewHolder extends RecyclerView.ViewHolder {
         TextView titleView2;
         MaterialButtonToggleGroup buttonToggleGroup;
 
         public ButtonViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemView.setPadding(5, 0, 5, 0);
             titleView2 = itemView.findViewById(R.id.message_selector_item_title);
             buttonToggleGroup = itemView.findViewById(R.id.message_selector_item_togglebutton);
             buttonToggleGroup.setSingleSelection(true);
@@ -212,7 +210,6 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public MulButtonViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemView.setPadding(5, 0, 5, 0);
             titleView2 = itemView.findViewById(R.id.message_selector_item_title);
             buttonToggleGroup = itemView.findViewById(R.id.message_selector_item_togglebutton);
             buttonToggleGroup.setSingleSelection(true);
@@ -252,7 +249,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 if (button.getId() == checkedId) {
                     Log.i("Button", "button Id = " + button.getId() + "的按钮" + isChecked);
                     Log.i("Button", "button Id = " + button.getId() + "的按钮" + "被点击，颜色变为红色");
-                    button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
+                    button.setBackgroundColor(Color.RED);
                     resultMap.put((String) group.getTag(), button.getText().toString());
                     Toast.makeText(context, button.getText().toString(), Toast.LENGTH_SHORT).show();
                 } else {
@@ -263,7 +260,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     };
 
-    private MaterialButtonToggleGroup.OnButtonCheckedListener mullistener = new MaterialButtonToggleGroup.OnButtonCheckedListener() {
+     private MaterialButtonToggleGroup.OnButtonCheckedListener mullistener = new MaterialButtonToggleGroup.OnButtonCheckedListener() {
         @Override
         public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
             if (!isChecked)
@@ -277,7 +274,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     String content = resultMap.get((String) group.getTag());
                     // 多选按钮一个都没被选中
                     if (content == null || content.equals("")) {
-                        button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
+                        button.setBackgroundColor(Color.RED);
                         resultMap.put((String) group.getTag(), s);
                         return;
                     }
@@ -296,7 +293,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     // 点击的按钮未被选中
                     if (!iscontain) {
                         content += s;
-                        button.setBackgroundColor(context.getResources().getColor(R.color.button_selected));
+                        button.setBackgroundColor(Color.RED);
                     }
                     resultMap.put((String) group.getTag(), content);
 //                    Toast.makeText(context,content,Toast.LENGTH_SHORT).show();
@@ -305,24 +302,5 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         }
     };
-
-    public void setData(List<CommonItemBean> data) {
-        this.data = data;
-    }
-
-    Map<String, String> getResultMap() {
-        return resultMap;
-    }
-
-    private void setViewBorder(boolean isRequire, View view) {
-        GradientDrawable drawable = (GradientDrawable) view.getBackground();
-        if (isRequire) {
-            drawable.setStroke(5, Color.RED);
-            drawable.setCornerRadius(10);
-        } else {
-            drawable.setStroke(3, context.getResources().getColor(R.color.border_color));
-            drawable.setCornerRadius(10);
-        }
-    }
 
 }

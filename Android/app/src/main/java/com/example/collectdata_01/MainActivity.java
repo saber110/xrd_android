@@ -135,7 +135,7 @@ public class MainActivity extends TakePhotoActivity{
          */
         gardenDialog = CreatDialog.createChangeMarkDialog(MainActivity.this, selectGardenView);
         locationDialog = CreatDialog.createLocationSelectDialog(MainActivity.this, selectLocationView);
-        locationDialog.setCanceledOnTouchOutside(false);
+
         searchKey = selectGardenView.findViewById(R.id.search_garden_key);
         addGardenBtn = selectGardenView.findViewById(R.id.add_garden);
         manage_fake_garden = selectGardenView.findViewById(R.id.manage_fake_garden);
@@ -494,7 +494,7 @@ public class MainActivity extends TakePhotoActivity{
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("是否对您当前的图片进行操作");
         final String[] items = {"是", "否"};// 创建一个存放选项的数组
-        final boolean[] checkedItems = {false, true};// 存放选中状态，true为选中
+        final boolean[] checkedItems = {true, false};// 存放选中状态，true为选中
         // ，false为未选中，和setSingleChoiceItems中第二个参数对应
         // 为对话框添加单选列表项
         // 第一个参数存放选项的数组，第二个参数存放默认被选中的项，第三个参数点击事件

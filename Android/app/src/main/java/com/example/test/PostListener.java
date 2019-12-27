@@ -43,10 +43,10 @@ public class PostListener implements View.OnClickListener {
             String key = bean.getKey();
             if (isRequire) {
                 String content = map.get(title);
-//                if (content == null) {
-//                    Toast.makeText(context, "请输入必填项:"+title, Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
+                if (content == null) {
+                    Toast.makeText(context, "请输入必填项:"+title, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (require_type.equals("text"))
                     submit_map.put(key, content);
                 else if (require_type.equals("radio"))
