@@ -323,14 +323,14 @@ def import_data(*args, **kwargs):
             if add_community(*row) is None:
                 community_fail_row.append(index + 1)
         fail_dict['省份_城市_行政区_街道_社区'] = community_fail_row
-    # if '省份_城市_行政区_街道_社区_小区' in sheet_name_list:
-    #     sheet = table['省份_城市_行政区_街道_社区_小区']
-    #     garden_fail_row = []
-    #     for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=6, values_only=True)):
-    #         if is_excel_end(row):
-    #             break
-    #         if add_garden(*row) is None:
-    #             garden_fail_row.append(index + 1)
-    #     fail_dict['省份_城市_行政区_街道_社区_小区'] = garden_fail_row
+    if '省份_城市_行政区_街道_社区_小区' in sheet_name_list:
+        sheet = table['省份_城市_行政区_街道_社区_小区']
+        garden_fail_row = []
+        for index, row in enumerate(sheet.iter_rows(min_row=2, max_col=6, values_only=True)):
+            if is_excel_end(row):
+                break
+            if add_garden(*row) is None:
+                garden_fail_row.append(index + 1)
+        fail_dict['省份_城市_行政区_街道_社区_小区'] = garden_fail_row
 
     return generate_result(0, '导入数据成功', {'fail_rows': fail_dict})

@@ -28,7 +28,6 @@ from ..models.garden_import_info import GardenImportInfo
 from ..models.garden_picture import GardenPicture
 from ..models.map_data import MapData
 from ..models.other_picture import OtherPicture
-from ..models.radius import Radius
 from ..models.street import Street
 from ..models.user import User
 from ..utils import gcj02_to_bd09, get_suffix
@@ -743,14 +742,6 @@ def garden_base_info(*args, **kwargs):
 
     if garden_info is not None:
         result = set_form_value(result, garden_info.to_dict)
-
-    radius = Radius.query.all()
-    radius_dict = {}
-    for item in radius:
-        radius_dict[item.key] = item.radius
-    for item in result:
-        if item['type'] == 'map' and radius_dict[item['key']] is not None:
-            item['radius'] = radius_dict[item['key']]
 
     return generate_result(0, '获取数据成功', {'gardenInfoList': result})
 
@@ -2588,34 +2579,3 @@ def garden_building(*args, **kwargs):
     building_ids = db.session.query(BuildingInfo.id).filter_by(gardenId=data['gardenId']).all()
     building_ids = [i[0] for i in building_ids]
     return generate_result(0, '获取楼栋id成功', {'buildingIds': building_ids})
-
-
-@get_data_bp.route('/virtual_garden', methods=['POST'])
-@token_check
-def virtual_garden(user_id, *args, **kwargs):
-    """
-    查询用户上传的虚拟小区
-    """
-    gardens = db.session.query(Garden).join(Community).filter(Garden.userId == user_id).filter(
-        Community.name == '不清楚').all()
-    result = []
-    for garden in gardens:
-        result.append({
-            "cityName": '不清楚',
-            "communityName": '不清楚',
-            "districtName": '不清楚',
-            "gardenName": garden.name,
-            "provinceName": '不清楚',
-            "streetName": '不清楚',
-            "gardenId": garden.id,
-            "userId": garden.userId
-        })
-
-    return generate_result(0, data={'gardenList': result})
-
-
-@get_data_bp.route('/radius', methods=['POST'])
-# @token_check
-def radius(*args, **kwargs):
-    result = [i.to_dict for i in Radius.query.all()]
-    return generate_result(0, '获取半径数据成功', data={'radius': result})

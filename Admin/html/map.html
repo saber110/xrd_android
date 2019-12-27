@@ -151,39 +151,6 @@
             BMAP_NORMAL_MAP,
             BMAP_HYBRID_MAP
         ]}));
-    mapbd.setMapStyle({
-        styleJson: [{
-            "featureType": "road",
-            "elementType": "all",
-            "stylers": {
-                "color": "#ffffff",
-                "visibility": "off"
-            }
-        },
-        {
-            "featureType": "building",
-            "elementType": "all",
-            "stylers": {
-                "visibility": "on"
-            }
-        },
-        {
-            "featureType": "poilabel",
-            "elementType": "all",
-            "stylers": {
-                "visibility": "off"
-            }
-        },
-        {
-            "featureType": "manmade",
-            "elementType": "all",
-            "stylers": {
-                "visibility": "off"
-            }
-        },
-        ]
-    });
-
     mapbd.addEventListener("click",function(e){
       console.log(e.point.lng + "," + e.point.lat);
     });
