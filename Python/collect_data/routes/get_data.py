@@ -28,6 +28,7 @@ from ..models.garden_import_info import GardenImportInfo
 from ..models.garden_picture import GardenPicture
 from ..models.map_data import MapData
 from ..models.other_picture import OtherPicture
+from ..models.radius import Radius
 from ..models.street import Street
 from ..models.user import User
 from ..utils import gcj02_to_bd09, get_suffix
@@ -742,6 +743,14 @@ def garden_base_info(*args, **kwargs):
 
     if garden_info is not None:
         result = set_form_value(result, garden_info.to_dict)
+
+    radius = Radius.query.all()
+    radius_dict = {}
+    for item in radius:
+        radius_dict[item.key] = item.radius
+    for item in result:
+        if item['type'] == 'map' and radius_dict[item['key']] is not None:
+            item['radius'] = radius_dict[item['key']]
 
     return generate_result(0, '获取数据成功', {'gardenInfoList': result})
 
@@ -2603,3 +2612,10 @@ def virtual_garden(user_id, *args, **kwargs):
         })
 
     return generate_result(0, data={'gardenList': result})
+
+
+@get_data_bp.route('/radius', methods=['POST'])
+# @token_check
+def radius(*args, **kwargs):
+    result = [i.to_dict for i in Radius.query.all()]
+    return generate_result(0, '获取半径数据成功', data={'radius': result})
