@@ -1,6 +1,5 @@
 package com.example.BuildingMessage;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Handler;
@@ -38,7 +37,6 @@ import java.util.Objects;
 
 import okhttp3.Response;
 
-import static com.example.collectdata.BuweiActivity.buweiMap;
 import static com.google.android.material.tabs.TabLayout.MODE_SCROLLABLE;
 
 public class BuildingActivity extends BaseActivity {
@@ -116,11 +114,8 @@ public class BuildingActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(BuildingActivity.this, BuweiActivity.class);
-                    int id = tab_getTag(tabLayout.getTabAt(tabLayout.getSelectedTabPosition()));
-                    String buwei = adapter2.getResultMap().get("部位说明");
-                    i.putExtra("id",id);
-                    i.putExtra("buwei",buwei);
-                    startActivityForResult(i,REQUEST_CODE);
+                    i.putExtra("id",tab_getTag(tabLayout.getTabAt(tabLayout.getSelectedTabPosition())));
+                    startActivity(i);
                 }
             });
         } else
@@ -308,9 +303,6 @@ public class BuildingActivity extends BaseActivity {
                         adapter2.setResultMap(manageResultMap(Objects.requireNonNull(newtabMap.get(i))));
                     submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
                 }
-                if(buweiMap.containsKey(i)) {
-                    adapter2.getResultMap().put("部位说明", buweiMap.get(i));
-                }
                 adapter2.notifyDataSetChanged();
             }
         }
@@ -383,14 +375,6 @@ public class BuildingActivity extends BaseActivity {
         }
         return resultMap;
     }
-    @Override
-    protected void onActivityResult(int requestcode,int resultcode,Intent data) {
-        super.onActivityResult(requestcode, resultcode, data);
-        if (resultcode != Activity.RESULT_OK) return;
-        if (requestcode == REQUEST_CODE) {
-            int id = tab_getTag(tabLayout.getTabAt(tabLayout.getSelectedTabPosition()));
-            adapter2.getResultMap().put("部位说明",data.getStringExtra("buwei"));
-            System.out.println(data.getStringExtra("buwei"));
-        }
-    }
+
+
 }
