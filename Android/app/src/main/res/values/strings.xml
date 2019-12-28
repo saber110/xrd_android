@@ -26,6 +26,19 @@
     <string name="updateUserApi">update</string>
     <string name="updatePasswordApi">reset_password</string>
 
+<!--    <string name="getDataTab">get_data</string>-->
+<!--    <string name="getMapDataAPI">map</string>-->
+<!--    <string name="getGardenBaseInfoAPI">garden_base_info</string>-->
+<!--    <string name="cbUpdateBuildingBaseInfo">cb_update_building_base_info</string>-->
+<!--    <string name="cbUpdateGardenBaseInfo">cb_update_garden_base_info</string>-->
+<!--    <string name="cbUpdateBuildingImportInfo">cb_update_building_import_info</string>-->
+<!--    <string name="cbUpdateGardenImportInfo">cb_update_garden_import_info</string>-->
+<!--    <string name="getBuildBaseInfoAPI">building_base_info</string>-->
+<!--    <string name="importGardenBaseInfoApi">garden_import_info</string>-->
+<!--    <string name="importBuildingBaseInfoApi">building_import_info</string>-->
+<!--    <string name="getGardenImportInfoApi">garden_import_info</string>-->
+<!--    <string name="getBuildingImportInfoApi">building_import_info</string>-->
+
     <string name="getDataTab">get_data</string>
     <string name="getMapDataAPI">map</string>
     <string name="getGardenBaseInfoAPI">garden_base_info</string>
@@ -33,16 +46,13 @@
     <string name="cbUpdateGardenBaseInfo">cb_update_garden_base_info</string>
     <string name="cbUpdateBuildingImportInfo">cb_update_building_import_info</string>
     <string name="cbUpdateGardenImportInfo">cb_update_garden_import_info</string>
-    <string name="getBuildBaseInfoAPI">building_base_info</string>
+    <string name="getBuildBaseInfoAPI">garden_building_base_info</string>
+    <string name="BuildBaseInfoAPI">building_base_info</string>
+    <string name="BuildImportInfoAPI">building_import_info</string>
     <string name="importGardenBaseInfoApi">garden_import_info</string>
     <string name="importBuildingBaseInfoApi">building_import_info</string>
     <string name="getGardenImportInfoApi">garden_import_info</string>
-    <string name="getBuildingImportInfoApi">building_import_info</string>
-
-    // new
-    <string name="BuildBaseInfoAPI">building_base_info</string>
-    <string name="BuildImportInfoAPI">building_import_info</string>
-    <string name="deleteBuildingInfoApi">building_info</string>
+    <string name="getBuildingImportInfoApi">garden_building_import_info</string>
 
     <string name="dataTab">data</string>
     <string name="createGardenApi">garden</string>
@@ -63,6 +73,7 @@
 
     <string name="delDataTab">del_data</string>
     <string name="deleteMapDataApi">map</string>
+    <string name="deleteBuildingInfoApi">building_info</string>
 
     <!--    Data页面的string    -->
     <string name="data_xiaoqugaikuang">小区概况表</string>
@@ -75,13 +86,14 @@
     <string name="building_submit">本楼提交</string>s
     <string name="message_hint">请在此输入信息...</string>
     <string name="message_title">信息详情</string>
+    <string name="new_building">新建楼栋</string>
+    <string name="del_building">删除楼栋</string>
 
     <!--    照片上传-->
     <string name="uploadPictures">确认上传</string>
     <string name="outlineOfUpload">照片上传</string>
 
-    <string name="new_building">新建楼栋</string>
-    <string name="del_building">删除楼栋</string>
+
 
     <string name="outlineOfManageFakeGarden">修改小区位置</string>
     <string name="saveFakeGarden">保存</string>

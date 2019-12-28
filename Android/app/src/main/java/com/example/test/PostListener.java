@@ -24,7 +24,7 @@ public class PostListener implements View.OnClickListener {
     private Context context;
     private Map<String, Object> map2;
 
-    public PostListener(Context context,int GardenId, Map<String, String> map, List<CommonItemBean> list, String mode, Map<String, Object> map2, RequestListener listener) {
+    public PostListener(Context context, int GardenId, Map<String, String> map, List<CommonItemBean> list, String mode, Map<String, Object> map2, RequestListener listener) {
         this.map = map;
         this.GardenId = GardenId;
         this.list = list;
@@ -38,21 +38,16 @@ public class PostListener implements View.OnClickListener {
     public void onClick(View v) {
         HashMap<String, Object> submit_map = new HashMap<>();
         for (CommonItemBean bean : list) {
-            boolean isRequire = bean.isRequire();
             String require_type = bean.getRequireType();
             String title = bean.getTitle();
             String key = bean.getKey();
-            if (isRequire) {
-                String content = map.get(title);
-                if (content == null) {
-                    Toast.makeText(context, "请输入必填项:"+title, Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            String content = map.get(title);
+            if (content == null || content.equals("")){
+                continue;
+//            if (content == null) {
+//                submit_map.put(key, "");
+            } else {
                 if (require_type.equals("text"))
-                    submit_map.put(key, content);
-                else if (require_type.equals("radio"))
-                    submit_map.put(key, content);
-                else if (require_type.equals("multiple"))
                     submit_map.put(key, content);
                 else if (require_type.equals("number")) {
                     int num = 0;
@@ -63,30 +58,34 @@ public class PostListener implements View.OnClickListener {
                         return;
                     }
                     submit_map.put(key, num);
+                } else {
+                    submit_map.put(key, content);
                 }
-            }else {
-                String content = map.get(title);
-                    if (content == null){
-                        submit_map.put(key, "");
-                    }else {
-                        if (require_type.equals("text"))
-                            submit_map.put(key, content);
-                        else if (require_type.equals("number")) {
-                            int num = 0;
-                            try {
-                                num = Integer.parseInt(content);
-                            }catch (Exception e){
-                                Toast.makeText(context,title + "项必须为数字",Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            submit_map.put(key, num);
-                        }
-                        else{
-                            submit_map.put(key, content);
-                        }
-                    }
-                }
+            }
+
         }
+
+        /**
+         if (isRequire) {
+         String content = map.get(title);
+         if (require_type.equals("text"))
+         submit_map.put(key, content);
+         else if (require_type.equals("radio"))
+         submit_map.put(key, content);
+         else if (require_type.equals("multiple"))
+         submit_map.put(key, content);
+         else if (require_type.equals("number")) {
+         int num = 0;
+         try {
+         num = Integer.parseInt(content);
+         } catch (Exception e) {
+         Toast.makeText(context, title + "项必须为数字", Toast.LENGTH_SHORT).show();
+         return;
+         }
+         submit_map.put(key, num);
+         }
+         } else
+         */
 
 
         for (String s : NearByActivity.map.keySet()) {
@@ -102,10 +101,10 @@ public class PostListener implements View.OnClickListener {
         submit_map.put("id", GardenId);
 
         if (mode.equals("base")) {
-            String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "garden_base_info";
+            String s = "http://gjb.hnxrd.com.cn:9998/api/v1/data/" + "garden_base_info";
             new RequestTools(v1.updateGardenBaseInfoApi, submit_map, listener).run();
         } else if (mode.equals("extra")) {
-            String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "garden_import_info";
+            String s = "http://gjb.hnxrd.com.cn:9998/api/v1/data/" + "garden_import_info";
             new RequestTools(v1.updateGardenImportInfoApi, submit_map, listener).run();
         }
     }
