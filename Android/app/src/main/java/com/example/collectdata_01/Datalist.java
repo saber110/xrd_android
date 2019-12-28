@@ -97,6 +97,7 @@ public class Datalist extends AppCompatActivity {
         for (int i = 0; i < buildinglist.size(); i++) {
             if (result.keySet().contains(buildinglist.get(i).getImage()))
                 if (result.get(buildinglist.get(i).getImage()))
+                    // TODO 存储该建筑对应的小区
                     uploadImgUtil.uploadBuildImg(buildinglist.get(i).getBuildingName(), buildinglist.get(i).getCollectTime(), Integer.toString(MainActivity.getGardenId()), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
         }
         for (int i = 0; i < qitalist.size(); i++) {
