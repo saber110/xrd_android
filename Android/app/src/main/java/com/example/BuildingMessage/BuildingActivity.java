@@ -84,7 +84,7 @@ public class BuildingActivity extends BaseActivity {
             public void onSuccess(Response response) {
                 try {
                     JTools.jsonParasForMessageList(Objects.requireNonNull(response.body()).string(), tabMap, mode);
-                    newBuilding();
+                    newBuilding(tabMap);
                 } catch (Exception e) {
                     Log.i("json", "json解析错误");
                 }
@@ -304,8 +304,8 @@ public class BuildingActivity extends BaseActivity {
         }
     };
 
-    void newBuilding() {
-        if (tabMap == null || tabMap.size() == 0) {
+    void newBuilding(HashMap<Integer, List<CommonItemBean>> map) {
+        if (map == null || map.size() == 0) {
             // 新建楼栋
             HashMap<String, Object> mmap = new HashMap<>();
             mmap.put("token", login.token);
