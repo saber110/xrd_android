@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.example.collectdata.NearByActivity;
 import com.example.collectdata.bean.CommonItemBean;
+import com.example.interfaceNet.v1;
 import com.example.login.login;
 
 import java.util.HashMap;
@@ -102,10 +103,10 @@ public class PostListener implements View.OnClickListener {
 
         if (mode.equals("base")) {
             String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "garden_base_info";
-            new RequestTools(s, submit_map, listener).run();
+            new RequestTools(v1.updateGardenBaseInfoApi, submit_map, listener).run();
         } else if (mode.equals("extra")) {
             String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "garden_import_info";
-            new RequestTools(s, submit_map, listener).run();
+            new RequestTools(v1.updateGardenImportInfoApi, submit_map, listener).run();
         }
     }
 }

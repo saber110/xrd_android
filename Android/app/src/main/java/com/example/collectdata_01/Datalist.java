@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.collectdata_01.adapter.DatalistAdapter;
 import com.example.collectdata_01.util.UploadImgUtil;
 import com.example.database.ImageDb;
+import com.example.database.UsingNeighbourDb;
 import com.example.login.login;
 import com.google.android.material.button.MaterialButton;
 import com.litesuits.orm.db.assit.QueryBuilder;
@@ -114,6 +115,7 @@ public class Datalist extends AppCompatActivity {
                 .appendOrderDescBy(ImageDb.GARDENID_COL)
                 .appendOrderDescBy(ImageDb.PICTUREKIND_COL)
                 .appendOrderDescBy(ImageDb.BUILDINGNAME_COL));
+        String id="-1";
         for (int i = 0; i < queryList.size(); i++) {
             // 检查文件是否存在
             // 若已经被删除，或者不存在
@@ -138,6 +140,14 @@ public class Datalist extends AppCompatActivity {
             if (queryList.get(i).getpictureKind().equals(getResources().getString(R.string.qiTa))
                 || queryList.get(i).getpictureKind().equals(getResources().getString(R.string.tuYa))) {
                 qitalist.add(queryList.get(i));
+            }
+            String nowId = queryList.get(i).getGardenId();
+            if(!nowId.equals(id)){
+                id=nowId;
+//                ArrayList<ImageDb> queryGardenName = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
+//                        .whereEquals(ImageDb.GARDENID_COL, id));
+//                listView.add(queryGardenName.get(0).getGardenName());
+                listView.add(id);
             }
             listView.add(queryList.get(i).getImage());
         }

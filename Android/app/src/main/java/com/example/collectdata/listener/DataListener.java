@@ -55,7 +55,7 @@ public class DataListener implements View.OnClickListener {
                 Intent BuildingDiaoChaIntent = new Intent(context, BuildingActivity.class);
                 BuildingDiaoChaIntent.putExtra("gardenId",gardenId);
                 BuildingDiaoChaIntent.putExtra("mode","base");
-                BuildingDiaoChaIntent.putExtra("url","http://kms.yinaoxiong.cn:8888/api/v1/get_data/garden_building_base_info");
+                BuildingDiaoChaIntent.putExtra("url",v1.getBuildingBaseInfoAPI);
                 context.startActivity(BuildingDiaoChaIntent);
                 break;
 //                interfaceForGetData.getBuildingBaseInfoAPI(buildingId);
@@ -64,7 +64,7 @@ public class DataListener implements View.OnClickListener {
                 BuildingXinxiIntent.putExtra("gardenId",gardenId);
                 BuildingXinxiIntent.putExtra("mode","extra");
 //                BuildingXinxiIntent.putExtra("url",getBuildingImportInfoApi);
-                BuildingXinxiIntent.putExtra("url","http://kms.yinaoxiong.cn:8888/api/v1/get_data/garden_building_import_info");
+                BuildingXinxiIntent.putExtra("url",v1.getBuildingImportInfoApi);
                 context.startActivity(BuildingXinxiIntent);
                 break;
 //                interfaceForGetData.getBuildingImportInfoAPI(buildingId);break;
@@ -74,7 +74,7 @@ public class DataListener implements View.OnClickListener {
                 Intent GardenImportIntent = new Intent(context, GardenMessage.class);
                 GardenImportIntent.putExtra("gardenId",gardenId);
                 GardenImportIntent.putExtra("mode","extra");
-                GardenImportIntent.putExtra("url","http://kms.yinaoxiong.cn:8888/api/v1/get_data/garden_import_info");
+                GardenImportIntent.putExtra("url",v1.getGardenImportInfoApi);
                 context.startActivity(GardenImportIntent);
                 break;
 
@@ -83,9 +83,10 @@ public class DataListener implements View.OnClickListener {
                 Intent GardenBaseIntent = new Intent(context, GardenMessage.class);
                 GardenBaseIntent.putExtra("gardenId",gardenId);
                 GardenBaseIntent.putExtra("mode","base");
-                GardenBaseIntent.putExtra("url","http://kms.yinaoxiong.cn:8888/api/v1/get_data/garden_base_info");
+                GardenBaseIntent.putExtra("url",v1.getGardenBaseInfoAPI);
                 context.startActivity(GardenBaseIntent);
                 break;
         }
+
     }
 }

@@ -39,6 +39,11 @@
     <string name="getGardenImportInfoApi">garden_import_info</string>
     <string name="getBuildingImportInfoApi">building_import_info</string>
 
+    // new
+    <string name="BuildBaseInfoAPI">building_base_info</string>
+    <string name="BuildImportInfoAPI">building_import_info</string>
+    <string name="deleteBuildingInfoApi">building_info</string>
+
     <string name="dataTab">data</string>
     <string name="createGardenApi">garden</string>
     <string name="addMapDataAPI">map</string>
@@ -74,6 +79,9 @@
     <!--    照片上传-->
     <string name="uploadPictures">确认上传</string>
     <string name="outlineOfUpload">照片上传</string>
+
+    <string name="new_building">新建楼栋</string>
+    <string name="del_building">删除楼栋</string>
 
     <string name="outlineOfManageFakeGarden">修改小区位置</string>
     <string name="saveFakeGarden">保存</string>

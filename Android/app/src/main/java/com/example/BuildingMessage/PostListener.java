@@ -9,6 +9,7 @@ import com.example.collectdata.BuweiActivity;
 import com.example.collectdata.bean.CommonItemBean;
 import com.example.collectdata.bean.ListItemBean;
 import com.example.collectdata.bean.SelectorItemBean;
+import com.example.interfaceNet.v1;
 import com.example.login.login;
 import com.example.test.RequestListener;
 import com.example.test.RequestTools;
@@ -130,12 +131,13 @@ public class PostListener implements View.OnClickListener {
             submit_map.put("locationDescription", BuweiActivity.buweiMap.get(id));
             System.out.println(submit_map);
             String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "building_base_info";
-            new RequestTools(s,submit_map,listener).run();
+            new RequestTools(v1.updateBuildingBaseInfoApi,submit_map,listener).run();
         }
         else if (mode.equals("extra")) {
             String s = "http://kms.yinaoxiong.cn:8888/api/v1/data/" + "building_import_info";
-            new RequestTools(s,submit_map,listener).run();
+            new RequestTools(v1.updateBuildingImportInfoApi,submit_map,listener).run();
         }
+
     }
 
 }
