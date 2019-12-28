@@ -1,6 +1,7 @@
 const split = '|';
 // const preFix = "http://rap2api.taobao.org/app/mock/234350/api/v1/";
-const preFix = "http://139.199.8.103:8888/api/v1/"
+const preFix = "http://139.199.8.103:8888/api/v1/";
+const picPreFix = "http://139.199.8.103:8888/";
 const SUCESSS = 0;
 
 const user = preFix + "user/";
