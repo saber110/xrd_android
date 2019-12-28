@@ -131,7 +131,7 @@ public class v1{
         v1.uploadGardenPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadGardenPictureApi));
         v1.uploadOtherPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadOtherPictureApi));
         v1.uploadBuildingPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadBuildingPictureApi));
-        v1.getFakeGardenListApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.getFakeGardenListApi));
+        v1.getFakeGardenListApi = String.format(pattern,res.getString(R.string.getDataTab), res.getString(R.string.getFakeGardenListApi));
 
         v1.deleteMapDataApi = String.format(pattern,res.getString(R.string.delDataTab), res.getString(R.string.deleteMapDataApi));
         v1.deleteBuildingInfoApi = String.format(pattern,res.getString(R.string.delDataTab),res.getString(R.string.deleteBuildingInfoApi));
