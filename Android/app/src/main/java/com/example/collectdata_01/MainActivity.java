@@ -445,12 +445,14 @@ public class MainActivity extends TakePhotoActivity{
                         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                setBuildingId(edit.getText().toString());
-                                Toast.makeText(context, "你确立的楼栋是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
-                                //把输入的地点赋给 fu.locationString
-                                loudong = edit.getText().toString();
-                                //调用拍照方法
-                                picture();
+                                if (! edit.getText().toString().isEmpty()) {
+                                    setBuildingId(edit.getText().toString());
+                                    Toast.makeText(context, "你确立的楼栋是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
+                                    //把输入的地点赋给 fu.locationString
+                                    loudong = edit.getText().toString();
+                                    //调用拍照方法
+                                    picture();
+                                }
                             }
                         });
                         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -496,7 +498,7 @@ public class MainActivity extends TakePhotoActivity{
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("是否对您当前的图片进行操作");
         final String[] items = {"是", "否"};// 创建一个存放选项的数组
-        final boolean[] checkedItems = {true, false};// 存放选中状态，true为选中
+        final boolean[] checkedItems = {false, true};// 存放选中状态，true为选中
         // ，false为未选中，和setSingleChoiceItems中第二个参数对应
         // 为对话框添加单选列表项
         // 第一个参数存放选项的数组，第二个参数存放默认被选中的项，第三个参数点击事件

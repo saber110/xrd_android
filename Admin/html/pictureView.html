@@ -177,9 +177,9 @@
       for(var p in pictures){
         var li = document.createElement("li");
         li.className = "col-xl-3 col-lg-2 col-md-4 col-sm-4 bspHasModal";
-        var url = '"' + pictures[p].compressedFilePath + '"';
-        $(li).html("<div class='bspImgWrapper' style='background:url(" + url + "');'></div><p class='bspText'>" + 
-          pictures[p].compressedFilePath + "</p>");
+        var url = '"' + picPreFix + pictures[p].compressedFilePath + '"';
+        $(li).html("<div class='bspImgWrapper' style='background:url(" + url + "');'></div><a href = " + url + " target='_blank' class='bspText'>" + 
+          pictures[p].compressedFilePath + "</a>");
           pictureLists.appendChild(li);
       }
       
@@ -187,9 +187,9 @@
       for(var p in pictures){
         var li = document.createElement("li");
         li.className = "col-xl-3 col-lg-2 col-md-4 col-sm-4 bspHasModal";
-        var url = '"' + pictures[p].compressedFilePath + '"';
-        $(li).html("<div class='bspImgWrapper' style='background:url(" + url + "');'></div><p class='bspText'>" + 
-          pictures[p].compressedFilePath + "</p>");
+        var url = '"' + picPreFix + pictures[p].compressedFilePath + '"';
+        $(li).html("<div class='bspImgWrapper' style='background:url(" + url + "');'></div><a href = " + url + " target='_blank' class='bspText'>" + 
+          pictures[p].compressedFilePath + "</a>");
           pictureLists.appendChild(li);
       }
     }

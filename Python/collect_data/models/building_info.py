@@ -66,7 +66,7 @@ class BuildingInfo(BaseModel):
     mainTowards = db.Column(db.Text, default='南', comment='主要朝向')
     planeLayout = db.Column(db.Text, default='一般', comment='平面布局')
     completedYear = db.Column(db.Integer, comment='建成年份')
-    decorationStandard = db.Column(db.Text, default='毛胚房', comment='装修标准')
+    decorationStandard = db.Column(db.Text, default='毛坯房', comment='装修标准')
     decorationYear = db.Column(db.Integer, comment='装修时间')
     buildingProperty = db.Column(db.Text, default='商品房', comment='房产性质')
     buildingStatus = db.Column(db.Text, default='存量', comment='楼栋状态')
