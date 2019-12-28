@@ -45,7 +45,7 @@ def set_form_value(form, value):
             if item['key'] != '' and item['key'] in value:
                 item['value'] = value[item['key']]
                 if item['type'] == 'multiple':
-                    item['value'] = item['value'].strip('&').split('&')
+                    item['value'] = item['value'].strip('、').split('、')
     return form
 
 
@@ -410,7 +410,7 @@ def garden_base_info(*args, **kwargs):
             "key": "roadGrade",
             "required": True,
             "changed": True,
-            "type": "multiple",
+            "type": "radio",
             "option": ["主干道、快速路", "次干道", "街巷", "里弄", "特殊类型"],
             "value": []
         },
