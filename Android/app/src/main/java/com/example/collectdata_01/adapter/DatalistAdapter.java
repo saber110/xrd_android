@@ -2,6 +2,7 @@ package com.example.collectdata_01.adapter;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,8 +71,12 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int p) {
-//        picName = datalist.get(p);
-        return 0;
+        try{
+            Integer.parseInt(datalist.get(p));
+            return 0;
+        }catch (Exception e){
+            return 1;
+        }
     }
 
     @Override
@@ -82,24 +87,29 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = layoutInflater.inflate(layoutId, parent, false);
-        return new ItemViewHolder(view);
+        if (viewType == 1){
+            View view = layoutInflater.inflate(layoutId, parent, false);
+            return new ItemViewHolder(view);
+        }
+        else {
+            View view = layoutInflater.inflate(R.layout.datalist_item2, parent, false);
+            return new ItemViewHolder2(view);
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         String pic_name = datalist.get(position);
-        try{
-            int a = Integer.parseInt(pic_name);
+        if (holder instanceof ItemViewHolder2){
+            ItemViewHolder2 itemViewHolder = (ItemViewHolder2) holder;
             ArrayList<ImageDb> queryGardenName = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
                     .whereEquals(ImageDb.GARDENID_COL, pic_name));
-
-            itemViewHolder.textView.setText(queryGardenName.get(0).getGardenName());
+            itemViewHolder.textView.setText(queryGardenName.get(0).getGardenName()+":");
+            itemViewHolder.textView.setTextColor(Color.rgb(88,88,88));
             return;
-        }catch (Exception e){
-            itemViewHolder.textView.setText(pic_name);
         }
+        ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
+        itemViewHolder.textView.setText(pic_name);
         itemViewHolder.checkBox.setTag(pic_name);
         // 点击事件
         itemViewHolder.checkBox.setOnCheckedChangeListener(checkBox_listener);
@@ -150,7 +160,7 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
         MaterialCheckBox checkBox;
-        TextView textView,textView2;
+        TextView textView;//textView2;
         ImageView imageView;
 
         public ItemViewHolder(@NonNull final View itemView) {
@@ -162,6 +172,14 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //            checkBox.setChecked(true);
             checkBox.setOnCheckedChangeListener(checkBox_listener);
 
+        }
+    }
+
+    class ItemViewHolder2 extends RecyclerView.ViewHolder {
+        TextView textView;
+        public ItemViewHolder2(@NonNull final View itemView) {
+            super(itemView);
+            textView = itemView.findViewById(R.id.garden_name);
         }
     }
 
