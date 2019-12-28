@@ -57,16 +57,21 @@ public class v1{
     private static String pattern;
     private static String apiError;
     private static String loginApi;
-    private static String updatePasswordApi;
-    private static String getGardenBaseInfoAPI;
-    private static String getBuildingBaseInfoAPI;
-    private static String getGardenImportInfoApi;
-    private static String getBuildingImportInfoApi;
+    public static String updatePasswordApi;
+    public static String getGardenBaseInfoAPI;
+    public static String getBuildingBaseInfoAPI;
+    public static String getGardenImportInfoApi;
+    public static String getBuildingImportInfoApi;
     private static String cbUpdateGardenBaseInfo;
     private static String cbUpdateBuildingBaseInfo;
     private static String cbUpdateGardenImportInfo;
     private static String cbUpdateBuildingImportInfo;
     private static String cbLogin;
+
+    public static String updateGardenImportInfoApi;
+    public static String updateBuildingImportInfoApi;
+    public static String updateGardenBaseInfoApi;
+    public static String updateBuildingBaseInfoApi;
 
     public static String getProvinceApi;
     public static String getCityApi;
@@ -79,10 +84,12 @@ public class v1{
     public static String addMapDataAPI;
 
     public static String deleteMapDataApi;
+    public static String deleteBuildingInfoApi;
 
     public static String uploadGardenPictureApi;
     public static String uploadOtherPictureApi;
     public static String uploadBuildingPictureApi;
+    public static String getFakeGardenListApi;
     private static Resources res;
 
 
@@ -102,6 +109,11 @@ public class v1{
         v1.getGardenImportInfoApi = String.format(pattern, res.getString(R.string.getDataTab), res.getString(R.string.getGardenImportInfoApi));
         v1.getBuildingImportInfoApi = String.format(pattern, res.getString(R.string.getDataTab), res.getString(R.string.getBuildingImportInfoApi));
 
+        v1.updateGardenBaseInfoApi = String.format(pattern, res.getString(R.string.dataTab), res.getString(R.string.getGardenBaseInfoAPI));
+        v1.updateBuildingBaseInfoApi = String.format(pattern, res.getString(R.string.dataTab), res.getString(R.string.BuildBaseInfoAPI));
+        v1.updateGardenImportInfoApi = String.format(pattern, res.getString(R.string.dataTab), res.getString(R.string.getGardenImportInfoApi));
+        v1.updateBuildingImportInfoApi = String.format(pattern, res.getString(R.string.dataTab), res.getString(R.string.BuildImportInfoAPI));
+
         v1.cbLogin = (res.getString(R.string.cbLogin));
         v1.cbUpdateGardenBaseInfo = (res.getString(R.string.cbUpdateGardenBaseInfo));
         v1.cbUpdateBuildingBaseInfo = res.getString(R.string.cbUpdateBuildingBaseInfo);
@@ -119,8 +131,10 @@ public class v1{
         v1.uploadGardenPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadGardenPictureApi));
         v1.uploadOtherPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadOtherPictureApi));
         v1.uploadBuildingPictureApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.uploadBuildingPictureApi));
+        v1.getFakeGardenListApi = String.format(pattern,res.getString(R.string.dataTab), res.getString(R.string.getFakeGardenListApi));
 
         v1.deleteMapDataApi = String.format(pattern,res.getString(R.string.delDataTab), res.getString(R.string.deleteMapDataApi));
+        v1.deleteBuildingInfoApi = String.format(pattern,res.getString(R.string.delDataTab),res.getString(R.string.deleteBuildingInfoApi));
     }
 
     public void setToken(String token){
@@ -339,6 +353,7 @@ public class v1{
     }
 
     public void loginFailure(String res){
+        desDialog();
         funToastMakeText(res);
     }
 

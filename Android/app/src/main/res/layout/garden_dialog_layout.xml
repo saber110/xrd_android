@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/card_style"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:paddingTop="100dp"
+    android:layout_margin="20dp"
+    android:divider="@drawable/divider"
+    android:dividerPadding="3dp"
+    android:showDividers="middle">
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/previous_working_garden"
+
+            >
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/toggle_button_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true">
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+
+        <ImageView
+            android:id="@+id/homeicon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/home" />
+
+        <TextView
+            android:id="@+id/xiaoqu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" 请输入小区名字"
+            android:layout_toRightOf="@+id/homeicon"
+            android:textColor="#000000"
+            android:textSize="@dimen/main_text_size"  />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/search_garden_key"
+            android:layout_width="250dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="7dp"
+            android:background="@drawable/search_style"
+            />
+
+        <ImageView
+            android:id="@+id/search_garden_button"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="34dp"
+            android:src="@drawable/search" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/garden_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/manage_fake_garden"
+            android:text="管理"
+            android:layout_gravity="fill_horizontal"
+            android:layout_weight="1"
+            android:textSize="@dimen/text_size"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/add_garden"
+            android:text="新建"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:textSize="@dimen/text_size"
+            />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
+
+

@@ -15,9 +15,9 @@
     <string name="label_neighbour_working">请选择工作小区</string>
 
     <!--    API-->
-<!--    <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/%1$s/%2$s</string>-->
+    <!--    <string name="preFix">http://rap2api.taobao.org/app/mock/234350/api/v1/%1$s/%2$s</string>-->
     <string name="preFix">http://kms.yinaoxiong.cn:8888/api/v1/%1$s/%2$s</string>
-<!--    <string name="preFix">http://gjb.hnxrd.com.cn:9998/api/v1/%1$s/%2$s</string>-->
+<!--        <string name="preFix">http://gjb.hnxrd.com.cn:9998/api/v1/%1$s/%2$s</string>-->
 
     <string name="userTab">user</string>
     <string name="loginApi">login</string>
@@ -25,7 +25,7 @@
     <string name="refreshTokenApi">refresh_token</string>
     <string name="updateUserApi">update</string>
     <string name="updatePasswordApi">reset_password</string>
-    
+
     <string name="getDataTab">get_data</string>
     <string name="getMapDataAPI">map</string>
     <string name="getGardenBaseInfoAPI">garden_base_info</string>
@@ -39,12 +39,18 @@
     <string name="getGardenImportInfoApi">garden_import_info</string>
     <string name="getBuildingImportInfoApi">building_import_info</string>
 
+    // new
+    <string name="BuildBaseInfoAPI">building_base_info</string>
+    <string name="BuildImportInfoAPI">building_import_info</string>
+    <string name="deleteBuildingInfoApi">building_info</string>
+
     <string name="dataTab">data</string>
     <string name="createGardenApi">garden</string>
     <string name="addMapDataAPI">map</string>
     <string name="uploadGardenPictureApi">garden_picture</string>
     <string name="uploadOtherPictureApi">other_picture</string>
     <string name="uploadBuildingPictureApi">building_picture</string>
+    <string name="getFakeGardenListApi">fake_garden</string>
 
 
     <string name="administrationTab">administration</string>
@@ -57,17 +63,28 @@
 
     <string name="delDataTab">del_data</string>
     <string name="deleteMapDataApi">map</string>
-    
+
     <!--    Data页面的string    -->
     <string name="data_xiaoqugaikuang">小区概况表</string>
     <string name="data_louzhuangdiaocha">楼幢调查</string>
     <string name="data_xiaoquxinxi">小区信息</string>
     <string name="data_louzhuangxinxi">楼幢信息</string>
 
-    <!-- 信息收集页的string  -->
+    <!-- 信息收集页的string  -->s
     <string name="message_submit">提交信息</string>
+    <string name="building_submit">本楼提交</string>s
     <string name="message_hint">请在此输入信息...</string>
     <string name="message_title">信息详情</string>
+
+    <!--    照片上传-->
+    <string name="uploadPictures">确认上传</string>
+    <string name="outlineOfUpload">照片上传</string>
+
+    <string name="new_building">新建楼栋</string>
+    <string name="del_building">删除楼栋</string>
+
+    <string name="outlineOfManageFakeGarden">修改小区位置</string>
+    <string name="saveFakeGarden">保存</string>
 
 
     <string name="cat_single_select">Single-select</string>
@@ -84,7 +101,27 @@
 
     <string name="api_error">接口出了点问题....，请联系管理员</string>
     <string name="loading">努力加载中，请稍候...</string>
+    <string name="add_garden_message">请输入小区名</string>
+    <string name="updateFakeGarden">更新虚拟小区</string>
+    <string name="selectWorkingGarden">请选择工作小区</string>
 
-
+    <string name="garden_other_message">配套信息</string>
+    <string name="feiloudong">非楼栋</string>
     <string name="cat_textfield_label" translatable="false">Label</string>
+
+    <!--图片类型-->
+    <string name="pingMianTu">平面图</string>
+    <string name="xiaoQuRuKou">小区入口</string>
+    <string name="waiJingTu">外景图</string>
+    <string name="neiJingTu">内景图</string>
+    <string name="jianZhuLiMian">建筑立面</string>
+    <string name="zhuangPaiHao">幢牌号</string>
+    <string name="qiTa">其他</string>
+    <string name="tuYa">涂鸦</string>
+
+    <string name="imageDB">imageData.db</string>
+    <!--存储该用户相关数据-->
+    <string name="userDB">userData.db</string>
+
+    <string name="picturePath">temp</string>
 </resources>

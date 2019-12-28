@@ -2,12 +2,7 @@ package com.example.map.baidu_map;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,24 +19,18 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.example.collectdata_01.R;
 import com.example.dialog.CreatDialog;
-import com.example.map.dao.MapMarkerDataDao;
 import com.example.map.dao.StanderDao;
-import com.example.map.dao.UploadMarkerReturnDao;
-import com.example.map.google.GoogleMapActivity;
 import com.example.map.net.MarkerNetUtil;
 import com.example.map.tecent_map.TecentActivity;
-import com.example.net.AsyncRequest;
 
 import java.util.concurrent.ExecutionException;
 
@@ -63,6 +52,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     private TextView lng;
     private int choose = 1;
     private EditText name;
+    private float scale;
 
 
     @Override
@@ -70,6 +60,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         super.onCreate(savedInstanceState);
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_baidu_map);
+        scale = this.getResources().getDisplayMetrics().density;
         mMapView = findViewById(R.id.bmapView);
         /**
          * dialog 的view
@@ -79,7 +70,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         dialog = CreatDialog.createSendMapDataDialog(this, view);
         changeDialog = CreatDialog.createSendMapDataDialog(this, changeView);
         intent = getIntent();
-        gardenId = intent.getIntExtra("gardenId",1);
+        gardenId = intent.getIntExtra("gardenId", 1);
         initChooseMap();
         initChoose();
         initMap();
@@ -91,45 +82,9 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
      * 初始化marker
      */
     private void initMark() {
-        // 代表百度地图
-        MarkerNetUtil.GetMarkerData getMarkerData = new MarkerNetUtil.GetMarkerData(gardenId, 1);
-
-        AsyncTask asyncTask = new AsyncRequest().execute(getMarkerData);
-        try {
-            MapMarkerDataDao mapMarkerDataDao = (MapMarkerDataDao) asyncTask.get();
-            Log.i("mapMarkerDataDao", "initMark: code " +  mapMarkerDataDao.getCode() );
-
-            if (mapMarkerDataDao.getCode() == 0) {
-                Log.i("mapMarkerDataDao", "initMark: size " +  mapMarkerDataDao.getData().getMap_data().size() );
-
-                for (int i = 0; i < mapMarkerDataDao.getData().getMap_data().size(); i++) {
-                    MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(i);
-                    Log.i("mapMarkerDataDao", "initMark: name " +  mapDataBean.getName() );
-
-                    MarkerOptions options = new MarkerOptions().position(new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude())).
-                            icon(BitmapDescriptorFactory.fromBitmap((drawBitMap(mapDataBean.getName()))));
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("id", mapMarkerDataDao.getData().getMap_data().get(i).getId());
-                    options.extraInfo(bundle);
-                    baiduMap.addOverlay(options);
-                    Log.i("mapMarkerDataDao", "initMark: " + mapDataBean );
-
-                }
-                if (mapMarkerDataDao.getData().getMap_data().size() != 0) {
-                    MapMarkerDataDao.DataBean.MapDataBean mapDataBean = mapMarkerDataDao.getData().getMap_data().get(0);
-                    LatLng ll = new LatLng(mapDataBean.getLatitude(), mapDataBean.getLongitude());
-                    MapStatus mMapStatus = new MapStatus.Builder()//定义地图状态
-                            .target(ll)
-                            .zoom(18)
-                            .build(); //定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
-                    MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mMapStatus);
-                    baiduMap.setMapStatus(mMapStatusUpdate);//改变地图状态
-                }
-            }
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
+        // 1 代表百度地图
+        MarkerNetUtil.GetBaiduMarkerData getBaiduMarkerData = new MarkerNetUtil.GetBaiduMarkerData(gardenId, 1, baiduMap, scale);
+        getBaiduMarkerData.execute();
     }
 
     /**
@@ -140,7 +95,6 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         TextView baiduText = findViewById(R.id.baidu_map);
         TextView tecentText = findViewById(R.id.tecent_map);
         baiduText.setBackgroundColor(Color.RED);
-        tecentText.setBackgroundColor(0x99EEE6E6);
 
         /**
          * 点击百度地图进行跳转
@@ -232,6 +186,7 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     }
 
     private boolean isNormalMap = true;
+
     private void initMap() {
         locButton = findViewById(R.id.dw_bt);
         locButton.setOnClickListener(this);
@@ -247,12 +202,12 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
             @Override
             public void onClick(View v) {
                 isNormalMap = !isNormalMap;
-                if (isNormalMap){
+                if (isNormalMap) {
                     /**
                      * 设置为普通3d地图
                      */
                     baiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
-                }else{
+                } else {
                     // 设置为卫星地图
                     baiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
                 }
@@ -300,11 +255,9 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                 if (name.getText().toString().length() == 0) {
                     Toast.makeText(BaiduMapActivity.this, "请输入数据", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (addMark(latLng)) {
-                        Toast.makeText(BaiduMapActivity.this, "发送数据成功", Toast.LENGTH_SHORT).show();
-                        name.setText(null);
-                        dialog.dismiss();
-                    }
+                    dialog.dismiss();
+                    addMark(latLng);
+                    name.setText(null);
                 }
             }
         });
@@ -329,66 +282,33 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         changeView.findViewById(R.id.delete_data_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (deleteMark(marker.getExtraInfo().getInt("id"))) {
-                    marker.remove();
-                    changeDialog.dismiss();
-                }
+
+                changeDialog.dismiss();
+                deleteMark(marker,marker.getExtraInfo().getInt("id"));
             }
         });
+
         changeView.findViewById(R.id.change_data_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (name.getText().length() == 0) {
                     Toast.makeText(getApplicationContext(), "请输入修改数据", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (changeMarkData(marker.getPosition(), marker.getExtraInfo().getInt("id"))) {
-                        marker.remove();
-                        name.setText(null);
-                        changeDialog.dismiss();
-                    }
+                    changeDialog.dismiss();
+                    deleteMark(marker,marker.getExtraInfo().getInt("id"));
+                    addMark(marker.getPosition());
+                    name.setText(null);
+
                 }
             }
         });
         return true;
     }
 
-    /**
-     * 修改，先删除，然后添加
-     * @param id
-     * @return
-     */
-    private boolean changeMarkData(LatLng latLng, Integer id) {
-        if (deleteMark(id) && addMark(latLng)) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean addMark(LatLng latLng) {
-
-        Log.d(">>>", "新添加的数据"+name.getText().toString());
-        MarkerNetUtil.AddMarker sendMapMsg = new MarkerNetUtil.AddMarker(latLng.latitude, latLng.longitude, name.getText().toString(), gardenId, 1, choose);
-        AsyncTask asyncTask = new AsyncRequest().execute(sendMapMsg);
-        try {
-            UploadMarkerReturnDao result = (UploadMarkerReturnDao) asyncTask.get();
-            if (result != null && result.getCode()==0) {
-                Log.d(">>>>>>", "addMark: 在百度地图上面添加数据");
-                MarkerOptions options = new MarkerOptions().position(latLng).
-                        icon(BitmapDescriptorFactory.fromBitmap((drawBitMap(name.getText().toString()))));
-                Bundle bundle = new Bundle();
-                bundle.putInt("id", result.getData().getMapDataId());
-                options.extraInfo(bundle);
-                baiduMap.addOverlay(options);
-                return true;
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return false;
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return false;
+    private void addMark(LatLng latLng) {
+        Log.d(">>>", "新添加的数据" + name.getText().toString());
+        MarkerNetUtil.AddBaiduMarker sendMapMsg = new MarkerNetUtil.AddBaiduMarker(baiduMap, latLng, name.getText().toString(), gardenId, 1, choose, scale);
+        sendMapMsg.execute();
     }
 
     /**
@@ -396,46 +316,9 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
      *
      * @return
      */
-    private boolean deleteMark(Integer id) {
-        MarkerNetUtil.DeletMarkerUtil deletMarkerUtil = new MarkerNetUtil.DeletMarkerUtil(id);
-        AsyncTask asyncTask = new AsyncRequest().execute(deletMarkerUtil);
-        try {
-            StanderDao result = (StanderDao) asyncTask.get();
-            if (result != null && "0".equals(result.getCode())) {
-                return true;
-            }
-        } catch (ExecutionException e) {
-            Toast.makeText(BaiduMapActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            Toast.makeText(BaiduMapActivity.this, "发送数据失败", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-
-    private Bitmap drawBitMap(String str) {
-        float scale = this.getResources().getDisplayMetrics().density;
-        Bitmap bitmap;
-        int width = 100;
-        int height = 100;
-        bitmap = Bitmap.createBitmap(width*str.length()==0?100:width*str.length(), height, Bitmap.Config.ARGB_4444); //建立一个空的Bitmap
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);//抗锯齿
-        paint.setDither(true); // 获取跟清晰的图像采样
-        paint.setFilterBitmap(true);// 过滤
-        paint.setColor(Color.RED);
-        paint.setTextSize(14 * scale);
-
-        Rect bounds = new Rect();
-        paint.getTextBounds(str, 0, str.length(), bounds);//获取文字的范围
-        //文字在mMarker中展示的位置
-        float paddingLeft = (bitmap.getWidth() - bounds.width()) / 2;//在中间
-        float paddingTop = (bitmap.getHeight() / scale);//在顶部
-
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawText(str, paddingLeft, paddingTop, paint);
-        return bitmap;
+    private void deleteMark(Marker marker,Integer id) {
+        MarkerNetUtil.DeletBaiduMarkerUtil deletBaiduMarkerUtil = new MarkerNetUtil.DeletBaiduMarkerUtil(id, new DeleteMarkListener(marker));
+        deletBaiduMarkerUtil.execute();
     }
 
     /**
@@ -464,6 +347,18 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
             }
         }
 
+    }
+
+    public class DeleteMarkListener {
+        private Marker marker;
+
+        public DeleteMarkListener(Marker marker) {
+            this.marker = marker;
+        }
+
+        public void deletetMark() {
+            marker.remove();
+        }
     }
 }
 
