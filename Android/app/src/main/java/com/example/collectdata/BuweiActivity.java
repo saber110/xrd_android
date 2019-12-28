@@ -114,9 +114,9 @@ public class BuweiActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent();
-                i.putExtra("buwei",getRetString());
-                setResult(RESULT_OK, i);
+//                Intent i = new Intent();
+//                i.putExtra("buwei",getRetString());
+//                setResult(RESULT_OK, i);
                 System.out.println(getRetString());
                 buweiMap.put(id,getRetString());
                 Toast.makeText(BuweiActivity.this,"保存成功", Toast.LENGTH_SHORT).show();
