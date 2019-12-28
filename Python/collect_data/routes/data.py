@@ -347,27 +347,27 @@ def garden_base_info(user_id: int, *args, **kwargs):
     schema = {
         'id': {'type': 'integer'},
         'collectTime': {'type': 'integer'},
-        'gardenLocation': {'type': 'string'},
-        'gardenEastTo': {'type': 'string'},
-        'gardenWestTo': {'type': 'string'},
-        'gardenNorthTo': {'type': 'string'},
-        'gardenSouthTo': {'type': 'string'},
-        'regionalLocation': {'type': 'string'},
-        'houseStatus': {'type': 'string'},
-        'gardenKind': {'type': 'string'},
-        'roomType': {'type': 'string'},
-        'buildingStructure': {'type': 'string'},
-        'houseNumber': {'type': 'integer'},
-        'description': {'type': 'string'},
-        'buildYear': {'type': 'integer'},
-        'setYear': {'type': 'integer'},
-        'landStatus': {'type': 'string'},
-        'right': {'type': 'string'},
-        'landGrade': {'type': 'string'},
-        'askRecode': {'type': 'string'},
-        'closed': {'type': 'string'},
-        'managementKind': {'type': 'string'},
-        'roadGrade': {'type': 'string'},
+        # 'gardenLocation': {'type': 'string'},
+        # 'gardenEastTo': {'type': 'string'},
+        # 'gardenWestTo': {'type': 'string'},
+        # 'gardenNorthTo': {'type': 'string'},
+        # 'gardenSouthTo': {'type': 'string'},
+        # 'regionalLocation': {'type': 'string'},
+        # 'houseStatus': {'type': 'string'},
+        # 'gardenKind': {'type': 'string'},
+        # 'roomType': {'type': 'string'},
+        # 'buildingStructure': {'type': 'string'},
+        # 'houseNumber': {'type': 'integer'},
+        # 'description': {'type': 'string'},
+        # 'buildYear': {'type': 'integer'},
+        # 'setYear': {'type': 'integer'},
+        # 'landStatus': {'type': 'string'},
+        # 'right': {'type': 'string'},
+        # 'landGrade': {'type': 'string'},
+        # 'askRecode': {'type': 'string'},
+        # 'closed': {'type': 'string'},
+        # 'managementKind': {'type': 'string'},
+        # 'roadGrade': {'type': 'string'},
     }
     v = generate_validator(schema)
     if not v(data):
@@ -413,8 +413,8 @@ def building_base_info(user_id: int, *args, **kwargs):
     schema = {
         "gardenId": {'type': 'integer', 'min': 1},
         "collectTime": {'type': 'integer', 'min': 1},
-        "buildingName": {'type': 'string'},
-        "buildingKind": {'type': 'string'}
+        # "buildingName": {'type': 'string'},
+        # "buildingKind": {'type': 'string'}
     }
     v = generate_validator(schema)
     if not v(data):
