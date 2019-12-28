@@ -1,6 +1,5 @@
 package com.example.BuildingMessage;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Handler;
@@ -14,20 +13,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSON;
 import com.example.collectdata.BuweiActivity;
 import com.example.collectdata.bean.CommonItemBean;
 import com.example.collectdata.bean.ListItemBean;
 import com.example.collectdata.bean.SelectorItemBean;
 import com.example.collectdata_01.R;
 import com.example.dialog.CreatDialog;
+import com.example.interfaceNet.v1;
 import com.example.login.login;
 import com.example.test.BaseActivity;
 import com.example.test.RequestListener;
 import com.example.test.RequestTools;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.JsonObject;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -38,7 +42,6 @@ import java.util.Objects;
 
 import okhttp3.Response;
 
-import static com.example.collectdata.BuweiActivity.buweiMap;
 import static com.google.android.material.tabs.TabLayout.MODE_SCROLLABLE;
 
 public class BuildingActivity extends BaseActivity {
@@ -56,7 +59,6 @@ public class BuildingActivity extends BaseActivity {
     private int gardenId;
     // resultList用来保存不同tab中填写的数据
     private HashMap<Integer, HashMap<String, String>> resultList = new HashMap();
-
     private List<CommonItemBean> list = new ArrayList<>();
     private HashMap<Integer, List<CommonItemBean>> tabMap = new HashMap<>();
     private HashMap<Integer, List<CommonItemBean>> newtabMap = new HashMap<>();
@@ -74,17 +76,19 @@ public class BuildingActivity extends BaseActivity {
         mode = i.getStringExtra("mode");
         gardenId = i.getIntExtra("gardenId", 0);
         String url = i.getStringExtra("url");
-        HashMap<String, Object> map = new HashMap<>();
+        final HashMap<String, Object> map = new HashMap<>();
         map.put("token", login.token);
         map.put("gardenId", gardenId);
-        new RequestTools(url, map, new RequestListener() {
+        final RequestTools requestTools = new RequestTools(url, map, new RequestListener() {
             @Override
             public void onSuccess(Response response) {
                 try {
                     JTools.jsonParasForMessageList(Objects.requireNonNull(response.body()).string(), tabMap, mode);
+                    newBuilding();
                 } catch (Exception e) {
                     Log.i("json", "json解析错误");
                 }
+
                 // 发送message提醒主线程更新ui，注意此段代码是在子线程中运行
                 Message message = new Message();
                 message.what = 0;
@@ -95,7 +99,8 @@ public class BuildingActivity extends BaseActivity {
             public void onFailure(String info) {
 
             }
-        }).run();
+        });
+        requestTools.run();
     }
 
     @Override
@@ -116,50 +121,41 @@ public class BuildingActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(BuildingActivity.this, BuweiActivity.class);
-                    int id = tab_getTag(tabLayout.getTabAt(tabLayout.getSelectedTabPosition()));
-                    String buwei = adapter2.getResultMap().get("部位说明");
-                    i.putExtra("id",id);
-                    i.putExtra("buwei",buwei);
-                    startActivityForResult(i,REQUEST_CODE);
+                    startActivityForResult(i, REQUEST_CODE);
                 }
             });
         } else
             buwei.setVisibility(View.GONE);
     }
 
-
     private void updateUI() {
 
         // 若小区没有楼栋，不初始化tab
-        if (tabMap == null || tabMap.size() == 0){
-            Toast.makeText(BuildingActivity.this,"该小区暂无楼栋信息",Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (tabMap == null || tabMap.size() == 0) {
+//            Toast.makeText(BuildingActivity.this, "该小区暂无楼栋信息", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         // 此段代码之前是在initView()中，后因为根据从服务器请求的数据建立tab，故放在此处
         for (int i : tabMap.keySet()) {
-            final TabLayout.Tab tab = tabLayout.newTab().setText("楼栋" + i);
+            final TabLayout.Tab tab = tabLayout.newTab();
             addTabListener(tabLayout, tab, i);
             if (tabLayout.getSelectedTabPosition() == -1) {
                 tabLayout.selectTab(tab);
                 adapter2.setData(tabMap.get(i));
             }
+            for(CommonItemBean bean : tabMap.get(i)){
+                if (bean.getTitle().equals("楼幢名称")){
+                    tab.setText(bean.getContent());
+                }
+            }
+//            tab.setText()
             tabLayout.addTab(tab);
         }
-
-// 这段代码已经证明重复执行
-//        int pos = tabLayout.getSelectedTabPosition();
-//        TabLayout.Tab selectTab = tabLayout.getTabAt(pos);
-//        assert selectTab != null;
-//        int i = tab_getTag(selectTab);
-//        if (i >= 0) {
-//            submit.setOnClickListener(new PostListener(this, gardenId, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
-//        }
         adapter2.notifyDataSetChanged();
     }
 
     private void showToast() {
         Toast.makeText(BuildingActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
-//        finish();
     }
 
     // 给tab添加OnLongClickListener，使用反射获取到tab的类，将对应楼栋的id设置为view的tag
@@ -182,13 +178,16 @@ public class BuildingActivity extends BaseActivity {
                             for (int i = 0; ; i++) {
                                 if (!tabMap.keySet().contains(i) && !newtabMap.keySet().contains(i)) {
                                     TabLayout.Tab tab1 = tabLayout.newTab().setText("新楼栋");
+//                                    if (tabMap.keySet().contains((int) view.getTag()))
+//                                        newtabMap.put(i, tabMap.get((int) view.getTag()));
+//                                    else
+//                                        newtabMap.put(i, newtabMap.get((int) view.getTag()));
                                     if (tabMap.keySet().contains((int) view.getTag()))
-                                        newtabMap.put(i, tabMap.get((int) view.getTag()));
-                                    else
-                                        newtabMap.put(i, newtabMap.get((int) view.getTag()));
+                                        tabMap.put(i, tabMap.get((int) view.getTag()));
                                     tab_setTag(tab1, i);
-                                    addTabListener(tabLayout, tab1, i);
+//                                    addTabListener(tabLayout, tab1, i);
                                     tabLayout.addTab(tab1);
+                                    newBuilding(tabMap, tab1);
                                     buildingNumDialog.dismiss();
                                     break;
                                 }
@@ -198,22 +197,18 @@ public class BuildingActivity extends BaseActivity {
                     del.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            // 使用tabLayout.removeTabAt((int) view.getTag());会删除错误的位置
                             tabLayout.removeTab(tab);
-//                            tabLayout.removeTabAt((int) view.getTag());
                             if (tabMap.keySet().contains(view.getTag()))
                                 tabMap.remove((int) view.getTag());
                             resultList.remove((int) view.getTag());
+                            if (tabMap.size() == 0) {
+                                adapter2.clearData();
+                                adapter2.notifyDataSetChanged();
+                            }
+                            delBuilding((int) view.getTag());
                             buildingNumDialog.dismiss();
                         }
                     });
-//                    modify.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            alert_edit(view, tab);
-//                            buildingNumDialog.dismiss();
-//                        }
-//                    });
                     return false;
                 }
             });
@@ -241,14 +236,47 @@ public class BuildingActivity extends BaseActivity {
         }
     }
 
-    // 深复制hashMap
-    public static HashMap<String, String> copy(HashMap<String, String> original) {
-        HashMap<String, String> copy = new HashMap<String, String>();
-        for (Map.Entry<String, String> entry : original.entrySet()) {
-            copy.put(entry.getKey(), entry.getValue());
+    // 切换tab时，根据tab的tag（也就是楼栋的id），给adapter设置不同的dataList和resultMap
+    private TabLayout.OnTabSelectedListener tabSelectListener = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            int i = tab_getTag(tab);
+            // i>0用来判断是否新建成功，若新建成功则设置submitListener
+            if (i > 0) {
+                HashMap<String, String> map = resultList.get(i);
+                if (map != null)
+                    adapter2.setResultMap(copy(map));
+                if (tabMap.keySet().contains(i)) {
+                    adapter2.setData(tabMap.get(i));
+                    if (map == null)
+                        adapter2.setResultMap(manageResultMap(Objects.requireNonNull(tabMap.get(i))));
+                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
+                }
+//                else {
+//                    adapter2.setData(newtabMap.get(i));
+//                    if (map == null)
+//                        adapter2.setResultMap(manageResultMap(Objects.requireNonNull(newtabMap.get(i))));
+//                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
+//                }
+                adapter2.notifyDataSetChanged();
+            }
         }
-        return copy;
-    }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+            // 切换tab时，先保存当前tab的数据，存放在resultList，再根据新tab的tag从resultList中获取新的数据，设置给adapter
+            int i = tab_getTag(tab);
+            if (i >= 0) {
+                resultList.put(i, copy(adapter2.getResultMap()));
+                adapter2.clearResultMap();
+            }
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
+
+        }
+    };
 
     // 用来回调上传数据是否成功
     private RequestListener requestListener = new RequestListener() {
@@ -276,6 +304,109 @@ public class BuildingActivity extends BaseActivity {
         }
     };
 
+    void newBuilding() {
+        if (tabMap == null || tabMap.size() == 0) {
+            // 新建楼栋
+            HashMap<String, Object> mmap = new HashMap<>();
+            mmap.put("token", login.token);
+            mmap.put("collectTime", System.currentTimeMillis());
+            mmap.put("buildingName", "未命名");
+            mmap.put("buildingKind", "其它类型");
+            mmap.put("gardenId", gardenId);
+
+            new RequestTools(v1.updateBuildingBaseInfoApi, mmap, new RequestListener() {
+                @Override
+                public void onSuccess(Response response) {
+                    try {
+                        String s = Objects.requireNonNull(response.body()).string();
+                        JSONObject jsonObject = new JSONObject(s);
+                        int code = jsonObject.getInt("code");
+                        if (code == 0) {
+                            initData();
+                        }
+                        Log.i("test", "新建楼栋成功");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(String info) {
+                    Log.i("test", "新建楼栋失败");
+                }
+            }).run();
+        }
+    }
+
+    void newBuilding(final HashMap<Integer, List<CommonItemBean>> tabMap, final TabLayout.Tab tab) {
+        HashMap<String, Object> mmap = new HashMap<>();
+        mmap.put("token", login.token);
+        mmap.put("collectTime", System.currentTimeMillis());
+        mmap.put("buildingName", "未命名");
+        mmap.put("buildingKind", "其它类型");
+        mmap.put("gardenId", gardenId);
+        new RequestTools(v1.updateBuildingBaseInfoApi, mmap, new RequestListener() {
+            @Override
+            public void onSuccess(Response response) {
+                try {
+                    String s = Objects.requireNonNull(response.body()).string();
+                    JSONObject jsonObject = new JSONObject(s);
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    int code = jsonObject.getInt("code");
+                    int id = -1;
+                    try {
+                        id = data.getInt("buildingId");
+                    }catch (Exception e){
+                        Log.i("test","api未更新");
+                    }
+                    // 新建楼栋成功，设置tag为新的id并且设置add和del监听
+                    if (code == 0 && id != -1) {
+                        // tabMap里边添加数据
+                        tabMap.put(id, tabMap.get(tab_getTag(tab)));
+                        tabMap.remove(tab_getTag(tab));
+                        tab_setTag(tab, id);
+                        addTabListener(tabLayout, tab, id);
+                    }
+                    Log.i("test", "新建楼栋成功");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(String info) {
+                Log.i("test", "新建楼栋失败");
+            }
+        }).run();
+    }
+
+    void delBuilding(int buildingId) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("token", login.token);
+        map.put("buildingId",buildingId);
+
+        new RequestTools(v1.deleteBuildingInfoApi, map, new RequestListener() {
+            @Override
+            public void onSuccess(Response response) {
+                try {
+                    String s = Objects.requireNonNull(response.body()).string();
+                    JSONObject jsonObject = new JSONObject(s);
+                    int code = jsonObject.getInt("code");
+                    if (code == 0) {
+                        Log.i("test", "删除楼栋成功");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(String info) {
+                Log.i("test", "删除楼栋失败");
+            }
+        }).run();
+    }
+
     private void initDialog() {
         View buildNumView = getLayoutInflater().inflate(R.layout.buildingtab, null);
         buildingNumDialog = CreatDialog.createChangeMarkDialog(BuildingActivity.this, buildNumView);
@@ -283,53 +414,6 @@ public class BuildingActivity extends BaseActivity {
         del = buildNumView.findViewById(R.id.del_tab);
 //        modify = BuildNumView.findViewById(R.id.modify_text);
     }
-
-    // 切换tab时，根据tab的tag（也就是楼栋的id），给adapter设置不同的dataList和resultMap
-    private TabLayout.OnTabSelectedListener tabSelectListener = new TabLayout.OnTabSelectedListener() {
-        @Override
-        public void onTabSelected(TabLayout.Tab tab) {
-            int i = tab_getTag(tab);
-            if (i >= 0) {
-                HashMap<String, String> map = resultList.get(i);
-                if (map != null)
-                    adapter2.setResultMap(copy(map));
-                if (tabMap.keySet().contains(i)) {
-                    adapter2.setData(tabMap.get(i));
-                    if (map != null)
-                        adapter2.setResultMap(copy(map));
-                    else
-                        adapter2.setResultMap(manageResultMap(Objects.requireNonNull(tabMap.get(i))));
-                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), tabMap.get(i), mode, i, map2, requestListener));
-                } else {
-                    adapter2.setData(newtabMap.get(i));
-                    if (map != null)
-                        adapter2.setResultMap(copy(map));
-                    else
-                        adapter2.setResultMap(manageResultMap(Objects.requireNonNull(newtabMap.get(i))));
-                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
-                }
-                if(buweiMap.containsKey(i)) {
-                    adapter2.getResultMap().put("部位说明", buweiMap.get(i));
-                }
-                adapter2.notifyDataSetChanged();
-            }
-        }
-
-        @Override
-        public void onTabUnselected(TabLayout.Tab tab) {
-            // 切换tab时，先保存当前tab的数据，存放在resultList，再根据新tab的tag从resultList中获取新的数据，设置给adapter
-            int i = tab_getTag(tab);
-            if (i >= 0) {
-                resultList.put(i, copy(adapter2.getResultMap()));
-                adapter2.clearResultMap();
-            }
-        }
-
-        @Override
-        public void onTabReselected(TabLayout.Tab tab) {
-
-        }
-    };
 
     private int tab_getTag(TabLayout.Tab tab) {
         Class c = tab.getClass();
@@ -383,14 +467,13 @@ public class BuildingActivity extends BaseActivity {
         }
         return resultMap;
     }
-    @Override
-    protected void onActivityResult(int requestcode,int resultcode,Intent data) {
-        super.onActivityResult(requestcode, resultcode, data);
-        if (resultcode != Activity.RESULT_OK) return;
-        if (requestcode == REQUEST_CODE) {
-            int id = tab_getTag(tabLayout.getTabAt(tabLayout.getSelectedTabPosition()));
-            adapter2.getResultMap().put("部位说明",data.getStringExtra("buwei"));
-            System.out.println(data.getStringExtra("buwei"));
+
+    // 深复制hashMap
+    public static HashMap<String, String> copy(HashMap<String, String> original) {
+        HashMap<String, String> copy = new HashMap<String, String>();
+        for (Map.Entry<String, String> entry : original.entrySet()) {
+            copy.put(entry.getKey(), entry.getValue());
         }
+        return copy;
     }
 }

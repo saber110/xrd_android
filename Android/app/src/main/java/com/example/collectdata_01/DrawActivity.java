@@ -313,6 +313,7 @@ public class DrawActivity extends AppCompatActivity {
                 getResources().getString(R.string.tuYa),
                 Long.toString(System.currentTimeMillis()),
                 bitName);
+        musers.setGardenName(MainActivity.getGardenName());
         MainActivity.mainDB.save(musers);
     }
 

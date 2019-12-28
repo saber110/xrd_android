@@ -16,11 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.collectdata_01.Datalist;
 import com.example.collectdata_01.R;
+import com.example.database.ImageDb;
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.example.collectdata_01.MainActivity.mainDB;
 
 public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
@@ -85,6 +90,16 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         String pic_name = datalist.get(position);
+        try{
+            int a = Integer.parseInt(pic_name);
+            ArrayList<ImageDb> queryGardenName = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
+                    .whereEquals(ImageDb.GARDENID_COL, pic_name));
+
+            itemViewHolder.textView.setText(queryGardenName.get(0).getGardenName());
+            return;
+        }catch (Exception e){
+            itemViewHolder.textView.setText(pic_name);
+        }
         itemViewHolder.checkBox.setTag(pic_name);
         // 点击事件
         itemViewHolder.checkBox.setOnCheckedChangeListener(checkBox_listener);
@@ -113,16 +128,16 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             });
         }
-        itemViewHolder.textView.setText(pic_name);
+        //itemViewHolder.textView.setText(pic_name);
         //itemViewHolder.textView2.setText(downloadMap.get(pic_name));
         String status = downloadMap.get(pic_name);
-        if(status.equals("上传中")){
+        if("上传中".equals(status)){
             itemViewHolder.imageView.setImageResource(R.drawable.process_loading);
         }
-        else if(status.equals("上传成功")){
+        else if("上传成功".equals(status)){
             itemViewHolder.imageView.setImageResource(R.drawable.process_success);
         }
-        else if(status.equals("上传失败")){
+        else if("上传失败".equals(status)){
             itemViewHolder.imageView.setImageResource(R.drawable.process_failure);
         }
         if (resultMap.keySet().contains(pic_name)) {

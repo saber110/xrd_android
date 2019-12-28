@@ -15,6 +15,7 @@ public class ImageDb extends BaseModel {
     public static final String COLLECTTIOME_COL = "collectTime";
     public static final String ISUPLOADED_COL = "isUploaded";
     public static final String GARDENID_COL = "gardenId";
+    public static final String GARDENNAME_COL = "gardenName";
     public static final String PICTUREKIND_COL = "pictureKind";
     public static final String IMAGE_COL = "image";
     public static final String BUILDINGNAME_COL = "buildingName";
@@ -23,6 +24,8 @@ public class ImageDb extends BaseModel {
     @NotNull
     @Column(GARDENID_COL)
     private String gardenId;
+    @Column(GARDENNAME_COL)
+    private String gardenName;
     @Column(PICTUREKIND_COL)
     private String pictureKind;
 
@@ -133,5 +136,13 @@ public class ImageDb extends BaseModel {
 
     public void setIsuploaded(boolean isUploaded) {
         this.isUploaded = isUploaded;
+    }
+
+    public String getGardenName() {
+        return gardenName;
+    }
+
+    public void setGardenName(String gardenName) {
+        this.gardenName = gardenName;
     }
 }

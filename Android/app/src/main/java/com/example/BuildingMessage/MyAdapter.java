@@ -372,6 +372,10 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.data = data;
     }
 
+    public void clearData() {
+        data = new ArrayList<>();
+    }
+
     HashMap<String, String> getResultMap() {
         return resultMap;
     }

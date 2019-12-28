@@ -311,10 +311,12 @@ public class MainActivity extends TakePhotoActivity{
         showImg(result.getImage());
         ImageDb musers;
         // 采集时间精确到毫秒
-        if(getBuildingId() == null)
+        if(getBuildingId() == null) {
             musers = new ImageDb(Integer.toString(MainActivity.getGardenId()), locationString, Long.toString(System.currentTimeMillis()), jpegName);
+        }
         else
             musers = new ImageDb(getBuildingId(), locationString, Long.toString(System.currentTimeMillis()), jpegName, Integer.toString(MainActivity.getGardenId()));
+        musers.setGardenName(MainActivity.getGardenName());
         mainDB.save(musers);
     }
 
@@ -539,6 +541,7 @@ public class MainActivity extends TakePhotoActivity{
                             getResources().getString(R.string.tuYa),
                             Long.toString(System.currentTimeMillis()),
                             getResources().getString(R.string.tuYa) + "_" + jpegName);
+                    musers.setGardenName(getGardenName());
                     mainDB.save(musers);
 
                 } else {
@@ -759,6 +762,7 @@ public class MainActivity extends TakePhotoActivity{
         UsingNeighbourDb mstatusDb;
         mstatusDb = new UsingNeighbourDb(gardenId, gardenName);
         statusDB.save(mstatusDb);
+        ArrayList<UsingNeighbourDb> queryGardenName = mainDB.query(new QueryBuilder<UsingNeighbourDb>(UsingNeighbourDb.class));
     }
 
     public void getPreviousNeighbour(LinearLayout ll) {
