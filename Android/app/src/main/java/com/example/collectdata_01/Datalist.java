@@ -43,6 +43,8 @@ public class Datalist extends AppCompatActivity {
     ArrayList<ImageDb> qitalist = new ArrayList<>();
     private MaterialButton uploadPictures;
     public static DatalistAdapter adapter;
+    public static HashMap<String,ArrayList<String>> pictures = new HashMap<>();
+    private HashMap<String,Boolean> isClicked = new HashMap<>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,20 +56,29 @@ public class Datalist extends AppCompatActivity {
         final List<String> list = new ArrayList<String>();
         //要添加的内容直接添加到list 队列里面就可显示出来   如
 //        list.add("数据一");
-        dividedData(list);
-
+        dividedData(list,true);
+        for(String s:list) isClicked.put(s,false);
         ///可以一直添加，在真机运行后可以下拉列表
         adapter = new DatalistAdapter(this, R.layout.datalist_item, list);
         listView.setLayoutManager(new LinearLayoutManager(this));
         adapter.setmOnItemClickListener(new DatalistAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position) {
-                if (adapter.getResultMap().keySet().contains(list.get(position))) {
+            public void onItemClick(int position,boolean flag) {
+                if(flag&&!isClicked.get(list.get(position))){
+                    String id = list.get(position);
+                    for(String name:pictures.get(id)){
+                        list.add(position+1,name);
+                    }
+                    isClicked.put(id,true);
+                    adapter.notifyDataSetChanged();
+                }
+                else if (!flag&&adapter.getResultMap().keySet().contains(list.get(position))) {
                     Intent i1 = new Intent(getApplicationContext(), ImageActivity.class);
                     i1.putExtra("image", list.get(position));
                     startActivity(i1);
                     Log.i("testForImage", "onItemClick: " + list.get(position));
                 }
+                else System.out.println(flag+" "+list.get(position));
             }
 
             @Override
@@ -106,7 +117,7 @@ public class Datalist extends AppCompatActivity {
         }
     }
 
-    private void dividedData(List<String> listView) {
+    private void dividedData(List<String> listView,boolean flag) {
         gardenlist.clear();
         buildinglist.clear();
         qitalist.clear();
@@ -141,15 +152,19 @@ public class Datalist extends AppCompatActivity {
                 || queryList.get(i).getpictureKind().equals(getResources().getString(R.string.tuYa))) {
                 qitalist.add(queryList.get(i));
             }
-            String nowId = queryList.get(i).getGardenId();
-            if(!nowId.equals(id)){
-                id=nowId;
+            if(flag) {
+                String nowId = queryList.get(i).getGardenId();
+                if (!nowId.equals(id)) {
+                    id = nowId;
 //                ArrayList<ImageDb> queryGardenName = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
 //                        .whereEquals(ImageDb.GARDENID_COL, id));
 //                listView.add(queryGardenName.get(0).getGardenName());
-                listView.add(id);
+                    listView.add(id);
+                    pictures.put(id, new ArrayList<String>());
+                }
+                //listView.add(queryList.get(i).getImage());
+                pictures.get(nowId).add(queryList.get(i).getImage());
             }
-            listView.add(queryList.get(i).getImage());
         }
     }
 
@@ -164,8 +179,24 @@ public class Datalist extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String newName = et.getText().toString();
                         String oldName = list.get(pos);
-                        if (newName.equals(oldName))
+
+                        if (newName.equals(oldName)) {
+                            Toast.makeText(getApplicationContext(),"新名称不能与旧名称相同！",Toast.LENGTH_SHORT).show();
                             return;
+                        }
+                        if (list.contains(newName)) {
+                            Toast.makeText(getApplicationContext(),"此名称已存在！",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        for(String id:pictures.keySet()){
+                            ArrayList<String> arrayList = pictures.get(id);
+                            for(int j=0;j<arrayList.size();j++){
+                                if(arrayList.get(j).equals(oldName)){
+                                    arrayList.remove(oldName);
+                                    arrayList.add(newName);
+                                }
+                            }
+                        }
                         boolean b;
                         b = adapter.getResultMap().get(oldName);
                         adapter.getResultMap().remove(oldName);
@@ -174,6 +205,7 @@ public class Datalist extends AppCompatActivity {
                         list.remove(pos);
                         list.add(pos, newName);
                         adapter.getResultMap().put(list.get(pos), b);
+                        dividedData(list,false);
                         adapter.notifyDataSetChanged();
                     }
                 }).setNegativeButton("取消", null).show();

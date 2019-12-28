@@ -121,7 +121,7 @@ public class BuildingActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(BuildingActivity.this, BuweiActivity.class);
-                    startActivityForResult(i, REQUEST_CODE);
+                    startActivity(i);
                 }
             });
         } else
