@@ -129,8 +129,9 @@ public class GardenMessage extends BaseActivity {
                     String content = "";
                     for (String s : bean.getCurrentSelects()) {
                         content += s;
-                        content += "&";
+                        content += "、";
                     }
+                    content = content.substring(0,content.length() - 1);
                     adapter2.getResultMap().put(bean.getTitle(),content);
                 }
             }else {

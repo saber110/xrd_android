@@ -116,7 +116,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 String s = button.getText().toString();
                 String content = resultMap.get((String) mulbuttonHolder.buttonToggleGroup.getTag());
 
-                String c[] = content.split("&");
+                String c[] = content.split("、");
                 for (int j = 0; j < c.length; j++) {
                     if (c[j].equals(s)) {
                         button.setBackgroundColor(Color.RED);
@@ -278,7 +278,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         resultMap.put((String) group.getTag(), s);
                         return;
                     }
-                    String c[] = content.split("&");
+                    String c[] = content.split("、");
                     content = "";
                     // 点击的按钮已经被选中
                     for (int j = 0; j < c.length; j++) {
@@ -287,7 +287,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             button.setBackgroundColor(Color.WHITE);
                         } else {
                             content += c[j];
-                            content += "&";
+                            content += "、";
                         }
                     }
                     // 点击的按钮未被选中
