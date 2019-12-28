@@ -123,7 +123,6 @@ public class UploadImgUtil {
                     if(n >= N){
                         msg.obj="上传成功";
                         handler.sendMessage(msg);
-                        funToastMakeText("数据上传完毕");
                         n = 0;
                     }
                     Log.d(">>>", "onResponse: "+str);
