@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.collectdata_01.Datalist.pictures;
 import static com.example.collectdata_01.MainActivity.mainDB;
 
 public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -36,24 +37,23 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private HashMap<String,String> downloadMap = new HashMap<>();
     private LayoutInflater layoutInflater;
     private OnItemClickListener mOnItemClickListener = null;
-    private AdapterView.OnItemLongClickListener mOnItemLongClickListener = null;
-
     public void setmOnItemClickListener(OnItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
     }
 
-    public void setmOnItemLongClickListener(AdapterView.OnItemLongClickListener mOnItemLongClickListener) {
-        this.mOnItemLongClickListener = mOnItemLongClickListener;
-    }
 
     public DatalistAdapter(Context context, int layoutId, List<String> list) {
         this.context = context;
         this.layoutId = layoutId;
         datalist = list;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        for(String id:pictures.keySet()){
+            for(String name:pictures.get(id)){
+                resultMap.put(name, true);
+            }
+        }
         for (String s : list) {
             System.out.print(s+" ");
-            resultMap.put(s, true);
             downloadMap.put(s,"准备上传");
         }
         System.out.println("");
@@ -98,14 +98,20 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        String pic_name = datalist.get(position);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+        final String pic_name = datalist.get(position);
         if (holder instanceof ItemViewHolder2){
             ItemViewHolder2 itemViewHolder = (ItemViewHolder2) holder;
             ArrayList<ImageDb> queryGardenName = mainDB.query(new QueryBuilder<ImageDb>(ImageDb.class)
                     .whereEquals(ImageDb.GARDENID_COL, pic_name));
-            itemViewHolder.textView.setText(queryGardenName.get(0).getGardenName()+":");
+            itemViewHolder.textView.setText(queryGardenName.get(0).getGardenName());
             itemViewHolder.textView.setTextColor(Color.rgb(88,88,88));
+            itemViewHolder.itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    mOnItemClickListener.onItemClick(position,true);
+                }
+            });
             return;
         }
         ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
@@ -132,7 +138,7 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 public void onClick(View view) {
                     if (view.getTag() != null) {
                         int pos = (int) view.getTag();
-                        mOnItemClickListener.onItemClick(pos);
+                        mOnItemClickListener.onItemClick(pos,false);
                     }
                 }
 
@@ -202,11 +208,7 @@ public class DatalistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     };
 
     public interface OnItemClickListener {
-        void onItemClick(int position);
-        void onItemLongClick(int position);
-    }
-
-    public interface OnItemLongClickListener {
+        void onItemClick(int position,boolean flag);
         void onItemLongClick(int position);
     }
 

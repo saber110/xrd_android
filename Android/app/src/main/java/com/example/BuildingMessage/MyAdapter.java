@@ -120,7 +120,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             for (int j = 0; j < ((ListItemBean) data.get(position)).getInnerItemList().size(); j++) {
                 CommonItemBean commonItemBean = ((ListItemBean) data.get(position)).getInnerItemList().get(j);
                 if (commonItemBean.getType() == 0) {// type为0表示这个列表项是textInputLayout
-                    if (result.keySet().contains((String) listHolder.textView.getTag() + commonItemBean.getTitle())) {
+                    if (resultMap.keySet().contains((String) listHolder.textView.getTag() + commonItemBean.getTitle())) {
                         List<TextInputEditText> list2 =
                                 (List<TextInputEditText>) listHolder.textView.getTag(listHolder.textView.getId());
                         for (TextInputEditText textInputEditText : list2) {
@@ -130,7 +130,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             }
                             if (((String) textInputEditText.getTag()).equals(commonItemBean.getTitle())
                                     && ((String) listHolder.textView.getTag()).equals(((ListItemBean) data.get(position)).getTitle())) {
-                                textInputEditText.setText(result.get(listHolder.textView.getTag() + commonItemBean.getTitle()));
+                                textInputEditText.setText(resultMap.get(listHolder.textView.getTag() + commonItemBean.getTitle()));
                             }
                             textInputEditText.addTextChangedListener(watcher);
                             textInputEditText.setTag(textInputEditText.getId(), watcher);
