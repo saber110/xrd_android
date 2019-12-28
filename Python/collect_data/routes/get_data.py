@@ -412,7 +412,7 @@ def garden_base_info(*args, **kwargs):
             "required": True,
             "changed": True,
             "type": "multiple",
-            "option": ["主干道、快速路", "次干道", "街巷", "里弄", "特殊类型"],
+            "option": ["主干道", "快速路", "次干道", "街巷", "里弄", "特殊类型"],
             "value": []
         },
         {
