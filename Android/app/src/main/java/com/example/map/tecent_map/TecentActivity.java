@@ -160,8 +160,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         uiSettings.setRotateGesturesEnabled(false);
         uiSettings.setCompassEnabled(false);
         // 正常的地图
-//        tencentMap.setMapType(TencentMap.MAP_TYPE_NORMAL);
-        tencentMap.setMapType(TencentMap.MAP_TYPE_NAVI);
+        tencentMap.setMapStyle(1);
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
         myLocationStyle.strokeColor(android.R.color.transparent);
@@ -176,7 +175,7 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
                     /**
                      * 设置为普通3d地图
                      */
-                    tencentMap.setMapType(TencentMap.MAP_TYPE_NAVI);
+                    tencentMap.setMapStyle(1);
                 } else {
                     // 设置为卫星地图
                     tencentMap.setMapType(TencentMap.MAP_TYPE_SATELLITE);
