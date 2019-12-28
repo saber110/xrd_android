@@ -445,12 +445,14 @@ public class MainActivity extends TakePhotoActivity{
                         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                setBuildingId(edit.getText().toString());
-                                Toast.makeText(context, "你确立的楼栋是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
-                                //把输入的地点赋给 fu.locationString
-                                loudong = edit.getText().toString();
-                                //调用拍照方法
-                                picture();
+                                if (! edit.getText().toString().isEmpty()) {
+                                    setBuildingId(edit.getText().toString());
+                                    Toast.makeText(context, "你确立的楼栋是: " + edit.getText().toString(), Toast.LENGTH_SHORT).show();
+                                    //把输入的地点赋给 fu.locationString
+                                    loudong = edit.getText().toString();
+                                    //调用拍照方法
+                                    picture();
+                                }
                             }
                         });
                         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
