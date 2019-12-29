@@ -88,12 +88,19 @@ public class BuildingActivity extends BaseActivity {
             adapter2.getResultMap().put("部位说明",buweiMap.get(id));
         }
         System.out.println("id="+id);
-        adapter2.notifyDataSetChanged();
+        // adapter2.notifyDataSetChanged();
     }
     @Override
     protected int initLayout() {
         return R.layout.buildingactivity;
     }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        submit.callOnClick();
+    }
+
     @Override
     protected void initData() {
         System.out.println("##1oncreate");
