@@ -121,7 +121,7 @@ public class BuweiActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 System.out.println(id+" "+getRetString());
-                buweiMap.put(id,getRetString());
+                buweiMap.put(id, getRetString());
 //                Intent i = new Intent();
 //                i.putExtra("buwei",getRetString());
 //                setResult(RESULT_OK,i);

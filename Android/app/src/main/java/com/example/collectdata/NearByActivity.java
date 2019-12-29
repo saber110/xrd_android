@@ -293,6 +293,7 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         return checkBox;
     }
     private void searchNeayBy(String key, final int index){
+        // TODO 加载数据成功才能进入
         // POI初始化搜索模块，注册搜索事件监听
         Log.d("keyword",key);
         PoiSearch mPoiSearch = PoiSearch.newInstance();
