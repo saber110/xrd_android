@@ -82,6 +82,15 @@ public class BuildingActivity extends BaseActivity {
 //    }
 
     @Override
+    protected void onResume(){
+        super.onResume();
+        if(buweiMap.get(id)!=null&&buweiMap.get(id).length()!=0) {
+            adapter2.getResultMap().put("部位说明",buweiMap.get(id));
+        }
+        System.out.println("id="+id);
+        adapter2.notifyDataSetChanged();
+    }
+    @Override
     protected int initLayout() {
         return R.layout.buildingactivity;
     }
@@ -280,9 +289,13 @@ public class BuildingActivity extends BaseActivity {
 //                        adapter2.setResultMap(manageResultMap(Objects.requireNonNull(newtabMap.get(i))));
 //                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
 //                }
+                id=i;
+                if(buweiMap.get(id)!=null&&buweiMap.get(id).length()!=0) {
+                    adapter2.getResultMap().put("部位说明",buweiMap.get(id));
+                }
+                System.out.println("id="+i);
                 adapter2.notifyDataSetChanged();
             }
-            id=i;
         }
 
         @Override
