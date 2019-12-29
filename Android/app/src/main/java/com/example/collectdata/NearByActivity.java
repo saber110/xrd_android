@@ -21,11 +21,13 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.CircleOptions;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
@@ -47,7 +49,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 public class NearByActivity extends AppCompatActivity implements TabHost.TabContentFactory, BaiduMap.OnMapLongClickListener,View.OnClickListener {
     private BaiduMap baiduMap;
@@ -197,6 +198,7 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
     //搜索地点
     private void searchLocation(){
         System.out.println("搜索地点");
+        baiduMap.clear();
         PoiSearch poiSearch = PoiSearch.newInstance();
         poiSearch.setOnGetPoiSearchResultListener(new OnGetPoiSearchResultListener() {
             // poi 查询结果回调
@@ -204,12 +206,22 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
             public void onGetPoiResult(PoiResult result) {
                 if (result != null) {
                     if (result.getAllPoi() != null && result.getAllPoi().size() > 0) {
-                        PoiInfo poiInfo = result.getAllPoi().get(0);
-                        System.out.println(poiInfo);
-                        LatLng location = new LatLng(poiInfo.getLocation().latitude,poiInfo.getLocation().longitude);
-                        MapStatus.Builder builder = new MapStatus.Builder();
-                        builder.target(location).zoom(18.0f);
-                        baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                        for(PoiInfo item : result.getAllPoi()) {
+                            if (! item.getAddress().isEmpty()) {
+                                MarkerOptions options = new MarkerOptions()
+                                        .position(item.getLocation())
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.outline_local_pizza_black_18dp));
+                                baiduMap.addOverlay(options);
+
+                                LatLng location = item.getLocation();
+                                MapStatus.Builder builder = new MapStatus.Builder();
+                                builder.target(location).zoom(13.0f);
+                                baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                            }
+                        }
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(),R.string.noSearchResult,Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -507,3 +519,4 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         baiduMap.setMyLocationEnabled(false);
     }
 }
+

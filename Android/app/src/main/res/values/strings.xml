@@ -116,7 +116,7 @@
     <string name="add_garden_message">请输入小区名</string>
     <string name="updateFakeGarden">更新虚拟小区</string>
     <string name="selectWorkingGarden">请选择工作小区</string>
-
+    <string name="noSearchResult">没有搜索到目标地点哦！</string>
     <string name="garden_other_message">配套信息</string>
     <string name="feiloudong">非楼栋</string>
     <string name="cat_textfield_label" translatable="false">Label</string>
@@ -136,4 +136,6 @@
     <string name="userDB">userData.db</string>
 
     <string name="picturePath">temp</string>
+
+
 </resources>
