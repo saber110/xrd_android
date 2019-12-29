@@ -19,13 +19,23 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.PoiInfo;
+import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
+import com.baidu.mapapi.search.poi.PoiCitySearchOption;
+import com.baidu.mapapi.search.poi.PoiDetailResult;
+import com.baidu.mapapi.search.poi.PoiDetailSearchResult;
+import com.baidu.mapapi.search.poi.PoiIndoorResult;
+import com.baidu.mapapi.search.poi.PoiResult;
+import com.baidu.mapapi.search.poi.PoiSearch;
 import com.example.collectdata_01.R;
 import com.example.dialog.CreatDialog;
 import com.example.map.dao.StanderDao;
@@ -50,10 +60,11 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
     private TextView qita;
     private TextView lat;
     private TextView lng;
+    private TextView textView;
     private int choose = 1;
     private EditText name;
     private float scale;
-
+    private Button search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +73,9 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
         setContentView(R.layout.activity_baidu_map);
         scale = this.getResources().getDisplayMetrics().density;
         mMapView = findViewById(R.id.bmapView);
+        search = (Button) findViewById(R.id.search_baidu);
+        textView = (TextView)findViewById(R.id.text_input_baidu);
+
         /**
          * dialog 的view
          */
@@ -166,6 +180,66 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
 //        });
     }
 
+    private void searchLocation(){
+        System.out.println("搜索地点");
+        baiduMap.clear();
+        PoiSearch poiSearch = PoiSearch.newInstance();
+        poiSearch.setOnGetPoiSearchResultListener(new OnGetPoiSearchResultListener() {
+            // poi 查询结果回调
+            @Override
+            public void onGetPoiResult(PoiResult result) {
+                if (result != null) {
+                    if (result.getAllPoi() != null && result.getAllPoi().size() > 0) {
+                        for(PoiInfo item : result.getAllPoi()) {
+                            if (! item.getAddress().isEmpty()) {
+                                MarkerOptions options = new MarkerOptions()
+                                        .position(item.getLocation())
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.outline_local_pizza_black_18dp));
+                                baiduMap.addOverlay(options);
+
+                                LatLng location = item.getLocation();
+                                MapStatus.Builder builder = new MapStatus.Builder();
+                                builder.target(location).zoom(13.0f);
+                                baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                            }
+                        }
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(),R.string.noSearchResult,Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            // poi 详情查询结果回调
+            @Override
+            public void onGetPoiDetailResult(
+                    PoiDetailResult poiDetailResult) {
+            }
+
+            @Override
+            public void onGetPoiDetailResult(PoiDetailSearchResult poiDetailSearchResult) {
+
+            }
+
+            @Override
+            public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
+
+            }
+        });
+        // 城市内检索
+        PoiCitySearchOption poiCitySearchOption = new PoiCitySearchOption();
+        // 关键字
+        poiCitySearchOption.keyword(textView.getText().toString());
+        // 城市
+        poiCitySearchOption.city(textView.getText().toString());
+        // 设置每页容量，默认为每页10条
+        poiCitySearchOption.pageCapacity(20);
+        // 分页编号
+        poiSearch.searchInCity(poiCitySearchOption);
+        // 设置poi检索监听者
+
+    }
+
     private void beginLoc() {
         //定位初始化
         mLocationClient = new LocationClient(this);
@@ -213,6 +287,13 @@ public class BaiduMapActivity extends AppCompatActivity implements BaiduMap.OnMa
                     // 设置为卫星地图
                     baiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
                 }
+            }
+        });
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchLocation();
             }
         });
     }
