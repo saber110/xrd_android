@@ -58,13 +58,13 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
     private TextView textView;
     private LocationClient mLocationClient;
     private boolean isShowLoc = false;
-    private final int tab_num = 18;
-    private final int set_num = 18;
+    private static final int tab_num = 18;
+    private static final int set_num = 18;
     private final int r = 1000;
-    private LinearLayout[] linearLayout = new LinearLayout[tab_num+1];
+    public static LinearLayout[] linearLayout = new LinearLayout[tab_num+1];
     private double latitude = 0.0,longitude = 0.0;
     private String select_tab = "tab1";
-    private HashSet<String>[]sets = new HashSet[set_num+1];
+    public static HashSet<String>[]sets = new HashSet[set_num+1];
     public static HashMap<String,Object> map = new HashMap<>();
     private final int MAX = 1000000000;
     private int busStationDistance = MAX;
@@ -84,12 +84,16 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         textView = (TextView)findViewById(R.id.text_input_location);
         baiduMap = mMapView.getMap();
         for(int i=1;i<=tab_num;i++){
-            linearLayout[i] = new LinearLayout(this);
-            linearLayout[i].setOrientation(LinearLayout.VERTICAL);
+            if(linearLayout[i]==null) {
+                linearLayout[i] = new LinearLayout(this);
+                linearLayout[i].setOrientation(LinearLayout.VERTICAL);
+            }
         }
         for(int i=0;i<=set_num;i++){
-            sets[i] = new HashSet<>();
-            sets[i].clear();
+            if(sets[i]==null) {
+                sets[i] = new HashSet<>();
+                sets[i].clear();
+            }
         }
         tabHost.setup();
         // 加上标签
@@ -416,19 +420,29 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         circleOptions.stroke(new Stroke(5, 0xAA00FF00));   // 设置边框
         baiduMap.addOverlay(circleOptions);
     }
+    private ScrollView[] scrollView = new ScrollView[tab_num+1];
+    @Override
+    protected void onStop(){
+        super.onStop();
+        for (int i = 1; i <= tab_num; i++) {
+            if(scrollView[i]!=null) scrollView[i].removeAllViews();
+        }
+    }
     @Override
     public View createTabContent(String tag)
     {
 // 参数： 这个方法会接受到被选择的tag的标签
         Log.d("select_tab:",select_tab);
-        ScrollView scrollView = new ScrollView(this);
-        for(int i=1;i<=tab_num;i++){
-            if(tag.equals("tab"+i)){
-                scrollView.addView(linearLayout[i]);
-                break;
+//        if(scrollView==null) scrollView = new ScrollView(this);
+//        scrollView.removeAllViews();
+        for (int i = 1; i <= tab_num; i++) {
+            if (tag.equals("tab" + i)) {
+                if(scrollView[i]==null) scrollView[i] = new ScrollView(this);
+                scrollView[i].addView(linearLayout[i]);
+                return scrollView[i];
             }
         }
-        return scrollView;
+        return null;
     }
     private void beginLoc() {
         //定位初始化
