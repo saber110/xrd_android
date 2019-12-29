@@ -1,5 +1,6 @@
 package com.example.BuildingMessage;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Handler;
@@ -57,6 +58,7 @@ public class BuildingActivity extends BaseActivity {
     private Map<String, String> map2 = new HashMap<>();
     private String mode;
     private int gardenId;
+    private int id = 0;
     // resultList用来保存不同tab中填写的数据
     private HashMap<Integer, HashMap<String, String>> resultList = new HashMap();
     private List<CommonItemBean> list = new ArrayList<>();
@@ -64,14 +66,37 @@ public class BuildingActivity extends BaseActivity {
     private HashMap<Integer, List<CommonItemBean>> newtabMap = new HashMap<>();
     private MyHandler handler = new MyHandler(this);
     private final static int REQUEST_CODE = 1; // 返回的结果码
+    public static HashMap<Integer,String> buweiMap = new HashMap<>();
 
+//    @Override
+//    protected void onActivityResult(int requestCode,int resultCode,Intent i){
+//        super.onActivityResult(requestCode,resultCode,i);
+//        if(requestCode!= Activity.RESULT_OK) return;
+//        if(requestCode!=REQUEST_CODE) {
+//            if(i==null) return;
+//            System.out.println(id+" "+i.getStringExtra("buwei"));
+//            buweiMap.put(id,i.getStringExtra("buwei"));
+//            adapter2.getResultMap().put("部位说明", buweiMap.get(id));
+//            adapter2.notifyDataSetChanged();
+//        }
+//    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(buweiMap.get(id)!=null&&buweiMap.get(id).length()!=0) {
+            adapter2.getResultMap().put("部位说明",buweiMap.get(id));
+        }
+        System.out.println("id="+id);
+        adapter2.notifyDataSetChanged();
+    }
     @Override
     protected int initLayout() {
         return R.layout.buildingactivity;
     }
-
     @Override
     protected void initData() {
+        System.out.println("##1oncreate");
         final Intent i = getIntent();
         mode = i.getStringExtra("mode");
         gardenId = i.getIntExtra("gardenId", 0);
@@ -121,7 +146,9 @@ public class BuildingActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(BuildingActivity.this, BuweiActivity.class);
-                    startActivity(i);
+                    i.putExtra("id",id);
+                    i.putExtra("buwei",adapter2.getResultMap().get("部位说明"));
+                    startActivityForResult(i,REQUEST_CODE);
                 }
             });
         } else
@@ -150,6 +177,10 @@ public class BuildingActivity extends BaseActivity {
             }
 //            tab.setText()
             tabLayout.addTab(tab);
+        }
+        id = tab_getTag(tabLayout.getTabAt(tabLayout.getSelectedTabPosition()));
+        if(buweiMap.get(id)!=null&&buweiMap.get(id).length()!=0){
+            adapter2.getResultMap().put("部位说明",buweiMap.get(id));
         }
         adapter2.notifyDataSetChanged();
     }
@@ -258,6 +289,11 @@ public class BuildingActivity extends BaseActivity {
 //                        adapter2.setResultMap(manageResultMap(Objects.requireNonNull(newtabMap.get(i))));
 //                    submit.setOnClickListener(new PostListener(BuildingActivity.this, gardenId, adapter2.getResultMap(), newtabMap.get(i), mode, -1, map2, requestListener));
 //                }
+                id=i;
+                if(buweiMap.get(id)!=null&&buweiMap.get(id).length()!=0) {
+                    adapter2.getResultMap().put("部位说明",buweiMap.get(id));
+                }
+                System.out.println("id="+i);
                 adapter2.notifyDataSetChanged();
             }
         }
