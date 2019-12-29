@@ -162,10 +162,11 @@ def garden_base_info(*args, **kwargs):
             'value': ''
         },
         {
+            # 应需求放要求，改为可以更改
             'label': '小区名称',
-            'key': '',
+            'key': 'gardenName',
             'required': False,
-            'changed': False,
+            'changed': True,
             'type': 'text',
             'value': garden.name
         },
