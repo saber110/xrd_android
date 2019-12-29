@@ -74,7 +74,7 @@ def compress_image(origin_path: str, compressed_path: str, size: int):
         image = image.resize((int(rate * width), int(rate * high)), Image.ANTIALIAS)
         image.save(compressed_path)
 
-    add_water_mark_and_save(compressed_path, '湖南新融达', 80, '#fff', 0.4)
+    add_water_mark_and_save(compressed_path, '湖 南 新 融 达', 60, '#fff', 0.4)
 
 
 def add_water_mark_and_save(image_path, text, front_size, fill_color, alpha):
@@ -91,7 +91,7 @@ def add_water_mark_and_save(image_path, text, front_size, fill_color, alpha):
     bg = img.copy()
     draw = ImageDraw.Draw(img)
     father_dictionary = os.path.abspath(os.path.dirname(__file__))
-    tff_path = os.path.join(father_dictionary, 'assets', 'SourceHanSansCN-Normal.ttf')
+    tff_path = os.path.join(father_dictionary, 'assets', 'FangZhengKaiTiJianTi-1.ttf')
     my_font = ImageFont.truetype(tff_path, size=front_size)
     front_width, front_height = my_font.getsize(text)
     width, height = img.size
