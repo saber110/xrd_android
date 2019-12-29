@@ -3,6 +3,8 @@ package com.example.collectdata;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +24,9 @@ import com.example.dao.Position;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.example.BuildingMessage.BuildingActivity.buweiMap;
+
+
 public class BuweiActivity extends AppCompatActivity {
     private LinearLayout Linayout;
     private TextView textView;
@@ -31,9 +36,9 @@ public class BuweiActivity extends AppCompatActivity {
     private Button save;
     private int id;
     private HashMap<String,String> myBuwei = new HashMap<>();
-    public static HashMap<Integer,String> buweiMap = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        System.out.println("##2oncreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buwei);
         id = getIntent().getIntExtra("id",0);
@@ -42,6 +47,7 @@ public class BuweiActivity extends AppCompatActivity {
         else {
             retString = buweiMap.get(id);
         }
+        retString=getIntent().getStringExtra("buwei");
         if(retString==null) retString="";
         if(retString.length()!=0) {
             for (String s : retString.split(";")) {
@@ -114,11 +120,11 @@ public class BuweiActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println(id+" "+getRetString());
+                buweiMap.put(id,getRetString());
 //                Intent i = new Intent();
 //                i.putExtra("buwei",getRetString());
-//                setResult(RESULT_OK, i);
-                System.out.println(getRetString());
-                buweiMap.put(id,getRetString());
+//                setResult(RESULT_OK,i);
                 Toast.makeText(BuweiActivity.this,"保存成功", Toast.LENGTH_SHORT).show();
                 finish();
             }

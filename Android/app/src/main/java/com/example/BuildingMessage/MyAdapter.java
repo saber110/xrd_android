@@ -80,7 +80,6 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         // 文字输入框复用
         if (holder instanceof TextViewHolder) {
             TextViewHolder textHolder = (TextViewHolder) holder;
-
             textHolder.textInputLayout.setHint(data.get(position).getTitle());
             // 复用前要移除listener，防止错误的添加数据到resultMap，下边类似
             TextWatcher watcher = (TextWatcher) textHolder.textInputEditText.getTag(textHolder.textInputEditText.getId());
