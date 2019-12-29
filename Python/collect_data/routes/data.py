@@ -379,6 +379,13 @@ def garden_base_info(user_id: int, *args, **kwargs):
         if key not in schema and str(data[key]).strip() == '':
             del data[key]
     try:
+        # 更新小区名
+        if 'gardenName' in data:
+            garden = Garden.query.get(data['id'])
+            if garden is None:
+                return generate_result(2, '小区不存在')
+            garden.name = data['gardenName']
+            db.session.add(garden)
         base_info = GardenBaseInfo.query.get(data['id'])
         if base_info is None:
             base_info = GardenBaseInfo(**data)  # 新建
