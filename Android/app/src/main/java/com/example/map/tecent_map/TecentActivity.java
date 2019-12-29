@@ -13,22 +13,31 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.collectdata_01.R;
+import com.example.collectdata_01.util.DrawUtil;
 import com.example.dialog.CreatDialog;
 import com.example.map.baidu_map.BaiduMapActivity;
+import com.example.map.dao.MapMarkerDataDao;
 import com.example.map.dao.UploadMarkerReturnDao;
 import com.example.map.net.MarkerNetUtil;
 import com.example.net.AsyncRequest;
+import com.tencent.lbssearch.TencentSearch;
+import com.tencent.lbssearch.httpresponse.BaseObject;
+import com.tencent.lbssearch.object.param.SearchParam;
+import com.tencent.lbssearch.object.result.SearchResultObject;
 import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
+import com.tencent.map.tools.net.http.HttpResponseListener;
 import com.tencent.tencentmap.mapsdk.maps.CameraUpdateFactory;
 import com.tencent.tencentmap.mapsdk.maps.LocationSource;
 import com.tencent.tencentmap.mapsdk.maps.MapView;
@@ -40,6 +49,7 @@ import com.tencent.tencentmap.mapsdk.maps.model.Marker;
 import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.maps.model.MyLocationStyle;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -59,11 +69,14 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
     private TextView qita;
     private TextView lat;
     private TextView lng;
+    private TextView textView;
     private int choose = 1;
     private View changeView;
     private Dialog changeDialog;
     private EditText name;
     private float scale;
+    private Button search;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +85,8 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         scale = this.getResources().getDisplayMetrics().density;
         initChooseMap();
         mapview = findViewById(R.id.tecent_mapview);
+        search = (Button) findViewById(R.id.search_tencent);
+        textView = (TextView)findViewById(R.id.text_input_tencent);
         view = getLayoutInflater().inflate(R.layout.send_map_data, null);
         changeView = getLayoutInflater().inflate(R.layout.change_mark_data, null);
         dialog = CreatDialog.createSendMapDataDialog(this, view);
@@ -136,6 +151,44 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
 
     }
 
+    private void searchLocation() {
+        System.out.println("搜索地点");
+        tencentMap.clearAllOverlays();
+        TencentSearch searchPoi = new TencentSearch(getApplicationContext());
+        SearchParam param = new SearchParam()
+                .keyword(textView.getText().toString())
+                .boundary(new SearchParam.Region("长沙"));
+
+        HttpResponseListener ResponseListener = new HttpResponseListener() {
+                @Override
+                public void onSuccess(int i, Object o) {
+                    SearchResultObject res = (SearchResultObject) o;
+                    List<SearchResultObject.SearchResultData> res1 = res.data;
+                    for (SearchResultObject.SearchResultData item : res1) {
+
+                        com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions options
+                                = new com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions(
+                                        new com.tencent.tencentmap.mapsdk.maps.model.LatLng(
+                                                item.latLng)).
+                                                    icon(
+                                                            com.tencent.tencentmap.mapsdk.maps.model.BitmapDescriptorFactory.fromResource(R.drawable.outline_local_pizza_black_18dp));
+                        tencentMap.addMarker(options);
+
+                        tencentMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                        tencentMap.animateCamera(CameraUpdateFactory.newLatLng(new com.tencent.tencentmap.mapsdk.maps.model.LatLng(item.latLng)));
+                    }
+                }
+
+                @Override
+                public void onFailure(int i, String s, Throwable throwable) {
+                    Log.i(TAG, "onFailure: " + s);
+                }
+
+
+            };
+        searchPoi.search(param, ResponseListener);
+    }
+
     /**
      * 初始化定位
      */
@@ -166,6 +219,13 @@ public class TecentActivity extends AppCompatActivity implements TencentMap.OnMa
         myLocationStyle.strokeColor(android.R.color.transparent);
         myLocationStyle.fillColor(android.R.color.transparent);
         tencentMap.setMyLocationStyle(myLocationStyle);
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchLocation();
+            }
+        });
 
         findViewById(R.id.change_tencent_map_style).setOnClickListener(new View.OnClickListener() {
             @Override

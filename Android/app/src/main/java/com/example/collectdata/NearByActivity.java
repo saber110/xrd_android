@@ -152,7 +152,7 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
                 searchNeayBy("小学",14);
                 searchNeayBy("中学",15);
                 searchNeayBy("大学",16);
-                searchNeayBy("景点",17);
+                searchNeayBy("旅游景点",17);
                 searchNeayBy("公园",18);
                 break;
             case R.id.dw_bt2:
