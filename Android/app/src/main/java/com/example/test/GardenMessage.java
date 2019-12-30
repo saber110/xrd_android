@@ -121,18 +121,22 @@ public class GardenMessage extends BaseActivity {
         adapter2.setData(list);
         for (CommonItemBean commonItemBean : list){
             if (commonItemBean instanceof SelectorItemBean){
+                // 单选
                 if (commonItemBean.getType() == 1) {
                     SelectorItemBean bean = (SelectorItemBean) commonItemBean;
                     adapter2.getResultMap().put(bean.getTitle(), bean.getCurrentSelect());
                 }else {
+                    // 多选
                     SelectorItemBean bean = (SelectorItemBean) commonItemBean;
                     String content = "";
                     for (String s : bean.getCurrentSelects()) {
                         content += s;
                         content += "、";
                     }
-                    content = content.substring(0,content.length() - 1);
-                    adapter2.getResultMap().put(bean.getTitle(),content);
+                    if(! content.isEmpty()){
+                        content = content.substring(0,content.length() - 1);
+                        adapter2.getResultMap().put(bean.getTitle(),content);
+                    }
                 }
             }else {
                 adapter2.getResultMap().put(commonItemBean.getTitle(),commonItemBean.getContent());
