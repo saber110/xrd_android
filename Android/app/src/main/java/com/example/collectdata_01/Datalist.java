@@ -49,7 +49,6 @@ public class Datalist extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_datalist);
-        final TextView textView = (TextView) findViewById(R.id.text);
         uploadPictures = findViewById(R.id.uploadPictures);
 
         RecyclerView listView = findViewById(R.id.list);
@@ -64,6 +63,7 @@ public class Datalist extends AppCompatActivity {
         adapter.setmOnItemClickListener(new DatalistAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position,boolean flag) {
+                // 点击到小区名
                 if(flag&&!isClicked.get(list.get(position))){
                     String id = list.get(position);
                     for(String name:pictures.get(id)){
@@ -72,11 +72,11 @@ public class Datalist extends AppCompatActivity {
                     isClicked.put(id,true);
                     adapter.notifyDataSetChanged();
                 }
+                // 点击到照片
                 else if (!flag&&adapter.getResultMap().keySet().contains(list.get(position))) {
                     Intent i1 = new Intent(getApplicationContext(), ImageActivity.class);
                     i1.putExtra("image", list.get(position));
                     startActivity(i1);
-                    Log.i("testForImage", "onItemClick: " + list.get(position));
                 }
                 else System.out.println(flag+" "+list.get(position));
             }
