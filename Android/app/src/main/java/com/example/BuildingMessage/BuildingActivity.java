@@ -460,6 +460,8 @@ public class BuildingActivity extends BaseActivity {
     }
 
     private int tab_getTag(TabLayout.Tab tab) {
+        if (tab == null)
+            return -1;
         Class c = tab.getClass();
         try {
             Field field = c.getDeclaredField("view");

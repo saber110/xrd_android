@@ -115,15 +115,18 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 MaterialButton button = (MaterialButton) mulbuttonHolder.buttonToggleGroup.getChildAt(i);
                 String s = button.getText().toString();
                 String content = resultMap.get((String) mulbuttonHolder.buttonToggleGroup.getTag());
-
-                String c[] = content.split("、");
-                for (int j = 0; j < c.length; j++) {
-                    if (c[j].equals(s)) {
-                        button.setBackgroundColor(Color.RED);
-                        break;
+                if(content != null && ! content.isEmpty()) {
+                    String c[] = content.split("、");
+                    for (int j = 0; j < c.length; j++) {
+                        if (c[j].equals(s)) {
+                            button.setBackgroundColor(Color.RED);
+                            break;
+                        }
+                        button.setBackgroundColor(Color.WHITE);
                     }
-                    button.setBackgroundColor(Color.WHITE);
                 }
+                else
+                    button.setBackgroundColor(Color.WHITE);
             }
             mulbuttonHolder.buttonToggleGroup.addOnButtonCheckedListener(mullistener);
             mulbuttonHolder.setIsRecyclable(false);
