@@ -41,40 +41,45 @@
     <div class="main-panel">
       <!-- Navbar -->
       <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top " id = "navbar">
+
       </nav>
       <!-- End Navbar -->
-      <div class="content">
-        <form class="form">
-                    <span id="city_china_val" class="bmd-form-group"><div class="input-group no-border">
-                        <select class="province other form-control" data-first-title="选择省" id = "province">
-                          <option value="">请选择</option>
-                          <!-- <option value="湖南省" selected>湖南省</option> -->
-                        </select>
-                        <select class="city form-control" data-first-title="选择市"  id = "city">
-                          <option value="">请选择</option>
-                          <!-- <option value="长沙市" selected>长沙市</option> -->
-                        </select>
-                        <select class="area form-control" data-first-title="选择地区" id = "district">
-                          <option value="">请选择</option>
-                          <!-- <option value="芙蓉区" selected>芙蓉区</option> -->
-                        </select>
-                        <select class="street form-control" data-first-title="选择街道" id = "street">
-                          <option value="">请选择</option>
-                          <!-- <option value="文艺路街道" selected>文艺路街道</option> -->
-                        </select>
-                        <select class="community form-control" data-first-title="选择社区" id = "community">
-                          <option value="">请选择</option>
-                          <!-- <option value="识字岭社区" selected>识字岭社区</option> -->
-                        </select>
-                    </div>
-                  </span>
-                  </form>
-        <ul class="nav">
-          <span class="input-group " id = "neighboutLists">
-          </span>
-        </ul>
-        <div id="map"></div>
+      <div class="">
+        <div class="">
+          <div id="map"></div>
+        </div>
+        <span id="city_china_val" >
+          <ul>
+            <span class="input-group " id = "neighboutLists">
+            </span>
+          </ul>
+          <div class="input-group">
+            <select class="form-control" data-first-title="选择省" id = "province">
+              <option value="">请选择</option>
+              <!-- <option value="湖南省" selected>湖南省</option> -->
+            </select>
+            <select class="form-control" data-first-title="选择市"  id = "city">
+              <option value="">请选择</option>
+              <!-- <option value="长沙市" selected>长沙市</option> -->
+            </select>
+            <select class="form-control" data-first-title="选择地区" id = "district">
+              <option value="">请选择</option>
+              <!-- <option value="芙蓉区" selected>芙蓉区</option> -->
+            </select>
+            <select class="form-control" data-first-title="选择街道" id = "street">
+              <option value="">请选择</option>
+              <!-- <option value="文艺路街道" selected>文艺路街道</option> -->
+            </select>
+            <select class="form-control" data-first-title="选择社区" id = "community">
+              <option value="">请选择</option>
+              <!-- <option value="识字岭社区" selected>识字岭社区</option> -->
+            </select>
+          </div>
+        </span>
+        
       </div>
+      
+      
       <footer id = "footer"></footer>
     </div>
   </div>
@@ -144,7 +149,7 @@
   <script type="text/javascript">
     //百度地图API功能
     var mapbd = new BMap.Map("map");            // 创建Map实例
-    mapbd.centerAndZoom("北京",11);                 
+    mapbd.centerAndZoom("长沙",11);                 
     mapbd.enableScrollWheelZoom();                 //启用滚轮放大缩小
     mapbd.addControl(new BMap.MapTypeControl({
     mapTypes:[
@@ -156,15 +161,14 @@
             "featureType": "road",
             "elementType": "all",
             "stylers": {
-                "color": "#ffffff",
-                "visibility": "off"
+                "visibility": "on"
             }
         },
         {
             "featureType": "building",
             "elementType": "all",
             "stylers": {
-                "visibility": "on"
+                "visibility": "off"
             }
         },
         {
@@ -184,10 +188,15 @@
         ]
     });
 
-    mapbd.addEventListener("click",function(e){
-      console.log(e.point.lng + "," + e.point.lat);
-    });
-  
+    // 缩放时阻止页面滚动
+    document.getElementById("map").onmousewheel=function (e) {
+      e= e || window.event;
+      if(document.all) {
+        e.cancelBubble=true;
+      }else{ 
+        e.stopPropagation();
+      }
+    };
   </script>
   <script type="text/javascript">
     function mapLabel(gardenId, mapId) {

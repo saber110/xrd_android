@@ -15,7 +15,8 @@ const userFileUpload = user + "import_user";
 
 
 const getDataTab = preFix + "get_data/";
-const getDiskDetail = getDataTab + "disk"
+const getDiskDetail = getDataTab + "disk";
+const getRadiusListApi = getDataTab + "radius";
 
 const admin = preFix + "administration/";
 // 省份数据获取接口
@@ -41,7 +42,7 @@ const getOtherPicture = getData + "other_picture";
 const data = preFix + "data/";
 // 图片相关接口
 const picture = preFix + "data/";
-const pictureExport = preFix + "get_data/" + "export_zip"
+const pictureExport = preFix + "get_data/" + "export_zip";
 // 获取建筑类别接口
 // 返回已有建筑的种类名称和对应的id
 const building = data + "building";
@@ -57,6 +58,9 @@ const buildingPictureKindList = picture + "building_picture_kind";
 const garden_base_info = data + "garden_base_info";
 // 修改楼栋概况表接口
 const building_base_info = data + "building_base_info";
+
+const updateRadiusApi = data + radius;
+
 
 
 const BAIDU_MAP = 1;
@@ -249,6 +253,15 @@ function updateTokenFun(token = '') {
 function getUserLists() {
     var token = getCookie("token");
     xhrPost(userList, conJson(conSplit("token", token)), false)
+        .done(function (para) {
+            userLists = para.data;
+        });
+    return userLists;
+}
+
+function getRadiusList() {
+    var token = getCookie("token");
+    xhrPost(getRadiusListApi, conJson(conSplit("token", token)), false)
         .done(function (para) {
             userLists = para.data;
         });
