@@ -59,7 +59,7 @@ const garden_base_info = data + "garden_base_info";
 // 修改楼栋概况表接口
 const building_base_info = data + "building_base_info";
 
-const updateRadiusApi = data + radius;
+const updateRadiusApi = data + "radius";
 
 
 
@@ -268,9 +268,26 @@ function getRadiusList() {
     return userLists;
 }
 
+function updateRadius(key, radius) {
+    var json = {
+            "token": getCookie("token"),
+            "key": key,
+            "radius": parseInt(radius)
+        };
+    xhrPost(updateRadiusApi, JSON.stringify(json))
+        .done(function (data) {
+            if (data.code == 0) {
+                md.showNotification("bottom", 'right', '更新成功');
+            } else {
+                md.showNotification("bottom", 'right', '更新失败，请联系管理员', 'danger');
+            }
+        }).fail(function (code) {
+            md.showNotification("bottom", 'right', '更新失败，请联系管理员', 'danger');
+        });
+    }
+
 function updateUserFun(data) {
     for (let index in data) {
-        console.log(data[index]);
         var json = {
             "newUsers": [
                 data[index]
