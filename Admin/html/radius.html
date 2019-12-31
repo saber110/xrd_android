@@ -131,24 +131,33 @@
   <script type="text/javascript" src="../assets/js/interface.js"></script>
   <script>
     var Lists = getRadiusList();
+    var radiusTable;
+    var changed = function(instance, cell, x, y, value) {
+      var cellName = jexcel.getColumnNameFromId([x,y]);
+      var key = radiusTable.getValue(jexcel.getColumnNameFromId([2, y]));
+      updateRadius(key, value);
+    }
     document.addEventListener('DOMContentLoaded', function() {
-      jexcel(document.getElementById('spreadsheet'), {
+      radiusTable = jexcel(document.getElementById('spreadsheet'), {
+          onchange: changed,
           data:Lists.radius,
           columns: [
               {
-                  title: '用户Id',
-                  width: 100
-              },
-              {
                   title: '标题',
-                  width: 100
+                  width: 100,
+                  name: "name",
+
               },
               {
                   title: '半径',
-                  width: 100
+                  width: 100,
+                  name: "radius"
+              },
+              {
+                type: 'hidden',
+                name: "key"
               }
-          ],
-          columnDrag:true,
+          ]
       });
     });
   </script>
