@@ -72,6 +72,7 @@ public class UploadImgUtil {
             public void handleMessage(Message msg){
                 if(msg.what==0){
                     adapter.setProcess(jpeg,msg.obj.toString());
+                    Toast.makeText(getContext(),msg.obj.toString(),Toast.LENGTH_SHORT).show();
                 }
             }
         };

@@ -408,6 +408,7 @@ public class BuildingActivity extends BaseActivity {
                         // tabMap里边添加数据
                         tabMap.put(id, tabMap.get(tab_getTag(tab)));
                         tabMap.remove(tab_getTag(tab));
+                        resultList.put(id,copy(adapter2.getResultMap()));
                         tab_setTag(tab, id);
                         addTabListener(tabLayout, tab, id);
                     }

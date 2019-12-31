@@ -102,18 +102,24 @@ public class Datalist extends AppCompatActivity {
         HashMap<String,Boolean> result = adapter.getResultMap();
         for (int i = 0; i < gardenlist.size(); i++) {
             if (result.keySet().contains(gardenlist.get(i).getImage()))
-                if (result.get(gardenlist.get(i).getImage()))
+                if (result.get(gardenlist.get(i).getImage())) {
                     uploadImgUtil.uploadGardenImg(gardenlist.get(i).getGardenId(), gardenlist.get(i).getpictureKind(), gardenlist.get(i).getCollectTime(), login.token, gardenlist.get(i).getImage());
+                    gardenlist.remove(gardenlist.get(i));
+                }
         }
         for (int i = 0; i < buildinglist.size(); i++) {
             if (result.keySet().contains(buildinglist.get(i).getImage()))
-                if (result.get(buildinglist.get(i).getImage()))
+                if (result.get(buildinglist.get(i).getImage())) {
                     uploadImgUtil.uploadBuildImg(buildinglist.get(i).getBuildingName(), buildinglist.get(i).getCollectTime(), buildinglist.get(i).getGardenId(), buildinglist.get(i).getpictureKind(), buildinglist.get(i).getImage());
+                    buildinglist.remove(buildinglist.get(i));
+                }
         }
         for (int i = 0; i < qitalist.size(); i++) {
             if (result.keySet().contains(qitalist.get(i).getImage()))
-                if (result.get(qitalist.get(i).getImage()))
+                if (result.get(qitalist.get(i).getImage())) {
                     uploadImgUtil.uploadOtherImg(qitalist.get(i).getGardenId(), qitalist.get(i).getCollectTime(), login.token, qitalist.get(i).getImage());
+                    qitalist.remove(qitalist.get(i));
+                }
         }
     }
 
