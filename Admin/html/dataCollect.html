@@ -202,6 +202,36 @@
 
   <script type="text/javascript" src="../assets/js/plugins/city.js"></script>
   <script type="text/javascript">
+    function searchGardenLists(){
+      gardenName = document.getElementById("searchGarden").value;
+      searchGarden(gardenName)
+        .done(function (res) {
+          if(res.code != 0) {
+            md.showNotification("bottom", "right", res.message, "danger");
+          }
+          else {
+            var gardens = res.data.gardens;
+            // 给四个表都添加数据
+            var main = document.getElementById('neighboutLists1');
+            for(var i = 1; i <= 4; i ++){
+              main = document.getElementById('neighboutLists' + i);
+
+              for (var item in gardens) {
+                // 添加下拉列表
+                // document.getElementById("gardenList").innerHTML += '<a class="dropdown-item" href="#">' + gardens[item].gardenName + '</a>'
+
+                  var li = document.createElement("li");
+                  li.className = "nav-item";
+                  $(li).html("<a class='nav-link' id = 'spreadsheet" + i + item + "' onclick = getExcel('" + excelTable[i - 1] + "'," + gardens[item].gardenId + ")>" + gardens[item].gardenName + "</a>");
+                  main.appendChild(li);
+                
+              }
+            }
+          }
+        });
+    }
+  </script>
+  <script type="text/javascript">
     function getExcelDataOfTable(tableId, idName) {
       var communityId = communitySelect.options[communitySelect.options.selectedIndex].value;
 
@@ -563,126 +593,7 @@
       });
     });
   </script>
-  <!-- <script src="../assets/js/jquery.cxselect.js"></script> -->
-<!--   <script>
-  (function() {
-    var urlChina = '../assets/js/data.min.js';
-    var urlGlobal = 'js/globalData.min.json';
-
-
-    $.cxSelect.defaults.url = urlChina;
-
-    // 默认
-    $('#city_china').cxSelect({
-      selects: ['province', 'city', 'area', 'street', 'community']
-    });
-
-    // 设置默认值及选项标题
-    $('#city_china_val').cxSelect({
-      selects: ['province', 'city', 'area', 'street', 'community'],
-      emptyStyle: 'none'
-    });
-
-    // 全球主要国家城市联动
-    $('#global_location').cxSelect({
-      url: urlGlobal,
-      selects: ['country', 'state', 'city', 'region'],
-      emptyStyle: 'none'
-    });
-
-    // API 接口
-    var apiBox = $('#api_data');
-    var cxSelectApi;
-
-    apiBox.cxSelect({
-      selects: ['province', 'city', 'area']
-    }, function(api) {
-      cxSelectApi = api;
-    });
-
-    // cxSelectApi = $.cxSelect(apiBox, {
-    //   selects: ['province', 'city', 'area']
-    // });
-
-    $('body').on('click', 'button', function() {
-      var _name = this.name;
-      var _value = this.value;
-
-      switch (_name) {
-        case 'attach':
-          cxSelectApi.attach();
-          break;
-
-        case 'detach':
-          cxSelectApi.detach();
-          break;
-
-        case 'clear':
-          cxSelectApi.clear();
-          break;
-
-        case 'required':
-          cxSelectApi.setOptions({
-            required: _value == 1 ? false : true
-          });
-          this.value = _value == 1 ? 0 : 1;
-          break;
-
-        case 'emptyStyle':
-          if (_value === 'none') {
-            _value = 'hidden';
-          } else if (_value === 'hidden') {
-            _value = '';
-          } else {
-            _value = 'none';
-          };
-          cxSelectApi.setOptions({
-            emptyStyle: _value
-          });
-          this.value = _value;
-          break;
-
-        case 'firstTitle':
-          _value = _value === '请选择' ? '选择吧' : '请选择';
-          cxSelectApi.setOptions({
-            firstTitle: _value
-          });
-          this.value = _value;
-          break;
-
-        case 'setSelect':
-          cxSelectApi.setOptions({
-            selects: _value === 'a' ? ['province', 'city', 'area', 'street', 'community'] : ['first', 'second', 'third', 'fourth', 'fifth']
-          });
-          this.value = _value === 'a' ? 'b' : 'a';
-          break;
-
-        case 'setData':
-          if (_value === 'china' || _value === 'global') {
-            // $.ajax({
-            //   url: this.value === 'china' ? urlChina : urlGlobal,
-            //   type: 'GET',
-            //   dataType: 'json'
-            // }).done(function(data, textStatus, jqXHR) {
-              cxSelectApi.setOptions({
-                url: this.value === 'china' ? urlChina : urlGlobal,
-                // data: data
-              });
-            // }).fail(function(jqXHR, textStatus, errorThrown) {
-            // });
-
-          } else if (this.value === 'custom') {
-            cxSelectApi.setOptions({
-              data: dataCustom
-            });
-          };
-          break;
-
-        // not default
-      };
-    });
-  })();
-  </script> -->
+  
 </body>
 
 </html>

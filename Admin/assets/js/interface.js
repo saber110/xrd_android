@@ -33,6 +33,7 @@ const community = admin + "community";
 const garden = admin + "garden";
 // excel导入数据接口
 const fileUpload = admin + "import_data";
+const searchGardenApi = admin + "search_garden";
 
 const getData = preFix + "get_data/";
 const getGardenPicture = getData + "garden_picture";
@@ -94,6 +95,10 @@ function getDiskDetailFun() {
     return result;
 }
 
+function searchGarden(gardenName) {
+    return xhrPost(searchGardenApi, conJson(conSplit("token",getCookie("token")), 
+        conSplit("gardenName", gardenName)));
+}
 
 // 照片管理
 function getGardenPictureFun(gardenId) {
