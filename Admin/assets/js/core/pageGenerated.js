@@ -11,7 +11,6 @@ arg.replace(/(\w+)(?:=([^&]*))?/g, function(a, key, value) {
   var valueStr = decodeURI(value);
   // 去掉前后引号
   settings[key] = valueStr.substr(1, valueStr.length - 2); 
-  console.log(settings);
 });
 
 

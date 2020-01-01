@@ -158,6 +158,31 @@
       }
   </script>
   <script type="text/javascript">
+    function searchGardenLists(){
+      gardenName = document.getElementById("searchGarden").value;
+      searchGarden(gardenName)
+        .done(function (res) {
+          if(res.code != 0) {
+            md.showNotification("bottom", "right", res.message, "danger");
+          }
+          else {
+            var gardens = res.data.gardens;
+            var neighboutLists = document.getElementById('neighboutLists');
+
+            for (var item in gardens) {
+              // 添加下拉列表
+              // document.getElementById("gardenList").innerHTML += '<a class="dropdown-item" href="#">' + gardens[item].gardenName + '</a>'
+                var li = document.createElement("li");
+                li.className = "nav-item";
+                $(li).html("<a class='nav-link' id = 'gardenId" + gardens[item].gardenId + "' onclick = getGardenPictures(" + gardens[item].gardenId + ")>" + gardens[item].gardenName + "</a>");
+                neighboutLists.appendChild(li);
+              
+            }
+          }
+        });
+    }
+  </script>
+  <script type="text/javascript">
     communitySelect.onchange = function() {
       var communityId = communitySelect.options[communitySelect.options.selectedIndex].value;
       var gardens = getGardenListOfCommunity(communityId);

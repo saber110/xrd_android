@@ -127,6 +127,26 @@
   <script type="text/javascript" src="../assets/js/interface.js"></script>
   <script type="text/javascript" src="../assets/js/plugins/city.js"></script>
   <script type="text/javascript">
+    function searchGardenLists(){
+      gardenName = document.getElementById("searchGarden").value;
+      searchGarden(gardenName)
+        .done(function (res) {
+          if(res.code != 0) {
+            md.showNotification("bottom", "right", res.message, "danger");
+          }
+          else {
+            var gardens = res.data.gardens;
+            var neighboutLists = document.getElementById('neighboutLists');
+            document.getElementById("gardenList").innerHTML = null;
+            for (var item in gardens) {
+              // 添加下拉列表
+              document.getElementById("gardenList").innerHTML += '<a class="dropdown-item"  onclick = "mapLabel(' + gardens[item].gardenId +', '+ BAIDU_MAP + ' )">' + gardens[item].gardenName + '</a>'
+            }
+          }
+        });
+    }
+  </script>
+  <script type="text/javascript">
     communitySelect.onchange = function() {
       var communityId = communitySelect.options[communitySelect.options.selectedIndex].value;
       var gardens = getGardenListOfCommunity(communityId);
