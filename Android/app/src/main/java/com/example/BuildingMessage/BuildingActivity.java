@@ -411,6 +411,7 @@ public class BuildingActivity extends BaseActivity {
                         resultList.put(id,copy(adapter2.getResultMap()));
                         tab_setTag(tab, id);
                         addTabListener(tabLayout, tab, id);
+                        buweiMap.put(id,adapter2.getResultMap().get("部位说明"));
                     }
                     Log.i("test", "新建楼栋成功");
                 } catch (Exception e) {
