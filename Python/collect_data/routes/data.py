@@ -27,20 +27,22 @@ from ..models.garden_picture import GardenPicture
 from ..models.garden_picture_kind import GardenPictureKind
 from ..models.map_data import MapData
 from ..models.other_picture import OtherPicture
+from ..models.radius import Radius
 from ..utils import bd09_to_gcj02, compress_image, get_suffix
-from ..wraps import token_check
+from ..wraps import token_check, admin_required
 
 data_bp = Blueprint('data', __name__, url_prefix=config.URL_Prefix + '/data')
 
 
 @data_bp.route('/garden', methods=['POST'])
 @token_check
-def garden(*args, **kwargs):
+def garden(user_id, *args, **kwargs):
     """
     添加新的小区
     :return:
     """
     data = request.get_json()
+    data['userId'] = user_id
     schema = {
         "gardenName": {'type': 'string', 'maxlength': 85}
     }
@@ -69,14 +71,11 @@ def garden(*args, **kwargs):
         garden.update(**data)
     else:
         garden = Garden(**data)
-    communityGardens = Garden.query.filter_by(communityId=garden.communityId).all()
-    for existGarden in communityGardens:
-        if garden.name == existGarden.name:
-            return generate_result(2, '请勿添加重名的小区')
     try:
         db.session.add(garden)
         db.session.commit()
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
+        print(str(e))
         db.session.rollback()
         return generate_result(2, '修改小区失败')
     return generate_result(0, '修改小区成功', {'gardenId': garden.id})
@@ -379,13 +378,6 @@ def garden_base_info(user_id: int, *args, **kwargs):
         if key not in schema and str(data[key]).strip() == '':
             del data[key]
     try:
-        # 更新小区名
-        if 'gardenName' in data:
-            garden = Garden.query.get(data['id'])
-            if garden is None:
-                return generate_result(2, '小区不存在')
-            garden.name = data['gardenName']
-            db.session.add(garden)
         base_info = GardenBaseInfo.query.get(data['id'])
         if base_info is None:
             base_info = GardenBaseInfo(**data)  # 新建
@@ -445,7 +437,7 @@ def building_base_info(user_id: int, *args, **kwargs):
     except SQLAlchemyError:
         db.session.rollback()
         return generate_result(2)
-    return generate_result(0, '提交楼栋信息成功')
+    return generate_result(0, '提交楼栋信息成功', {"buildingId": info.id})
 
 
 @data_bp.route('/garden_import_info', methods=['POST'])
@@ -517,3 +509,29 @@ def building_import_info(user_id: int, *args, **kwargs):
         db.session.rollback()
         return generate_result(2)
     return generate_result(0, '上传楼幢导入数据成功')
+
+
+@data_bp.route('/radius', methods=['POST'])
+@token_check
+@admin_required
+def radius(*args, **kwargs):
+    data = request.get_json()
+    schema = {
+        'key': {'type': 'string'},
+        'radius': {'type': 'integer', 'min': 1}
+    }
+    v = generate_validator(schema)
+    if not v(data):
+        return generate_result(1, data=v.errors)
+    radius = Radius.query.get(data['key'])
+    if radius is None:
+        return generate_result(2, '该字段无法设置半径')
+    radius.radius = data['radius']
+    try:
+        db.session.add(radius)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return generate_result(2, '修改失败')
+    return generate_result(0, '修改成功')

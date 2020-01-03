@@ -43,7 +43,7 @@ class GardenBaseInfo(BaseModel):
     otherInfo = db.Column(db.Text, comment='小区概况表其它信息备注')
     neighborGarden = db.Column(db.Text, comment='相邻小区')
     mainRoad = db.Column(db.Text, comment='交通干道')
-    roadGrade = db.Column(db.Text, comment='道路等级')
+    roadGrade = db.Column(db.Text, default='[]', comment='道路等级')
     busStation = db.Column(db.Text, comment='公交站名')
     busStationDistance = db.Column(db.Integer, comment='站点距离')
     baseBus = db.Column(db.Text, comment='普通公交')

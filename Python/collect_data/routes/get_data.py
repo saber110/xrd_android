@@ -28,6 +28,8 @@ from ..models.garden_import_info import GardenImportInfo
 from ..models.garden_picture import GardenPicture
 from ..models.map_data import MapData
 from ..models.other_picture import OtherPicture
+from ..models.province import Province
+from ..models.radius import Radius
 from ..models.street import Street
 from ..models.user import User
 from ..utils import gcj02_to_bd09, get_suffix
@@ -161,11 +163,10 @@ def garden_base_info(*args, **kwargs):
             'value': ''
         },
         {
-            # 应需求放要求，改为可以更改
             'label': '小区名称',
-            'key': 'gardenName',
+            'key': '',
             'required': False,
-            'changed': True,
+            'changed': False,
             'type': 'text',
             'value': garden.name
         },
@@ -744,6 +745,14 @@ def garden_base_info(*args, **kwargs):
     if garden_info is not None:
         result = set_form_value(result, garden_info.to_dict)
 
+    radius = Radius.query.all()
+    radius_dict = {}
+    for item in radius:
+        radius_dict[item.key] = item.radius
+    for item in result:
+        if item['type'] == 'map' and radius_dict[item['key']] is not None:
+            item['radius'] = radius_dict[item['key']]
+
     return generate_result(0, '获取数据成功', {'gardenInfoList': result})
 
 
@@ -762,14 +771,14 @@ def building_base_info(*args, **kwargs):
             'type': 'text',
             'value': ''
         },
-        {
-            'label': '楼幢别名',
-            'key': 'buildingAlias',
-            'required': False,
-            'changed': True,
-            'type': 'text',
-            'value': ''
-        },
+        # {
+        #     'label': '楼幢别名',
+        #     'key': 'buildingAlias',
+        #     'required': False,
+        #     'changed': True,
+        #     'type': 'text',
+        #     'value': ''
+        # },
         {
             'label': '楼幢类别',
             'key': 'buildingKind',
@@ -1494,7 +1503,8 @@ def garden_base_table(*args, **kwargs):
     stream = BytesIO()
     wb.save(stream)
     stream.seek(0)
-    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '小区概况表.xlsx')
+    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        f'{garden.name}_小区概况表.xlsx')
 
 
 @get_data_bp.route('/building_base_table', methods=['POST'])
@@ -1507,6 +1517,8 @@ def building_base_table(*args, **kwargs):
     except KeyError:
         return generate_result(1)
     try:
+        garden = Garden.query.get(garden_id)
+        garden_info = GardenBaseInfo.query.get(garden_id)
         building_infos = BuildingInfo.query.filter_by(gardenId=garden_id).all()
     except SQLAlchemyError as e:
         print(str(e))
@@ -1539,12 +1551,17 @@ def building_base_table(*args, **kwargs):
         for key in item.keys():
             if item[key] is None:
                 item[key] = ''
-        ws.append([index + 1] + [item[table_key] for table_key in table_key_list])
+        row = [index + 1] + [item[table_key] for table_key in table_key_list]
+        # 设置楼栋名称和楼栋别名，规则为 小区名+楼栋名，小区别名+楼栋名
+        row[2] = garden_info.gardenAlias + row[1]
+        row[1] = garden.name + row[1]
+        ws.append(row)
 
     stream = BytesIO()
     wb.save(stream)
     stream.seek(0)
-    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '楼幢调查表.xlsx')
+    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        f'{garden.name}_楼幢调查表.xlsx')
 
 
 @get_data_bp.route('/garden_table', methods=['POST'])
@@ -1562,6 +1579,11 @@ def garden_table(*args, **kwargs):
         garden = Garden.query.get(garden_id)
         if garden is None:
             return generate_result(2, '小区不存在')
+        province = Province.query.get(garden.provinceId)
+        city = City.query.query.get(garden.cityId)
+        district = District.query.get(garden.districtId)
+        street = Street.query.get(garden.streetId)
+        community = Street.query.get(garden.communityId)
         garden_info = GardenBaseInfo.query.get(garden_id)
         if garden_info is None:
             return generate_result(2, '小区基本信息不存在')
@@ -1616,7 +1638,8 @@ def garden_table(*args, **kwargs):
     stream = BytesIO()
     wb.save(stream)
     stream.seek(0)
-    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '小区信息_数据导入表.xlsx')
+    file_name = f'{garden.name}_{province.name}_{city.name}_{district.name}_{street.name}_{community.name}_小区信息.xlsx'
+    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', file_name)
 
 
 @get_data_bp.route('/building_table', methods=['POST'])
@@ -1631,6 +1654,8 @@ def building_table(*args, **kwargs):
     except KeyError:
         return generate_result(1)
     try:
+        garden = Garden.query.get(garden_id)
+        garden_info = GardenBaseInfo.query.get(garden_id)
         building_info = BuildingInfo.query.filter_by(gardenId=garden_id).all()
         if len(building_info) == 0:
             return generate_result(2, '该小区暂无楼幢信息')
@@ -1676,11 +1701,15 @@ def building_table(*args, **kwargs):
                 row_data.append('')
             else:
                 row_data.append(all_info[table_key])
+        # 设置楼栋名称和楼栋别名，规则为 小区名+楼栋名，小区别名+楼栋名
+        row_data[1] = garden_info.gardenAlias + row_data[1]
+        row_data[0] = garden.name + row_data[1]
         ws.append(row_data)
     stream = BytesIO()
     wb.save(stream)
     stream.seek(0)
-    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '楼幢信息_数据导入表.xlsx')
+    return my_send_file(stream, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        f'{garden.name}_楼幢信息.xlsx')
 
 
 @get_data_bp.route('/picture', methods=['GET'])
@@ -1823,14 +1852,14 @@ def garden_building_base_info(*args, **kwargs):
                 'type': 'text',
                 'value': ''
             },
-            {
-                'label': '楼幢别名',
-                'key': 'buildingAlias',
-                'required': False,
-                'changed': True,
-                'type': 'text',
-                'value': ''
-            },
+            # {
+            #     'label': '楼幢别名',
+            #     'key': 'buildingAlias',
+            #     'required': False,
+            #     'changed': True,
+            #     'type': 'text',
+            #     'value': ''
+            # },
             {
                 'label': '楼幢类别',
                 'key': 'buildingKind',
