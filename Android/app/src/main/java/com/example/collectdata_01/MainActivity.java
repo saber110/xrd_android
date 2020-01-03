@@ -324,9 +324,9 @@ public class MainActivity extends TakePhotoActivity{
 
     //普通の方法
     public void formatString(int i) {
-        if (i < 10) {
+        if (i < 9) {
             n = "00" + Integer.toString(i + 1);
-        } else if (i >= 100) {
+        } else if (i >= 99) {
             n = Integer.toString(i + 1);
         } else {
             n = "0" + Integer.toString(i + 1);

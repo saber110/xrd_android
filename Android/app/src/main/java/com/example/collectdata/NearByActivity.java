@@ -70,6 +70,8 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
     private int busStationDistance = MAX;
     private int subwayDistance = MAX;
     private ArrayList<Integer> radius;
+    private HashMap<Integer,Integer> true_radius = new HashMap<>();
+    public static int now_tab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,13 +119,28 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         tabHost.addTab(tabHost.newTabSpec("tab16").setIndicator("大学教育").setContent(this));
         tabHost.addTab(tabHost.newTabSpec("tab17").setIndicator("旅游景点").setContent(this));
         tabHost.addTab(tabHost.newTabSpec("tab18").setIndicator("公园广场").setContent(this));
+        for(int i=0;i<tabHost.getTabWidget().getTabCount();i++){
+            final int finalI = i;
+            tabHost.getTabWidget().getChildTabViewAt(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("选择了第"+finalI+"个页面");
+                    tabHost.setCurrentTab(finalI);
+                    now_tab = finalI;
+                }
+            });
+        }
         search.setOnClickListener(this);
         locButton.setOnClickListener(this);
         save.setOnClickListener(this);
         location.setOnClickListener(this);
         beginLoc();
         radius = getIntent().getIntegerArrayListExtra("radius");
-        System.out.println("radius="+radius.size());
+        true_radius.put(1,0);
+        true_radius.put(3,1);
+        true_radius.put(4,3);
+        true_radius.put(5,4);
+        true_radius.put(6,6);
 //        i.putExtra("map",(Serializable)map);
 //        HashMap<Integer, String> map = (HashMap<Integer, String>) getIntent().getSerializableExtra("map");
     }
@@ -287,19 +304,23 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                int select_index = Integer.parseInt(tabHost.getCurrentTabTag().substring(3));
+                //int select_index = tabHost.getCurrentTab();
+                int select_index = now_tab;
                 String text = compoundButton.getText().toString();
                 System.out.println("选择第"+select_index+"个页面的"+text);
+                if(select_index<1) select_index++;
+                else  select_index+=2;
                 if(b) sets[select_index].add(text);
                 else sets[select_index].remove(text);
             }
         });
         return checkBox;
     }
-    private void searchNeayBy(String key, final int index){
+    private void searchNeayBy(final String key, final int index){
         // TODO 加载数据成功才能进入
         // POI初始化搜索模块，注册搜索事件监听
-        Log.d("keyword",key);
+        //Log.d("keyword",key);
+        int myradius = 0;
         PoiSearch mPoiSearch = PoiSearch.newInstance();
         mPoiSearch.setOnGetPoiSearchResultListener(new OnGetPoiSearchResultListener() {
             @Override
@@ -319,14 +340,14 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
                         });
                         for(int i = 0 ; i < result.getAllPoi().size(); i ++){
                             PoiInfo poiInfo = result.getAllPoi().get(i);
-                            System.out.println(poiInfo);
+                            //System.out.println(poiInfo);
                             LatLng gp1 = new LatLng(latitude,longitude);
                             LatLng gp2 = new LatLng(poiInfo.getLocation().latitude,poiInfo.getLocation().longitude);
                             int distence = (int) DistanceUtil. getDistance(gp1, gp2);
                             String name = poiInfo.name;
                             //sets[index].add(name);
                             if(index<=18) {
-                                linearLayout[index].addView(newCheckBox(name + "（距离：" + distence + "m）",i,index));
+                                linearLayout[index].addView(newCheckBox(name,i,index));
                                 //公交站距离
                                 if(index==3){
                                     //计算最近的公交站距离
@@ -394,8 +415,9 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
         poiNearbySearchOption.keyword(key);
         poiNearbySearchOption.sortType(PoiSortType.distance_from_near_to_far);
         poiNearbySearchOption.location(new LatLng(latitude, longitude));
-        if(index>2) poiNearbySearchOption.radius(radius.get(index-2));
-        else poiNearbySearchOption.radius(radius.get(index-1));  // 检索半径，单位是米
+        if(index>=7) myradius = radius.get(index+2);
+        else myradius = radius.get(true_radius.get(index));  // 检索半径，单位是米
+        poiNearbySearchOption.radius(myradius);
         poiNearbySearchOption.pageCapacity(20);  // 默认每页10条
         mPoiSearch.searchNearby(poiNearbySearchOption);  // 发起附近检索请求
     }
@@ -526,6 +548,7 @@ public class NearByActivity extends AppCompatActivity implements TabHost.TabCont
                 }
             }
         }).start();
+        now_tab=0;
     }
     @Override
     protected void onPause(){
