@@ -29,7 +29,7 @@ from ..models.map_data import MapData
 from ..models.other_picture import OtherPicture
 from ..models.radius import Radius
 from ..utils import bd09_to_gcj02, compress_image, get_suffix
-from ..wraps import token_check
+from ..wraps import token_check, admin_required
 
 data_bp = Blueprint('data', __name__, url_prefix=config.URL_Prefix + '/data')
 
@@ -512,8 +512,8 @@ def building_import_info(user_id: int, *args, **kwargs):
 
 
 @data_bp.route('/radius', methods=['POST'])
-# @token_check
-# @admin_required
+@token_check
+@admin_required
 def radius(*args, **kwargs):
     data = request.get_json()
     schema = {
