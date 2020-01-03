@@ -770,14 +770,14 @@ def building_base_info(*args, **kwargs):
             'type': 'text',
             'value': ''
         },
-        {
-            'label': '楼幢别名',
-            'key': 'buildingAlias',
-            'required': False,
-            'changed': True,
-            'type': 'text',
-            'value': ''
-        },
+        # {
+        #     'label': '楼幢别名',
+        #     'key': 'buildingAlias',
+        #     'required': False,
+        #     'changed': True,
+        #     'type': 'text',
+        #     'value': ''
+        # },
         {
             'label': '楼幢类别',
             'key': 'buildingKind',
@@ -1515,6 +1515,8 @@ def building_base_table(*args, **kwargs):
     except KeyError:
         return generate_result(1)
     try:
+        garden_info = Garden.query.get(garden_id)
+        garden_base_info = GardenBaseInfo.query.get(garden_id)
         building_infos = BuildingInfo.query.filter_by(gardenId=garden_id).all()
     except SQLAlchemyError as e:
         print(str(e))
@@ -1547,7 +1549,11 @@ def building_base_table(*args, **kwargs):
         for key in item.keys():
             if item[key] is None:
                 item[key] = ''
-        ws.append([index + 1] + [item[table_key] for table_key in table_key_list])
+        row = [index + 1] + [item[table_key] for table_key in table_key_list]
+        # 设置楼栋名称和楼栋别名，规则为 小区名+楼栋名，小区别名+楼栋名
+        row[2] = garden_base_info.gardenAlias + row[1]
+        row[1] = garden_info.name + row[1]
+        ws.append(row)
 
     stream = BytesIO()
     wb.save(stream)
@@ -1639,6 +1645,8 @@ def building_table(*args, **kwargs):
     except KeyError:
         return generate_result(1)
     try:
+        garden_info = Garden.query.get(garden_id)
+        garden_base_info = GardenBaseInfo.query.get(garden_id)
         building_info = BuildingInfo.query.filter_by(gardenId=garden_id).all()
         if len(building_info) == 0:
             return generate_result(2, '该小区暂无楼幢信息')
@@ -1684,6 +1692,9 @@ def building_table(*args, **kwargs):
                 row_data.append('')
             else:
                 row_data.append(all_info[table_key])
+        # 设置楼栋名称和楼栋别名，规则为 小区名+楼栋名，小区别名+楼栋名
+        row_data[1] = garden_base_info.gardenAlias + row_data[1]
+        row_data[0] = garden_info.name + row_data[1]
         ws.append(row_data)
     stream = BytesIO()
     wb.save(stream)
@@ -1831,14 +1842,14 @@ def garden_building_base_info(*args, **kwargs):
                 'type': 'text',
                 'value': ''
             },
-            {
-                'label': '楼幢别名',
-                'key': 'buildingAlias',
-                'required': False,
-                'changed': True,
-                'type': 'text',
-                'value': ''
-            },
+            # {
+            #     'label': '楼幢别名',
+            #     'key': 'buildingAlias',
+            #     'required': False,
+            #     'changed': True,
+            #     'type': 'text',
+            #     'value': ''
+            # },
             {
                 'label': '楼幢类别',
                 'key': 'buildingKind',
