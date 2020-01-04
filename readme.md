@@ -23,7 +23,13 @@
 - 中期检查结束之后再详细规划后面的开发
 - 开发过程中设计到小功能的分工要多沟通，建议直接在群里沟通
 
-### 后续开发
+### 地图密钥
+- 百度地图
+	- `ecAAwxIHYrAOQ6dNE18y4giPZY08Fw3i`  胡皓斌——deepin
+	- `vXYZQTQvM2T9V3HVX2Wz0N1RRK8COnGm`  李宇轩
+	- `o4bqUZIMs3srq7tbSZR77nTOOINx397u`  胡皓斌——HUAWEI
+- 腾讯地图
+	- `BNQBZ-CLD6P-Q4PDR-LIJ4B-LG2L3-G3FL5` 自定义样式
 
 
 ### 机型
