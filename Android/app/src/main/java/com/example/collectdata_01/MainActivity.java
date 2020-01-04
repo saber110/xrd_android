@@ -335,6 +335,18 @@ public class MainActivity extends TakePhotoActivity{
 
     long count; //定义里面类型个数
 
+    long queryCount(){
+        QueryBuilder<ImageDb> qb = new QueryBuilder<ImageDb>(ImageDb.class)
+                .columns(new String[]{"pictureKind"})
+                .distinct(true)
+                .whereEquals(ImageDb.PICTUREKIND_COL, locationString)
+                .whereAppendAnd()
+                .whereEquals(ImageDb.GARDENID_COL, Integer.toString(getGardenId()))
+                .whereAppendAnd()
+                .whereEquals(ImageDb.BUILDINGNAME_COL, "非楼栋");
+        return mainDB.queryCount(qb);
+    }
+
     //拍照方法
     private void picture() {
 
@@ -349,22 +361,29 @@ public class MainActivity extends TakePhotoActivity{
         count = mainDB.queryCount(qb);
 
         //保存的文件名，先格式化000字符
-        formatString((int) (count++));
+//        formatString((int) (count++));
         if (locationString.equals(getResources().getString(R.string.pingMianTu))
-            || locationString.equals(getResources().getString(R.string.xiaoQuRuKou))
-            || locationString.equals(getResources().getString(R.string.waiJingTu))
-            || locationString.equals(getResources().getString(R.string.neiJingTu))) {
+                || locationString.equals(getResources().getString(R.string.xiaoQuRuKou))
+                || locationString.equals(getResources().getString(R.string.waiJingTu))
+                || locationString.equals(getResources().getString(R.string.neiJingTu))) {
+
+
+            formatString((int) (queryCount()));
             jpegName = "2_" + neighbourWorking.getText() + "_" + locationString + "_" + n + ".jpg";
             pictureKind = Integer.toString(2);
+
         }
         if(locationString.equals(getResources().getString(R.string.zhuangPaiHao))
-            || locationString.equals(getResources().getString(R.string.jianZhuLiMian))){
+                || locationString.equals(getResources().getString(R.string.jianZhuLiMian))){
+            formatString((int) (count));
             jpegName = "3_"+ neighbourWorking.getText()+ loudong + "_" + locationString + "_" + n + ".jpg";
             pictureKind = Integer.toString(3);
         }
         if(locationString.equals(getResources().getString(R.string.qiTa))){
+            formatString((int) (queryCount()));
             pictureKind = Integer.toString(3);
             jpegName = "4_"+ neighbourWorking.getText() + "_" + locationString + "_" + n +".jpg";
+
         }
 
         File file = new File(Environment.getExternalStorageDirectory(), "/"+ getResources().getString(R.string.picturePath) + "/" + jpegName);
@@ -374,9 +393,8 @@ public class MainActivity extends TakePhotoActivity{
 
         final Uri imageUri = Uri.fromFile(file);
         getTakePhoto().onPickFromCapture(imageUri);
-        loudong = getResources().getString(R.string.feiloudong);
+//        loudong = getResources().getString(R.string.feiloudong);
     }
-
     /**
      * 将拍照的图片加入系统相册中
      *
